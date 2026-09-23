@@ -40,6 +40,8 @@
 
             --danger: #F04438;
 
+            --success-bg: #E8F8F0;
+
             --shadow: 0 8px 30px rgba(16, 24, 40, .055);
             --shadow-hover: 0 15px 40px rgba(16, 24, 40, .09);
         }
@@ -57,6 +59,7 @@
             --navy-soft: #102D3D;
 
             --warning-bg: rgba(247, 144, 9, .11);
+            --success-bg: rgba(18, 183, 106, .10);
 
             --shadow: 0 8px 30px rgba(0, 0, 0, .18);
             --shadow-hover: 0 15px 40px rgba(0, 0, 0, .28);
@@ -76,9 +79,7 @@
             background: var(--bg);
             color: var(--text);
             font-family: "Inter", sans-serif;
-            transition:
-                background-color .25s ease,
-                color .25s ease;
+            transition: background-color .25s ease, color .25s ease;
         }
 
         h1,
@@ -122,11 +123,8 @@
             background: var(--surface);
             border: 1px solid var(--border);
             box-shadow: var(--shadow);
-            transition:
-                background-color .25s ease,
-                border-color .25s ease,
-                box-shadow .2s ease,
-                transform .2s ease;
+            transition: background-color .25s ease, border-color .25s ease,
+                box-shadow .2s ease, transform .2s ease;
         }
 
         .card:hover {
@@ -320,10 +318,6 @@
             transform: translateY(-1px);
         }
 
-        .validate-btn:active {
-            transform: translateY(0);
-        }
-
         .locked-action {
             transition: .2s ease;
         }
@@ -337,6 +331,7 @@
             border: 1px dashed var(--border);
         }
 
+        /* Validation modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -373,11 +368,134 @@
             transform: translateY(0) scale(1);
         }
 
+        /* Community popup */
+        .community-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(3, 10, 17, .72);
+            backdrop-filter: blur(7px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .25s ease, visibility .25s ease;
+        }
+
+        .community-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .community-card {
+            width: 100%;
+            max-width: 440px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 30px 90px rgba(0, 0, 0, .30);
+            transform: translateY(20px) scale(.97);
+            transition: transform .28s ease;
+        }
+
+        .community-overlay.show .community-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .community-top-line {
+            height: 5px;
+            background: linear-gradient(90deg, var(--teal), var(--primary));
+        }
+
+        .community-icon {
+            width: 68px;
+            height: 68px;
+            border-radius: 21px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(18, 183, 106, .10);
+            color: var(--primary);
+        }
+
+        .community-join-btn {
+            width: 100%;
+            min-height: 50px;
+            border-radius: 14px;
+            background: var(--primary);
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: .2s ease;
+        }
+
+        .community-join-btn:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .community-join-btn:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+        .community-later-btn {
+            width: 100%;
+            min-height: 46px;
+            border-radius: 14px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            transition: .2s ease;
+        }
+
+        .community-later-btn:hover {
+            background: var(--surface-soft);
+            color: var(--text);
+        }
+
+        .community-warning {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(3, 10, 17, .72);
+            backdrop-filter: blur(7px);
+            opacity: 0;
+            visibility: hidden;
+            transition: .25s ease;
+        }
+
+        .community-warning.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .community-warning-card {
+            width: 100%;
+            max-width: 390px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, .28);
+        }
+
         .toast {
             position: fixed;
             right: 22px;
             bottom: 22px;
-            z-index: 150;
+            z-index: 15000;
             background: var(--text);
             color: var(--surface);
             border-radius: 13px;
@@ -435,7 +553,6 @@
         }
 
         @media (max-width: 1023px) {
-
             .sidebar {
                 position: fixed;
                 left: 0;
@@ -450,11 +567,9 @@
             .sidebar.open {
                 transform: translateX(0);
             }
-
         }
 
         @media (max-width: 640px) {
-
             .mobile-bottom-nav {
                 display: flex;
                 position: fixed;
@@ -483,6 +598,15 @@
                 bottom: 82px;
             }
 
+            .community-overlay {
+                align-items: flex-end;
+                padding: 12px;
+            }
+
+            .community-card {
+                max-width: 100%;
+                border-radius: 28px 28px 20px 20px;
+            }
         }
 
         .no-scrollbar::-webkit-scrollbar {
@@ -574,9 +698,10 @@
             </p>
 
             <nav class="space-y-1">
+
                 <a href="epin.html"
-                    class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-white/65 hover:text-white hover:bg-white/5">
-                    <i class='bx bx-key'></i>
+                    class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium">
+                    <i class='bx bx-key text-[20px]'></i>
                     <span>Withdrawal E-pin</span>
                 </a>
 
@@ -606,8 +731,6 @@
                     <i class='bx bx-cog text-[20px]'></i>
                     <span>Settings</span>
                 </a>
-
-
 
             </nav>
 
@@ -694,7 +817,6 @@
         <!-- PAGE CONTENT -->
         <div class="px-5 sm:px-7 lg:px-9 pb-10">
 
-
             <!-- VALIDATION BANNER -->
             <section class="validation-banner rounded-[24px] p-6 sm:p-7 mb-5">
 
@@ -712,6 +834,7 @@
                             <div>
 
                                 <div class="flex flex-wrap items-center gap-2">
+
                                     <h2 class="font-sora text-lg sm:text-xl font-semibold">
                                         Dashboard Validation Required
                                     </h2>
@@ -720,6 +843,7 @@
                                         style="background: rgba(247,144,9,.15); color: #FFBF66;">
                                         NOT VALIDATED
                                     </span>
+
                                 </div>
 
                                 <p class="text-sm leading-6 text-white/65 mt-2 max-w-2xl">
@@ -771,7 +895,6 @@
             <!-- BALANCE + STATUS -->
             <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.5fr)_minmax(300px,.75fr)] gap-5 mb-6">
 
-
                 <!-- BALANCE -->
                 <section class="balance-card rounded-[24px] p-6 sm:p-7">
 
@@ -799,7 +922,6 @@
 
                             </div>
 
-
                             <div class="w-12 h-12 rounded-2xl hidden sm:flex items-center justify-center"
                                 style="background: rgba(255,255,255,.09);">
                                 <i class='bx bx-wallet text-2xl'></i>
@@ -811,7 +933,6 @@
                         <div class="grid grid-cols-3 gap-3 mt-7">
 
                             <div class="rounded-2xl p-3 sm:p-4" style="background: rgba(255,255,255,.075);">
-
                                 <p class="text-[10px] sm:text-xs text-white/50">
                                     Total Earned
                                 </p>
@@ -819,12 +940,10 @@
                                 <p class="font-sora text-sm sm:text-lg font-semibold mt-1">
                                     $0.00
                                 </p>
-
                             </div>
 
 
                             <div class="rounded-2xl p-3 sm:p-4" style="background: rgba(255,255,255,.075);">
-
                                 <p class="text-[10px] sm:text-xs text-white/50">
                                     Pending
                                 </p>
@@ -832,12 +951,10 @@
                                 <p class="font-sora text-sm sm:text-lg font-semibold mt-1">
                                     $0.00
                                 </p>
-
                             </div>
 
 
                             <div class="rounded-2xl p-3 sm:p-4" style="background: rgba(255,255,255,.075);">
-
                                 <p class="text-[10px] sm:text-xs text-white/50">
                                     Withdrawn
                                 </p>
@@ -845,7 +962,6 @@
                                 <p class="font-sora text-sm sm:text-lg font-semibold mt-1">
                                     $0.00
                                 </p>
-
                             </div>
 
                         </div>
@@ -968,7 +1084,6 @@
 
 
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-
 
                     <button class="card locked-action rounded-2xl p-4 text-left" data-locked-action>
 
@@ -1107,7 +1222,6 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
 
-
                     <!-- STREAK -->
                     <article class="card lock-card locked-content rounded-2xl p-5">
 
@@ -1135,6 +1249,7 @@
                         <div class="mt-5 rounded-xl p-3" style="background: var(--surface-soft);">
 
                             <div class="flex justify-between">
+
                                 <span class="text-[11px]" style="color: var(--muted);">
                                     Reward
                                 </span>
@@ -1142,6 +1257,7 @@
                                 <span class="text-xs font-semibold">
                                     $1.50 / claim
                                 </span>
+
                             </div>
 
                         </div>
@@ -1181,6 +1297,7 @@
                         <div class="mt-5 rounded-xl p-3" style="background: var(--surface-soft);">
 
                             <div class="flex justify-between">
+
                                 <span class="text-[11px]" style="color: var(--muted);">
                                     Reward range
                                 </span>
@@ -1188,6 +1305,7 @@
                                 <span class="text-xs font-semibold">
                                     $1 – $5
                                 </span>
+
                             </div>
 
                         </div>
@@ -1227,6 +1345,7 @@
                         <div class="mt-5 rounded-xl p-3" style="background: var(--surface-soft);">
 
                             <div class="flex justify-between">
+
                                 <span class="text-[11px]" style="color: var(--muted);">
                                     Reward range
                                 </span>
@@ -1234,6 +1353,7 @@
                                 <span class="text-xs font-semibold">
                                     $1 – $5
                                 </span>
+
                             </div>
 
                         </div>
@@ -1273,6 +1393,7 @@
                         <div class="mt-5 rounded-xl p-3" style="background: var(--surface-soft);">
 
                             <div class="flex justify-between">
+
                                 <span class="text-[11px]" style="color: var(--muted);">
                                     Reward
                                 </span>
@@ -1280,6 +1401,7 @@
                                 <span class="text-xs font-semibold">
                                     $5 / referral
                                 </span>
+
                             </div>
 
                         </div>
@@ -1317,6 +1439,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 md:min-w-[520px]">
 
                         <div class="flex items-center gap-2">
+
                             <div class="w-8 h-8 rounded-full flex items-center justify-center"
                                 style="background: var(--success-bg); color: var(--primary);">
                                 <i class='bx bx-check text-lg'></i>
@@ -1325,10 +1448,12 @@
                             <span class="text-xs font-medium">
                                 Earning activities
                             </span>
+
                         </div>
 
 
                         <div class="flex items-center gap-2">
+
                             <div class="w-8 h-8 rounded-full flex items-center justify-center"
                                 style="background: var(--success-bg); color: var(--primary);">
                                 <i class='bx bx-check text-lg'></i>
@@ -1337,10 +1462,12 @@
                             <span class="text-xs font-medium">
                                 Withdrawal access
                             </span>
+
                         </div>
 
 
                         <div class="flex items-center gap-2">
+
                             <div class="w-8 h-8 rounded-full flex items-center justify-center"
                                 style="background: var(--success-bg); color: var(--primary);">
                                 <i class='bx bx-check text-lg'></i>
@@ -1349,6 +1476,7 @@
                             <span class="text-xs font-medium">
                                 Reward features
                             </span>
+
                         </div>
 
                     </div>
@@ -1360,7 +1488,6 @@
 
             <!-- LOWER GRID -->
             <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,.8fr)] gap-5">
-
 
                 <!-- SETUP PROGRESS -->
                 <section class="card rounded-[22px] p-5 sm:p-6">
@@ -1396,6 +1523,7 @@
                             </div>
 
                             <div class="flex-1">
+
                                 <p class="text-sm font-semibold">
                                     Profile
                                 </p>
@@ -1403,6 +1531,7 @@
                                 <p class="text-[11px] mt-0.5" style="color: var(--muted);">
                                     Your account profile is ready.
                                 </p>
+
                             </div>
 
                             <span class="text-[11px] font-semibold" style="color: var(--primary);">
@@ -1420,6 +1549,7 @@
                             </div>
 
                             <div class="flex-1">
+
                                 <p class="text-sm font-semibold">
                                     Community
                                 </p>
@@ -1427,6 +1557,7 @@
                                 <p class="text-[11px] mt-0.5" style="color: var(--muted);">
                                     Your community step is complete.
                                 </p>
+
                             </div>
 
                             <span class="text-[11px] font-semibold" style="color: var(--primary);">
@@ -1444,6 +1575,7 @@
                             </div>
 
                             <div class="flex-1">
+
                                 <p class="text-sm font-semibold">
                                     Dashboard Validation
                                 </p>
@@ -1451,6 +1583,7 @@
                                 <p class="text-[11px] mt-0.5" style="color: var(--muted);">
                                     Pay the validation fee to unlock features.
                                 </p>
+
                             </div>
 
                             <button class="text-[11px] font-semibold" style="color: var(--primary);"
@@ -1475,6 +1608,7 @@
                         </div>
 
                         <div>
+
                             <h2 class="font-sora text-base font-semibold">
                                 Complete Your Validation
                             </h2>
@@ -1482,6 +1616,7 @@
                             <p class="text-xs leading-5 mt-1" style="color: var(--muted);">
                                 Validate your dashboard to access Optify's earning features.
                             </p>
+
                         </div>
 
                     </div>
@@ -1492,6 +1627,7 @@
                         <div class="flex items-end justify-between">
 
                             <div>
+
                                 <p class="text-[11px]" style="color: var(--muted);">
                                     Validation Fee
                                 </p>
@@ -1499,9 +1635,11 @@
                                 <p class="font-sora text-2xl font-semibold mt-1">
                                     $5.00
                                 </p>
+
                             </div>
 
                             <div class="text-right">
+
                                 <p class="text-[11px]" style="color: var(--muted);">
                                     Naira equivalent
                                 </p>
@@ -1509,6 +1647,7 @@
                                 <p class="text-sm font-semibold mt-1">
                                     ₦5,000
                                 </p>
+
                             </div>
 
                         </div>
@@ -1539,7 +1678,6 @@
 
             <!-- WITHDRAWAL + TRANSACTIONS -->
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-5 mt-5">
-
 
                 <!-- WITHDRAWAL -->
                 <section class="card rounded-[22px] p-5 sm:p-6">
@@ -1572,6 +1710,7 @@
                             <div class="flex items-center justify-between mt-5">
 
                                 <div>
+
                                     <p class="text-[11px]" style="color: var(--muted);">
                                         Minimum withdrawal
                                     </p>
@@ -1579,10 +1718,12 @@
                                     <p class="font-sora text-sm font-semibold mt-1">
                                         $10.00
                                     </p>
+
                                 </div>
 
                                 <button class="px-4 py-2.5 rounded-xl text-xs font-semibold"
-                                    style="background: var(--surface-soft); color: var(--muted);" data-locked-action>
+                                    style="background: var(--surface-soft); color: var(--muted);"
+                                    data-locked-action>
                                     Validate to Unlock
                                 </button>
 
@@ -1601,6 +1742,7 @@
                     <div class="flex items-center justify-between">
 
                         <div>
+
                             <h2 class="font-sora text-base font-semibold">
                                 Recent Transactions
                             </h2>
@@ -1608,6 +1750,7 @@
                             <p class="text-xs mt-1" style="color: var(--muted);">
                                 Your account activity will appear here.
                             </p>
+
                         </div>
 
                         <i class='bx bx-receipt text-2xl' style="color: var(--muted);"></i>
@@ -1639,7 +1782,6 @@
 
             <!-- REFERRAL / CONVERSION -->
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-5 mt-5">
-
 
                 <!-- REFERRAL -->
                 <section class="card rounded-[22px] p-5 sm:p-6">
@@ -1677,7 +1819,7 @@
                     <div class="mt-5 p-3 rounded-xl flex items-center gap-2" style="background: var(--surface-soft);">
 
                         <div class="flex-1 min-w-0 text-xs truncate" id="referralLink">
-                            optify.com/register?ref=David
+                            Referral link unavailable
                         </div>
 
                         <button id="copyReferral"
@@ -1706,6 +1848,7 @@
                         </div>
 
                         <div>
+
                             <h2 class="font-sora text-base font-semibold">
                                 Optify Conversion
                             </h2>
@@ -1713,6 +1856,7 @@
                             <p class="text-xs mt-1" style="color: var(--muted);">
                                 Current platform display rate
                             </p>
+
                         </div>
 
                     </div>
@@ -1817,7 +1961,10 @@
     </nav>
 
 
-    <!-- VALIDATION MODAL -->
+    <!-- =========================================================
+         VALIDATION MODAL
+    ========================================================== -->
+
     <div class="modal-overlay" id="validationModal">
 
         <div class="validation-modal">
@@ -1829,7 +1976,8 @@
                     <i class='bx bx-shield-check text-2xl'></i>
                 </div>
 
-                <button id="closeModal" class="w-9 h-9 rounded-full flex items-center justify-center"
+                <button id="closeModal"
+                    class="w-9 h-9 rounded-full flex items-center justify-center"
                     style="background: var(--surface-soft); color: var(--muted);">
                     <i class='bx bx-x text-xl'></i>
                 </button>
@@ -1851,6 +1999,7 @@
                 <div class="flex items-center justify-between">
 
                     <div>
+
                         <p class="text-xs" style="color: var(--muted);">
                             Validation Fee
                         </p>
@@ -1858,6 +2007,7 @@
                         <p class="font-sora text-2xl font-semibold mt-1">
                             $5.00
                         </p>
+
                     </div>
 
                     <div class="text-right">
@@ -1883,12 +2033,14 @@
             </div>
 
 
-            <button id="continueValidation" class="validate-btn w-full py-3.5 rounded-xl text-sm font-semibold mt-6">
+            <button id="continueValidation"
+                class="validate-btn w-full py-3.5 rounded-xl text-sm font-semibold mt-6">
                 Validate Dashboard
             </button>
 
 
-            <button id="cancelValidation" class="w-full py-3 rounded-xl text-sm font-medium mt-2"
+            <button id="cancelValidation"
+                class="w-full py-3 rounded-xl text-sm font-medium mt-2"
                 style="color: var(--muted);">
                 Maybe Later
             </button>
@@ -1897,6 +2049,211 @@
             <p class="text-[10px] text-center leading-4 mt-4" style="color: var(--muted);">
                 Payment confirmation is handled securely by the platform backend.
             </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         COMMUNITY POPUP
+         This appears automatically when community settings
+         indicate that the popup should be displayed.
+    ========================================================== -->
+
+    <div
+        class="community-overlay"
+        id="communityPopup"
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="communityPopupTitle"
+        aria-describedby="communityPopupMessage"
+    >
+
+        <div class="community-card">
+
+            <div class="community-top-line"></div>
+
+            <div class="relative p-6 sm:p-7">
+
+                <button
+                    type="button"
+                    id="communityPopupClose"
+                    aria-label="Close community popup"
+                    class="absolute right-5 top-5 w-9 h-9 rounded-full flex items-center justify-center bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 dark:bg-white/10 dark:text-slate-400 dark:hover:bg-white/15 dark:hover:text-white transition"
+                >
+                    <i class='bx bx-x text-xl'></i>
+                </button>
+
+
+                <!-- ICON -->
+
+                <div class="flex justify-center pt-1">
+
+                    <div class="community-icon" id="communityPopupIcon">
+                        <i class='bx bx-group text-3xl'></i>
+                    </div>
+
+                </div>
+
+
+                <!-- LABEL -->
+
+                <div class="text-center mt-5">
+
+                    <span
+                        class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[.12em] text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400"
+                    >
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        Optify Community
+                    </span>
+
+                </div>
+
+
+                <!-- TITLE -->
+
+                <h2
+                    id="communityPopupTitle"
+                    class="font-sora text-xl sm:text-2xl font-bold text-center tracking-tight mt-4"
+                >
+                    Join the Optify Community
+                </h2>
+
+
+                <!-- MESSAGE -->
+
+                <p
+                    id="communityPopupMessage"
+                    class="text-sm leading-6 text-center max-w-sm mx-auto mt-3"
+                    style="color: var(--muted);"
+                >
+                    Stay connected with Optify, receive important updates, and get the latest announcements from our community.
+                </p>
+
+
+                <!-- PLATFORM -->
+
+                <div
+                    id="communityPopupPlatform"
+                    class="flex items-center justify-center gap-2 text-xs font-medium mt-5"
+                    style="color: var(--muted);"
+                >
+                    <i class='bx bx-group text-lg'></i>
+                    <span>Official Optify Community</span>
+                </div>
+
+
+                <!-- ACTIONS -->
+
+                <div class="mt-6 space-y-2.5">
+
+                    <button
+                        type="button"
+                        id="communityJoinBtn"
+                        class="community-join-btn"
+                    >
+                        <i class='bx bx-log-in-circle text-lg'></i>
+                        <span id="communityJoinText">
+                            Join Community
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="communityLaterBtn"
+                        class="community-later-btn"
+                    >
+                        Maybe Later
+                    </button>
+
+                </div>
+
+
+                <!-- INFO -->
+
+                <div
+                    class="mt-5 rounded-xl p-3 flex items-start gap-2"
+                    style="background: var(--surface-soft);"
+                >
+
+                    <i
+                        class='bx bx-info-circle text-base text-emerald-500 mt-0.5 flex-shrink-0'
+                    ></i>
+
+                    <p
+                        class="text-[11px] leading-5"
+                        style="color: var(--muted);"
+                    >
+                        Joining the community does not affect your dashboard validation or earnings.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         EXTERNAL LINK WARNING
+    ========================================================== -->
+
+    <div
+        class="community-warning"
+        id="communityWarningModal"
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+    >
+
+        <div class="community-warning-card">
+
+            <div
+                class="w-12 h-12 rounded-xl flex items-center justify-center bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400"
+            >
+                <i class='bx bx-link-external text-2xl'></i>
+            </div>
+
+
+            <h3 class="font-sora text-lg font-bold mt-5">
+                Leaving Optify
+            </h3>
+
+
+            <p
+                class="text-sm leading-6 mt-2"
+                style="color: var(--muted);"
+            >
+                You are about to open the official Optify community outside the dashboard.
+            </p>
+
+
+            <div class="flex gap-3 mt-5">
+
+                <button
+                    type="button"
+                    id="cancelCommunityWarning"
+                    class="flex-1 rounded-xl border px-4 py-3 text-sm font-semibold"
+                    style="border-color: var(--border); color: var(--muted);"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="button"
+                    id="continueCommunityLink"
+                    class="flex-1 rounded-xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-600 transition"
+                >
+                    Continue
+                </button>
+
+            </div>
 
         </div>
 
@@ -1915,39 +2272,36 @@
     </div>
 
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================== -->
 
-            /*
-             * ==========================================
-             * DEMO USER STATE
-             * ==========================================
-             *
-             * This represents an unvalidated account.
-             *
-             * Replace this object with backend data later.
-             */
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            /* =====================================================
+               USER STATE
+            ===================================================== */
 
             const user = {
                 name: "David",
                 validated: false,
-
                 balance: 0,
                 totalEarned: 0,
                 pending: 0,
                 withdrawn: 0,
-
-                referralCode: "David"
+                referralCode: ""
             };
 
 
-            /*
-             * ==========================================
-             * ELEMENTS
-             * ==========================================
-             */
+            /* =====================================================
+               ELEMENTS
+            ===================================================== */
 
             const body = document.body;
+
+            const html = document.documentElement;
 
             const themeToggle =
                 document.getElementById("themeToggle");
@@ -1983,11 +2337,9 @@
                 document.getElementById("toastMessage");
 
 
-            /*
-             * ==========================================
-             * USER DISPLAY
-             * ==========================================
-             */
+            /* =====================================================
+               USER NAME
+            ===================================================== */
 
             document.getElementById("greetingName").textContent =
                 user.name;
@@ -1996,20 +2348,22 @@
                 user.name;
 
 
-            /*
-             * ==========================================
-             * THEME
-             * ==========================================
-             */
+            /* =====================================================
+               THEME
+            ===================================================== */
 
-            function updateThemeIcon() {
+            function applyTheme(theme) {
 
-                if (body.classList.contains("dark")) {
+                if (theme === "dark") {
+
+                    body.classList.add("dark");
 
                     themeIcon.className =
                         "bx bx-sun text-xl";
 
                 } else {
+
+                    body.classList.remove("dark");
 
                     themeIcon.className =
                         "bx bx-moon text-xl";
@@ -2020,51 +2374,79 @@
             const savedTheme =
                 localStorage.getItem("optify-theme");
 
-            if (savedTheme === "dark") {
-                body.classList.add("dark");
+
+            if (savedTheme) {
+
+                applyTheme(savedTheme);
+
+            } else {
+
+                const prefersDark =
+                    window.matchMedia &&
+                    window.matchMedia(
+                        "(prefers-color-scheme: dark)"
+                    ).matches;
+
+                applyTheme(
+                    prefersDark ? "dark" : "light"
+                );
             }
 
-            updateThemeIcon();
+
+            themeToggle.addEventListener(
+                "click",
+                function () {
+
+                    const nextTheme =
+                        body.classList.contains("dark")
+                            ? "light"
+                            : "dark";
+
+                    applyTheme(nextTheme);
+
+                    localStorage.setItem(
+                        "optify-theme",
+                        nextTheme
+                    );
+
+                }
+            );
 
 
-            themeToggle.addEventListener("click", () => {
-
-                body.classList.toggle("dark");
-
-                const dark =
-                    body.classList.contains("dark");
-
-                localStorage.setItem(
-                    "optify-theme",
-                    dark ? "dark" : "light"
-                );
-
-                updateThemeIcon();
-
-            });
-
-
-            /*
-             * ==========================================
-             * SIDEBAR
-             * ==========================================
-             */
+            /* =====================================================
+               MOBILE SIDEBAR
+            ===================================================== */
 
             function openSidebar() {
 
                 sidebar.classList.add("open");
+
                 mobileOverlay.classList.add("show");
 
                 document.body.style.overflow = "hidden";
             }
 
 
-            function closeSidebarMenu() {
+            function closeSidebar() {
 
                 sidebar.classList.remove("open");
+
                 mobileOverlay.classList.remove("show");
 
-                document.body.style.overflow = "";
+                /*
+                 * Only restore scrolling if another modal
+                 * is not currently open.
+                 */
+
+                if (
+                    !validationModal.classList.contains("show") &&
+                    !document
+                        .getElementById("communityPopup")
+                        .classList.contains("show")
+                ) {
+
+                    document.body.style.overflow = "";
+                }
             }
 
 
@@ -2076,38 +2458,43 @@
 
             mobileOverlay.addEventListener(
                 "click",
-                closeSidebarMenu
+                closeSidebar
             );
 
 
-            document.querySelectorAll(".sidebar-link")
-                .forEach(link => {
+            document
+                .querySelectorAll(".sidebar-link")
+                .forEach(function (link) {
 
-                    link.addEventListener("click", () => {
+                    link.addEventListener(
+                        "click",
+                        function () {
 
-                        if (window.innerWidth < 1024) {
-                            closeSidebarMenu();
+                            if (window.innerWidth < 1024) {
+                                closeSidebar();
+                            }
+
                         }
-
-                    });
+                    );
 
                 });
 
 
-            window.addEventListener("resize", () => {
+            window.addEventListener(
+                "resize",
+                function () {
 
-                if (window.innerWidth >= 1024) {
-                    closeSidebarMenu();
+                    if (window.innerWidth >= 1024) {
+                        closeSidebar();
+                    }
+
                 }
+            );
 
-            });
 
-
-            /*
-             * ==========================================
-             * VALIDATION MODAL
-             * ==========================================
-             */
+            /* =====================================================
+               VALIDATION MODAL
+            ===================================================== */
 
             function openValidationModal() {
 
@@ -2121,32 +2508,39 @@
 
                 validationModal.classList.remove("show");
 
-                document.body.style.overflow = "";
+                if (
+                    !document
+                        .getElementById("communityPopup")
+                        .classList.contains("show")
+                ) {
+
+                    document.body.style.overflow = "";
+                }
             }
 
 
-            document.querySelectorAll(
-                "[data-validation-trigger]"
-            ).forEach(button => {
+            document
+                .querySelectorAll("[data-validation-trigger]")
+                .forEach(function (button) {
 
-                button.addEventListener(
-                    "click",
-                    openValidationModal
-                );
+                    button.addEventListener(
+                        "click",
+                        openValidationModal
+                    );
 
-            });
+                });
 
 
-            document.querySelectorAll(
-                "[data-locked-action]"
-            ).forEach(button => {
+            document
+                .querySelectorAll("[data-locked-action]")
+                .forEach(function (button) {
 
-                button.addEventListener(
-                    "click",
-                    openValidationModal
-                );
+                    button.addEventListener(
+                        "click",
+                        openValidationModal
+                    );
 
-            });
+                });
 
 
             closeModal.addEventListener(
@@ -2163,7 +2557,7 @@
 
             validationModal.addEventListener(
                 "click",
-                event => {
+                function (event) {
 
                     if (event.target === validationModal) {
                         closeValidationModal();
@@ -2173,189 +2567,152 @@
             );
 
 
-            document.addEventListener(
-                "keydown",
-                event => {
-
-                    if (
-                        event.key === "Escape" &&
-                        validationModal.classList.contains("show")
-                    ) {
-                        closeValidationModal();
-                    }
-
-                }
-            );
-
-
-            /*
-             * ==========================================
-             * CONTINUE TO VALIDATION
-             * ==========================================
-             *
-             * Replace this with:
-             *
-             * window.location.href = "validation.html";
-             *
-             * when the validation page is ready.
-             */
-
             continueValidation.addEventListener(
                 "click",
-                () => {
+                function () {
 
-                    continueValidation.disabled = true;
+                    /*
+                     * Production:
+                     *
+                     * window.location.href = "validation.html";
+                     */
 
-                    continueValidation.innerHTML = `
-                        <i class='bx bx-loader-alt bx-spin mr-1'></i>
-                        Loading...
-                    `;
-
-                    setTimeout(() => {
-
-                        continueValidation.disabled = false;
-
-                        continueValidation.innerHTML =
-                            "Validate Dashboard";
-
-                        closeValidationModal();
-
-                        showToast(
-                            "Validation page is not connected yet"
-                        );
-
-                    }, 700);
+                    window.location.href =
+                        "validation.html";
 
                 }
             );
 
 
-            /*
-             * ==========================================
-             * REFERRAL LINK
-             * ==========================================
-             */
+            /* =====================================================
+               REFERRAL LINK
+            ===================================================== */
 
-            const referralUrl =
-                "https://optify.com/register?ref=" +
-                encodeURIComponent(user.referralCode);
-
-            document.getElementById(
-                "referralLink"
-            ).textContent = referralUrl;
-
+            const referralLink =
+                document.getElementById("referralLink");
 
             const copyReferral =
                 document.getElementById("copyReferral");
 
 
-            copyReferral.addEventListener(
-                "click",
-                async () => {
+            if (!user.referralCode) {
 
-                    try {
+                referralLink.textContent =
+                    "Referral link unavailable";
 
-                        await navigator.clipboard.writeText(
-                            referralUrl
-                        );
-
-                        showToast(
-                            "Referral link copied"
-                        );
-
-                        copyReferral.innerHTML =
-                            "<i class='bx bx-check'></i>";
-
-                        setTimeout(() => {
-
-                            copyReferral.innerHTML =
-                                "<i class='bx bx-copy'></i>";
-
-                        }, 1600);
-
-                    } catch (error) {
+                copyReferral.addEventListener(
+                    "click",
+                    function () {
 
                         showToast(
-                            "Unable to copy referral link"
+                            "Referral link is not available yet"
                         );
 
                     }
+                );
 
-                }
-            );
+            } else {
 
-
-            /*
-             * ==========================================
-             * NOTIFICATIONS
-             * ==========================================
-             */
-
-            document.getElementById(
-                "notificationBtn"
-            ).addEventListener(
-                "click",
-                () => {
-
-                    showToast(
-                        "No new notifications"
+                const referralUrl =
+                    window.location.origin +
+                    "/register.html?ref=" +
+                    encodeURIComponent(
+                        user.referralCode
                     );
 
-                }
-            );
+                referralLink.textContent =
+                    referralUrl;
 
 
-            /*
-             * ==========================================
-             * SUPPORT
-             * ==========================================
-             */
+                copyReferral.addEventListener(
+                    "click",
+                    async function () {
 
-            document.getElementById(
-                "supportLink"
-            ).addEventListener(
-                "click",
-                event => {
+                        try {
 
-                    event.preventDefault();
+                            await navigator.clipboard.writeText(
+                                referralUrl
+                            );
 
-                    showToast(
-                        "Support center coming soon"
-                    );
+                            showToast(
+                                "Referral link copied"
+                            );
 
-                }
-            );
+                            copyReferral.innerHTML =
+                                "<i class='bx bx-check'></i>";
 
+                            setTimeout(
+                                function () {
 
-            /*
-             * ==========================================
-             * LOGOUT
-             * ==========================================
-             *
-             * Replace with real Firebase/backend logout.
-             */
+                                    copyReferral.innerHTML =
+                                        "<i class='bx bx-copy'></i>";
 
-            document.getElementById(
-                "logoutBtn"
-            ).addEventListener(
-                "click",
-                () => {
+                                },
+                                1600
+                            );
 
-                    showToast(
-                        "Logout is not connected yet"
-                    );
+                        } catch (error) {
 
-                }
-            );
+                            showToast(
+                                "Unable to copy referral link"
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
 
 
-            /*
-             * ==========================================
-             * TOAST
-             * ==========================================
-             */
+            /* =====================================================
+               NOTIFICATIONS
+            ===================================================== */
+
+            document
+                .getElementById("notificationBtn")
+                .addEventListener(
+                    "click",
+                    function () {
+
+                        showToast(
+                            "No new notifications"
+                        );
+
+                    }
+                );
+
+
+            /* =====================================================
+               LOGOUT
+            ===================================================== */
+
+            document
+                .getElementById("logoutBtn")
+                .addEventListener(
+                    "click",
+                    function () {
+
+                        /*
+                         * Production:
+                         *
+                         * Firebase signOut(auth)
+                         * or your backend logout endpoint.
+                         */
+
+                        window.location.href =
+                            "login.html";
+
+                    }
+                );
+
+
+            /* =====================================================
+               TOAST
+            ===================================================== */
 
             let toastTimer;
+
 
             function showToast(message) {
 
@@ -2366,15 +2723,674 @@
 
                 clearTimeout(toastTimer);
 
-                toastTimer = setTimeout(() => {
+                toastTimer =
+                    setTimeout(
+                        function () {
 
-                    toast.classList.remove("show");
+                            toast.classList.remove("show");
 
-                }, 2500);
-
+                        },
+                        2500
+                    );
             }
 
+
+            /* =====================================================
+               COMMUNITY POPUP
+            ===================================================== */
+
+            const communityPopup =
+                document.getElementById(
+                    "communityPopup"
+                );
+
+            const communityPopupTitle =
+                document.getElementById(
+                    "communityPopupTitle"
+                );
+
+            const communityPopupMessage =
+                document.getElementById(
+                    "communityPopupMessage"
+                );
+
+            const communityPopupPlatform =
+                document.getElementById(
+                    "communityPopupPlatform"
+                );
+
+            const communityPopupIcon =
+                document.getElementById(
+                    "communityPopupIcon"
+                );
+
+            const communityPopupClose =
+                document.getElementById(
+                    "communityPopupClose"
+                );
+
+            const communityLaterBtn =
+                document.getElementById(
+                    "communityLaterBtn"
+                );
+
+            const communityJoinBtn =
+                document.getElementById(
+                    "communityJoinBtn"
+                );
+
+            const communityJoinText =
+                document.getElementById(
+                    "communityJoinText"
+                );
+
+            const communityWarningModal =
+                document.getElementById(
+                    "communityWarningModal"
+                );
+
+            const cancelCommunityWarning =
+                document.getElementById(
+                    "cancelCommunityWarning"
+                );
+
+            const continueCommunityLink =
+                document.getElementById(
+                    "continueCommunityLink"
+                );
+
+
+            let communitySettings = null;
+
+            let pendingCommunityUrl = null;
+
+
+            /* =====================================================
+               PLATFORM HELPERS
+            ===================================================== */
+
+            function getPlatformIcon(platform) {
+
+                const icons = {
+
+                    whatsapp: "bxl-whatsapp",
+
+                    telegram: "bxl-telegram",
+
+                    discord: "bxl-discord",
+
+                    facebook: "bxl-facebook-circle",
+
+                    other: "bx-link-alt"
+
+                };
+
+                return (
+                    icons[platform] ||
+                    icons.other
+                );
+            }
+
+
+            function getPlatformName(platform) {
+
+                const names = {
+
+                    whatsapp: "WhatsApp Community",
+
+                    telegram: "Telegram Community",
+
+                    discord: "Discord Community",
+
+                    facebook: "Facebook Group",
+
+                    other: "Official Optify Community"
+
+                };
+
+                return (
+                    names[platform] ||
+                    names.other
+                );
+            }
+
+
+            function isValidUrl(url) {
+
+                try {
+
+                    const parsed =
+                        new URL(url);
+
+                    return (
+                        parsed.protocol === "https:" ||
+                        parsed.protocol === "http:"
+                    );
+
+                } catch (error) {
+
+                    return false;
+                }
+            }
+
+
+            /* =====================================================
+               SHOW COMMUNITY POPUP
+            ===================================================== */
+
+            function showCommunityPopup(settings) {
+
+                if (!settings) {
+                    return;
+                }
+
+
+                if (settings.active === false) {
+                    return;
+                }
+
+
+                const prompt =
+                    settings.registrationPrompt || {};
+
+
+                if (prompt.enabled === false) {
+                    return;
+                }
+
+
+                communityPopupTitle.textContent =
+                    prompt.title ||
+                    "Join the Optify Community";
+
+
+                communityPopupMessage.textContent =
+                    prompt.message ||
+                    "Stay connected with Optify, receive important updates, and get the latest announcements from our community.";
+
+
+                communityJoinText.textContent =
+                    prompt.buttonText ||
+                    "Join Community";
+
+
+                communityLaterBtn.textContent =
+                    prompt.secondaryButtonText ||
+                    "Maybe Later";
+
+
+                const platform =
+                    settings.platform ||
+                    "other";
+
+
+                const icon =
+                    getPlatformIcon(platform);
+
+
+                const platformName =
+                    getPlatformName(platform);
+
+
+                communityPopupIcon.innerHTML = `
+                    <i class='bx ${icon} text-3xl'></i>
+                `;
+
+
+                communityPopupPlatform.innerHTML = `
+                    <i class='bx ${icon} text-lg'></i>
+                    <span>${platformName}</span>
+                `;
+
+
+                /*
+                 * If the admin has configured a valid URL,
+                 * enable the Join button.
+                 */
+
+                if (
+                    settings.communityLink &&
+                    isValidUrl(
+                        settings.communityLink
+                    )
+                ) {
+
+                    communityJoinBtn.disabled =
+                        false;
+
+                } else {
+
+                    communityJoinBtn.disabled =
+                        true;
+                }
+
+
+                communityPopup.classList.add("show");
+
+                communityPopup.setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+                document.body.style.overflow =
+                    "hidden";
+            }
+
+
+            /* =====================================================
+               CLOSE COMMUNITY POPUP
+            ===================================================== */
+
+            function closeCommunityPopup() {
+
+                communityPopup.classList.remove("show");
+
+                communityPopup.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+
+                if (
+                    !validationModal.classList.contains("show")
+                ) {
+
+                    document.body.style.overflow =
+                        "";
+                }
+            }
+
+
+            communityPopupClose.addEventListener(
+                "click",
+                closeCommunityPopup
+            );
+
+
+            communityLaterBtn.addEventListener(
+                "click",
+                closeCommunityPopup
+            );
+
+
+            /* =====================================================
+               JOIN COMMUNITY
+            ===================================================== */
+
+            communityJoinBtn.addEventListener(
+                "click",
+                function () {
+
+                    if (!communitySettings) {
+
+                        showToast(
+                            "Community settings are not available yet"
+                        );
+
+                        return;
+                    }
+
+
+                    const url =
+                        communitySettings.communityLink;
+
+
+                    if (
+                        !url ||
+                        !isValidUrl(url)
+                    ) {
+
+                        showToast(
+                            "Community link is not available yet"
+                        );
+
+                        return;
+                    }
+
+
+                    const behavior =
+                        communitySettings.linkBehavior ||
+                        {};
+
+
+                    if (
+                        behavior.externalWarning === true
+                    ) {
+
+                        pendingCommunityUrl =
+                            url;
+
+                        communityWarningModal.classList.add(
+                            "show"
+                        );
+
+                        communityWarningModal.setAttribute(
+                            "aria-hidden",
+                            "false"
+                        );
+
+                        return;
+                    }
+
+
+                    openCommunityLink(
+                        url,
+                        behavior.target ||
+                        "new_tab"
+                    );
+
+                }
+            );
+
+
+            /* =====================================================
+               OPEN COMMUNITY LINK
+            ===================================================== */
+
+            function openCommunityLink(
+                url,
+                target
+            ) {
+
+                closeCommunityPopup();
+
+
+                if (target === "same_tab") {
+
+                    window.location.href =
+                        url;
+
+                    return;
+                }
+
+
+                window.open(
+                    url,
+                    "_blank",
+                    "noopener,noreferrer"
+                );
+            }
+
+
+            /* =====================================================
+               COMMUNITY WARNING
+            ===================================================== */
+
+            cancelCommunityWarning.addEventListener(
+                "click",
+                function () {
+
+                    communityWarningModal.classList.remove(
+                        "show"
+                    );
+
+                    communityWarningModal.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+
+                    pendingCommunityUrl = null;
+
+                }
+            );
+
+
+            continueCommunityLink.addEventListener(
+                "click",
+                function () {
+
+                    if (!pendingCommunityUrl) {
+                        return;
+                    }
+
+
+                    const url =
+                        pendingCommunityUrl;
+
+
+                    const behavior =
+                        communitySettings?.linkBehavior ||
+                        {};
+
+
+                    communityWarningModal.classList.remove(
+                        "show"
+                    );
+
+
+                    communityWarningModal.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+
+
+                    pendingCommunityUrl =
+                        null;
+
+
+                    openCommunityLink(
+                        url,
+                        behavior.target ||
+                        "new_tab"
+                    );
+
+                }
+            );
+
+
+            /* =====================================================
+               ESCAPE KEY
+            ===================================================== */
+
+            document.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (event.key !== "Escape") {
+                        return;
+                    }
+
+
+                    if (
+                        communityPopup.classList.contains(
+                            "show"
+                        )
+                    ) {
+
+                        closeCommunityPopup();
+
+                    }
+
+
+                    if (
+                        communityWarningModal.classList.contains(
+                            "show"
+                        )
+                    ) {
+
+                        communityWarningModal.classList.remove(
+                            "show"
+                        );
+
+                        communityWarningModal.setAttribute(
+                            "aria-hidden",
+                            "true"
+                        );
+
+                        pendingCommunityUrl =
+                            null;
+                    }
+
+
+                    if (
+                        validationModal.classList.contains(
+                            "show"
+                        )
+                    ) {
+
+                        closeValidationModal();
+
+                    }
+
+
+                    closeSidebar();
+
+                }
+            );
+
+
+            /* =====================================================
+               COMMUNITY SETTINGS
+            ===================================================== */
+
+            async function loadCommunitySettings() {
+
+                /*
+                 * IMPORTANT:
+                 *
+                 * This is the part that was preventing your popup
+                 * from appearing before.
+                 *
+                 * communitySettings was set to null and therefore
+                 * showCommunityPopup() was never called.
+                 *
+                 * For now we show the popup using configuration
+                 * without a real URL.
+                 *
+                 * When your backend is ready, replace this section
+                 * with the fetch request shown below.
+                 */
+
+
+                communitySettings = {
+
+                    communityName:
+                        "Optify Community",
+
+                    platform:
+                        "whatsapp",
+
+                    /*
+                     * Leave empty until the admin/backend provides
+                     * the real community URL.
+                     */
+                    communityLink:
+                        "",
+
+                    active:
+                        true,
+
+                    showOnDashboard:
+                        true,
+
+                    registrationPrompt: {
+
+                        enabled:
+                            true,
+
+                        title:
+                            "Join the community and earn more online",
+
+                        message:
+                            "you want more update?, join now and start earning!!!",
+
+                        buttonText:
+                            "Join Community",
+
+                        secondaryButtonText:
+                            "Maybe Later"
+
+                    },
+
+                    linkBehavior: {
+
+                        target:
+                            "new_tab",
+
+                        externalWarning:
+                            false
+
+                    }
+
+                };
+
+
+                /*
+                 * SHOW POPUP
+                 *
+                 * This makes the popup appear automatically
+                 * when the dashboard loads.
+                 */
+
+                if (
+                    communitySettings.active &&
+                    communitySettings.showOnDashboard
+                ) {
+
+                    setTimeout(
+                        function () {
+
+                            showCommunityPopup(
+                                communitySettings
+                            );
+
+                        },
+                        350
+                    );
+
+                }
+
+
+                /*
+                 * ================================================
+                 * BACKEND VERSION
+                 * ================================================
+                 *
+                 * When your backend is ready, replace the demo
+                 * configuration above with:
+                 *
+                 * const response = await fetch(
+                 *     "/api/user/community-settings",
+                 *     {
+                 *         method: "GET",
+                 *         credentials: "include",
+                 *         headers: {
+                 *             "Accept": "application/json"
+                 *         }
+                 *     }
+                 * );
+                 *
+                 * if (!response.ok) {
+                 *     throw new Error(
+                 *         "Unable to load community settings."
+                 *     );
+                 * }
+                 *
+                 * const data =
+                 *     await response.json();
+                 *
+                 * communitySettings =
+                 *     data;
+                 *
+                 * if (
+                 *     data.active &&
+                 *     data.showOnDashboard
+                 * ) {
+                 *
+                 *     showCommunityPopup(data);
+                 * }
+                 */
+            }
+
+
+            /* =====================================================
+               INITIALIZE COMMUNITY POPUP
+            ===================================================== */
+
+            loadCommunitySettings();
+
         });
+
     </script>
 
 </body>
