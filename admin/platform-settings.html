@@ -1,0 +1,4325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Platform Settings | Optify Admin</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Boxicons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        sora: ['Sora', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        :root {
+            --navy: #071A2B;
+            --navy-light: #0B2539;
+            --emerald: #12B76A;
+            --teal: #0EA5A4;
+            --background: #F7F9FC;
+            --border: #E4E7EC;
+            --text: #101828;
+            --muted: #667085;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: #071A2B;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .nav-item {
+            transition: all .2s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, .06);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: rgba(18, 183, 106, .13);
+            color: #6EE7B7;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .1);
+            border-radius: 10px;
+        }
+
+        .input-field,
+        .select-field {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #E4E7EC;
+            background: #fff;
+            color: #101828;
+            border-radius: 12px;
+            padding: 0 13px;
+            outline: none;
+            font-size: 14px;
+            transition: .2s ease;
+        }
+
+        .input-field:focus,
+        .select-field:focus {
+            border-color: #12B76A;
+            box-shadow: 0 0 0 3px rgba(18, 183, 106, .10);
+        }
+
+        .dark .input-field,
+        .dark .select-field {
+            background: #0B2539;
+            border-color: #1E3A4F;
+            color: #F8FAFC;
+        }
+
+        .dark .input-field::placeholder {
+            color: #718096;
+        }
+
+        .dark body {
+            background: #061521;
+            color: #F8FAFC;
+        }
+
+        .dark .page-bg {
+            background: #061521;
+        }
+
+        .dark .card {
+            background: #0B2539;
+            border-color: #1E3A4F;
+        }
+
+        .dark .soft-bg {
+            background: #092032;
+            border-color: #1E3A4F;
+        }
+
+        .dark .border-soft {
+            border-color: #1E3A4F;
+        }
+
+        .dark .text-main {
+            color: #F8FAFC;
+        }
+
+        .dark .text-muted {
+            color: #94A3B8;
+        }
+
+        .dark .divider {
+            border-color: #1E3A4F;
+        }
+
+        .dark .header-bg {
+            background: rgba(6, 21, 33, .90);
+            border-color: #1E3A4F;
+        }
+
+        .switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .slider {
+            position: absolute;
+            inset: 0;
+            background: #D0D5DD;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .slider::before {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            top: 3px;
+            left: 3px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .18);
+            transition: .2s ease;
+        }
+
+        .switch input:checked + .slider {
+            background: #12B76A;
+        }
+
+        .switch input:checked + .slider::before {
+            transform: translateX(20px);
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #E8F8F0;
+            color: #12B76A;
+            flex-shrink: 0;
+        }
+
+        .dark .section-icon {
+            background: rgba(18, 183, 106, .10);
+        }
+
+        .info-box {
+            background: #F8FAFC;
+            border: 1px solid #E4E7EC;
+        }
+
+        .dark .info-box {
+            background: #092032;
+            border-color: #1E3A4F;
+        }
+
+        .warning-box {
+            background: #FFFAEB;
+            border: 1px solid #FEDF89;
+        }
+
+        .dark .warning-box {
+            background: rgba(247, 144, 9, .08);
+            border-color: rgba(247, 144, 9, .25);
+        }
+
+        .toast {
+            opacity: 0;
+            transform: translateY(120px);
+            pointer-events: none;
+            transition: .3s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .mobile-overlay {
+            display: none;
+        }
+
+        html.sidebar-open .mobile-overlay {
+            display: block;
+        }
+
+        html.sidebar-open .sidebar {
+            transform: translateX(0);
+        }
+
+        .skeleton {
+            position: relative;
+            overflow: hidden;
+            background: #E9EEF3;
+        }
+
+        .dark .skeleton {
+            background: #123044;
+        }
+
+        .skeleton::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, .45),
+                transparent
+            );
+            animation: skeleton 1.4s infinite;
+        }
+
+        @keyframes skeleton {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .modal-backdrop {
+            backdrop-filter: blur(4px);
+        }
+
+        @media (max-width: 1023px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, .45);
+                z-index: 55;
+            }
+        }
+
+        @media (max-width: 640px) {
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .header-actions > button {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- MOBILE OVERLAY -->
+    <div id="mobileOverlay" class="mobile-overlay"></div>
+
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar"
+        class="sidebar fixed left-0 top-0 bottom-0 z-[60] text-white overflow-y-auto">
+
+        <div class="px-5 py-6">
+
+            <!-- Logo -->
+            <div class="flex items-center gap-3 mb-8">
+
+                <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
+                    <i class='bx bx-layer text-2xl'></i>
+                </div>
+
+                <div>
+                    <div class="font-sora font-bold text-lg tracking-tight">
+                        OPTIFY
+                    </div>
+
+                    <div class="text-[10px] text-slate-400 uppercase tracking-[.18em]">
+                        Admin Portal
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Main Menu -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Main Menu
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="admin.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-grid-alt text-lg'></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a href="users.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-group text-lg'></i>
+                        <span>Users</span>
+                    </a>
+
+                    <a href="quizzes.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-help-circle text-lg'></i>
+                        <span>Quiz</span>
+                    </a>
+
+                    <a href="referrals.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-share-alt text-lg'></i>
+                        <span>Referrals</span>
+                    </a>
+
+                </nav>
+            </div>
+
+            <!-- Finance -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Finance
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="epins.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-key text-lg'></i>
+                        <span>E-pins</span>
+                    </a>
+
+                    <a href="withdrawals.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-money-withdraw text-lg'></i>
+                        <span>Withdrawals</span>
+                    </a>
+
+                    <a href="transactions.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-transfer-alt text-lg'></i>
+                        <span>Transactions</span>
+                    </a>
+
+                </nav>
+            </div>
+
+            <!-- Platform -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Platform
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="community-settings.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-link text-lg'></i>
+                        <span>Community Settings</span>
+                    </a>
+
+                    <a href="platform-settings.html"
+                        class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm">
+                        <i class='bx bx-cog text-lg'></i>
+                        <span>Platform Settings</span>
+                    </a>
+
+                </nav>
+            </div>
+
+        </div>
+
+        <!-- Sidebar Bottom -->
+        <div class="absolute bottom-0 left-0 right-0 p-5 border-t border-white/10 bg-[#071A2B]">
+
+            <a href="admin-profile.html"
+                class="flex items-center gap-3 mb-4">
+
+                <div class="w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center">
+                    <i class='bx bx-user text-emerald-400'></i>
+                </div>
+
+                <div class="min-w-0">
+                    <p id="sidebarAdminName" class="text-sm font-medium truncate">
+                        Optify Admin
+                    </p>
+
+                    <p class="text-xs text-slate-500">
+                        Administrator
+                    </p>
+                </div>
+
+            </a>
+
+            <button id="logoutBtn"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-400 hover:bg-white/5 hover:text-white transition">
+
+                <i class='bx bx-log-out text-lg'></i>
+                Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content page-bg min-h-screen">
+
+        <!-- HEADER -->
+        <header
+            class="header-bg sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-slate-200">
+
+            <div class="px-4 sm:px-6 lg:px-8 py-4">
+
+                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+
+                    <div class="flex items-center gap-3">
+
+                        <button id="menuBtn"
+                            class="lg:hidden w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-white">
+                            <i class='bx bx-menu text-xl'></i>
+                        </button>
+
+                        <div>
+
+                            <p class="text-[10px] uppercase tracking-[.18em] font-semibold text-emerald-600 mb-1">
+                                Platform Settings
+                            </p>
+
+                            <h1 class="font-sora text-xl sm:text-2xl font-semibold text-main">
+                                Platform Settings
+                            </h1>
+
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                Manage Optify's earning rules, validation requirements, withdrawal limits, and financial configuration.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="flex items-center gap-2 header-actions">
+
+                        <button id="themeToggle"
+                            aria-label="Toggle dark mode"
+                            class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0B2539] flex items-center justify-center text-slate-600 dark:text-slate-300 hover:border-emerald-300 transition">
+
+                            <i id="themeIcon" class='bx bx-moon text-lg'></i>
+
+                        </button>
+
+                        <button id="discardBtn"
+                            disabled
+                            class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-400 bg-white dark:bg-[#0B2539] disabled:opacity-50 disabled:cursor-not-allowed">
+
+                            Discard
+
+                        </button>
+
+                        <button id="saveBtn"
+                            class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold flex items-center justify-center gap-2 transition shadow-sm">
+
+                            <i class='bx bx-save'></i>
+
+                            <span id="saveBtnText">
+                                Save Changes
+                            </span>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE -->
+        <section class="px-4 sm:px-6 lg:px-8 py-6 pb-16">
+
+
+            <!-- UNSAVED BAR -->
+            <div id="unsavedBar"
+                class="hidden mb-5 rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-500/10 dark:border-amber-500/20 px-4 py-3">
+
+                <div class="flex items-center gap-3">
+
+                    <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-500/10 flex items-center justify-center">
+                        <i class='bx bx-edit text-amber-600 dark:text-amber-400'></i>
+                    </div>
+
+                    <div>
+
+                        <p class="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                            Unsaved changes
+                        </p>
+
+                        <p class="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
+                            Your platform configuration has changes that have not been saved.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOADING STATE -->
+            <div id="loadingState">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-5">
+
+                    <div class="card bg-white rounded-2xl border border-slate-200 p-5">
+                        <div class="skeleton h-3 w-16 rounded mb-4"></div>
+                        <div class="skeleton h-7 w-20 rounded"></div>
+                    </div>
+
+                    <div class="card bg-white rounded-2xl border border-slate-200 p-5">
+                        <div class="skeleton h-3 w-20 rounded mb-4"></div>
+                        <div class="skeleton h-7 w-24 rounded"></div>
+                    </div>
+
+                    <div class="card bg-white rounded-2xl border border-slate-200 p-5">
+                        <div class="skeleton h-3 w-20 rounded mb-4"></div>
+                        <div class="skeleton h-7 w-20 rounded"></div>
+                    </div>
+
+                    <div class="card bg-white rounded-2xl border border-slate-200 p-5">
+                        <div class="skeleton h-3 w-28 rounded mb-4"></div>
+                        <div class="skeleton h-7 w-20 rounded"></div>
+                    </div>
+
+                    <div class="card bg-white rounded-2xl border border-slate-200 p-5">
+                        <div class="skeleton h-3 w-16 rounded mb-4"></div>
+                        <div class="skeleton h-7 w-20 rounded"></div>
+                    </div>
+
+                </div>
+
+                <div class="space-y-5">
+
+                    <div class="card bg-white rounded-2xl border border-slate-200 p-6">
+
+                        <div class="skeleton h-5 w-48 rounded mb-7"></div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                            <div>
+                                <div class="skeleton h-3 w-24 rounded mb-3"></div>
+                                <div class="skeleton h-11 w-full rounded-xl"></div>
+                            </div>
+
+                            <div>
+                                <div class="skeleton h-3 w-32 rounded mb-3"></div>
+                                <div class="skeleton h-11 w-full rounded-xl"></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="card bg-white rounded-2xl border border-slate-200 p-6">
+
+                        <div class="skeleton h-5 w-44 rounded mb-7"></div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                            <div>
+                                <div class="skeleton h-3 w-28 rounded mb-3"></div>
+                                <div class="skeleton h-11 w-full rounded-xl"></div>
+                            </div>
+
+                            <div>
+                                <div class="skeleton h-3 w-28 rounded mb-3"></div>
+                                <div class="skeleton h-11 w-full rounded-xl"></div>
+                            </div>
+
+                            <div>
+                                <div class="skeleton h-3 w-28 rounded mb-3"></div>
+                                <div class="skeleton h-11 w-full rounded-xl"></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ERROR STATE -->
+            <div id="errorState" class="hidden">
+
+                <div class="max-w-xl mx-auto mt-12 text-center">
+
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-red-50 dark:bg-red-500/10 flex items-center justify-center mb-4">
+                        <i class='bx bx-error-circle text-3xl text-red-500'></i>
+                    </div>
+
+                    <h2 class="font-sora font-semibold text-lg text-main">
+                        Unable to load platform settings
+                    </h2>
+
+                    <p id="errorMessage"
+                        class="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                        Something went wrong while loading the platform configuration.
+                    </p>
+
+                    <button id="retryBtn"
+                        class="mt-5 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold">
+
+                        <i class='bx bx-refresh mr-1'></i>
+                        Try Again
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- SETTINGS -->
+            <div id="settingsContent" class="hidden">
+
+
+                <!-- PLATFORM OVERVIEW -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-5">
+
+                    <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+
+                        <div class="flex items-center justify-between gap-3">
+
+                            <div>
+
+                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400">
+                                    Currency
+                                </p>
+
+                                <p id="overviewCurrency"
+                                    class="font-sora text-xl font-semibold text-main mt-2">
+                                    Not configured
+                                </p>
+
+                            </div>
+
+                            <div class="section-icon">
+                                <i class='bx bx-dollar text-xl'></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+
+                        <div class="flex items-center justify-between gap-3">
+
+                            <div>
+
+                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400">
+                                    Conversion
+                                </p>
+
+                                <p id="overviewRate"
+                                    class="font-sora text-xl font-semibold text-main mt-2">
+                                    Not configured
+                                </p>
+
+                            </div>
+
+                            <div class="section-icon">
+                                <i class='bx bx-transfer text-xl'></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+
+                        <div class="flex items-center justify-between gap-3">
+
+                            <div>
+
+                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400">
+                                    Validation
+                                </p>
+
+                                <p id="overviewValidation"
+                                    class="font-sora text-xl font-semibold text-main mt-2">
+                                    Not configured
+                                </p>
+
+                            </div>
+
+                            <div class="section-icon">
+                                <i class='bx bx-check-shield text-xl'></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+
+                        <div class="flex items-center justify-between gap-3">
+
+                            <div>
+
+                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400">
+                                    Min Withdrawal
+                                </p>
+
+                                <p id="overviewWithdrawal"
+                                    class="font-sora text-xl font-semibold text-main mt-2">
+                                    Not configured
+                                </p>
+
+                            </div>
+
+                            <div class="section-icon">
+                                <i class='bx bx-money-withdraw text-xl'></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+
+                        <div class="flex items-center justify-between gap-3">
+
+                            <div>
+
+                                <p class="text-xs font-medium text-slate-500 dark:text-slate-400">
+                                    E-pin
+                                </p>
+
+                                <p id="overviewEpin"
+                                    class="font-sora text-xl font-semibold text-main mt-2">
+                                    Not configured
+                                </p>
+
+                            </div>
+
+                            <div class="section-icon">
+                                <i class='bx bx-key text-xl'></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- GENERAL SETTINGS -->
+                <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm mb-5">
+
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="section-icon">
+                                <i class='bx bx-cog text-xl'></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="font-sora font-semibold text-base text-main">
+                                    General Platform Settings
+                                </h2>
+
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                    Configure the core identity and operating status of the platform.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                            <div>
+
+                                <label for="platformName"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    Platform Name
+                                </label>
+
+                                <input
+                                    id="platformName"
+                                    class="input-field"
+                                    type="text"
+                                    placeholder="Optify"
+                                    maxlength="80">
+
+                            </div>
+
+
+                            <div>
+
+                                <label for="currency"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    Currency
+                                </label>
+
+                                <select id="currency"
+                                    class="select-field">
+
+                                    <option value="">
+                                        Select currency
+                                    </option>
+
+                                    <option value="USD">
+                                        USD — US Dollar
+                                    </option>
+
+                                </select>
+
+                                <p class="text-xs text-slate-400 mt-1.5">
+                                    Optify currently uses USD as its platform currency.
+                                </p>
+
+                            </div>
+
+
+                            <div>
+
+                                <label for="usdToNgnRate"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    USD to NGN Conversion Rate
+                                </label>
+
+                                <div class="relative">
+
+                                    <span
+                                        class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400">
+                                        ₦
+                                    </span>
+
+                                    <input
+                                        id="usdToNgnRate"
+                                        class="input-field pl-8"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="1000">
+
+                                </div>
+
+                                <p class="text-xs text-slate-400 mt-1.5">
+                                    Used only to display approximate naira equivalents alongside USD values.
+                                </p>
+
+                            </div>
+
+
+                            <div class="flex items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-[#092032] border border-slate-100 dark:border-slate-800">
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-main">
+                                        Platform Active
+                                    </p>
+
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                        Controls whether normal Optify activity is enabled.
+                                    </p>
+
+                                </div>
+
+                                <label class="switch">
+
+                                    <input id="platformActive"
+                                        type="checkbox">
+
+                                    <span class="slider"></span>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- VALIDATION -->
+                <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm mb-5">
+
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="section-icon">
+                                <i class='bx bx-check-shield text-xl'></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="font-sora font-semibold text-base text-main">
+                                    Dashboard Validation
+                                </h2>
+
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                    Configure the payment required before users can access earning features.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                            <div>
+
+                                <label for="validationFee"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    Validation Fee
+                                </label>
+
+                                <div class="relative">
+
+                                    <span
+                                        class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400">
+                                        $
+                                    </span>
+
+                                    <input
+                                        id="validationFee"
+                                        class="input-field pl-8"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="">
+
+                                </div>
+
+                                <p class="text-xs text-slate-400 mt-1.5">
+                                    Currency: USD
+                                </p>
+
+                            </div>
+
+
+                            <div>
+
+                                <label class="block text-sm font-medium text-main mb-2">
+                                    NGN Equivalent
+                                </label>
+
+                                <div id="validationNgn"
+                                    class="h-11 flex items-center px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#092032] text-sm font-semibold text-main">
+                                    Not configured
+                                </div>
+
+                                <p class="text-xs text-slate-400 mt-1.5">
+                                    Automatically calculated from the conversion rate.
+                                </p>
+
+                            </div>
+
+
+                            <div class="flex items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-[#092032] border border-slate-100 dark:border-slate-800">
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-main">
+                                        Validation Required
+                                    </p>
+
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                        Require validation before earning and withdrawal features.
+                                    </p>
+
+                                </div>
+
+                                <label class="switch">
+
+                                    <input id="validationEnabled"
+                                        type="checkbox">
+
+                                    <span class="slider"></span>
+
+                                </label>
+
+                            </div>
+
+
+                            <div>
+
+                                <label class="block text-sm font-medium text-main mb-2">
+                                    Payment Provider
+                                </label>
+
+                                <div class="h-11 flex items-center gap-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#092032]">
+
+                                    <i class='bx bx-credit-card text-emerald-500'></i>
+
+                                    <span class="text-sm font-medium text-main">
+                                        Paystack
+                                    </span>
+
+                                    <span class="ml-auto text-[10px] uppercase tracking-wider font-semibold text-slate-400">
+                                        Configured
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-box mt-5 rounded-xl p-4 flex items-start gap-3">
+
+                            <i class='bx bx-info-circle text-emerald-500 text-lg mt-0.5'></i>
+
+                            <p class="text-xs leading-5 text-slate-600 dark:text-slate-300">
+                                Payment confirmation must be handled server-side using trusted Paystack verification or webhook processing. Frontend confirmation alone must never unlock a user's earning features.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- STREAK -->
+                <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm mb-5">
+
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+
+                        <div class="flex items-center justify-between gap-4">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="section-icon">
+                                    <i class='bx bx-time-five text-xl'></i>
+                                </div>
+
+                                <div>
+
+                                    <h2 class="font-sora font-semibold text-base text-main">
+                                        Streak Reward Settings
+                                    </h2>
+
+                                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                        Configure the three daily streak claims.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <label class="switch">
+
+                                <input id="streakEnabled"
+                                    type="checkbox">
+
+                                <span class="slider"></span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                            <div>
+
+                                <label for="morningReward"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    Morning Reward
+                                </label>
+
+                                <div class="relative">
+
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-semibold">
+                                        $
+                                    </span>
+
+                                    <input id="morningReward"
+                                        class="input-field pl-8"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="">
+
+                                </div>
+
+                            </div>
+
+
+                            <div>
+
+                                <label for="afternoonReward"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    Afternoon Reward
+                                </label>
+
+                                <div class="relative">
+
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-semibold">
+                                        $
+                                    </span>
+
+                                    <input id="afternoonReward"
+                                        class="input-field pl-8"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="">
+
+                                </div>
+
+                            </div>
+
+
+                            <div>
+
+                                <label for="nightReward"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    Night Reward
+                                </label>
+
+                                <div class="relative">
+
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-semibold">
+                                        $
+                                    </span>
+
+                                    <input id="nightReward"
+                                        class="input-field pl-8"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+
+                            <div>
+
+                                <label class="block text-sm font-medium text-main mb-2">
+                                    Maximum Daily Streak Reward
+                                </label>
+
+                                <div id="streakDailyTotal"
+                                    class="h-11 flex items-center px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#092032] text-sm font-semibold text-main">
+                                    Not configured
+                                </div>
+
+                                <p class="text-xs text-slate-400 mt-1.5">
+                                    Calculated from morning, afternoon, and night rewards.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-box mt-5 rounded-xl p-4">
+
+                            <div class="flex items-start gap-3">
+
+                                <i class='bx bx-shield-quarter text-emerald-500 text-lg mt-0.5'></i>
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-main">
+                                        Backend enforcement
+                                    </p>
+
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-5 mt-1">
+                                        The backend must enforce one claim per period, the daily limit, eligibility windows, and duplicate-claim protection.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MYSTERY BOX -->
+                <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm mb-5">
+
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+
+                        <div class="flex items-center justify-between gap-4">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="section-icon">
+                                    <i class='bx bx-gift text-xl'></i>
+                                </div>
+
+                                <div>
+
+                                    <h2 class="font-sora font-semibold text-base text-main">
+                                        Mystery Box Settings
+                                    </h2>
+
+                                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                        Configure the number of boxes and reward range.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <label class="switch">
+
+                                <input id="mysteryEnabled"
+                                    type="checkbox">
+
+                                <span class="slider"></span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                            <div>
+
+                                <label for="boxesPerRound"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    Boxes Per Round
+                                </label>
+
+                                <input id="boxesPerRound"
+                                    class="input-field"
+                                    type="number"
+                                    min="1"
+                                    step="1"
+                                    placeholder="">
+
+                            </div>
+
+
+                            <div>
+
+                                <label for="mysteryMinReward"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    Minimum Reward
+                                </label>
+
+                                <div class="relative">
+
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-semibold">
+                                        $
+                                    </span>
+
+                                    <input id="mysteryMinReward"
+                                        class="input-field pl-8"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="">
+
+                                </div>
+
+                            </div>
+
+
+                            <div>
+
+                                <label for="mysteryMaxReward"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    Maximum Reward
+                                </label>
+
+                                <div class="relative">
+
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-semibold">
+                                        $
+                                    </span>
+
+                                    <input id="mysteryMaxReward"
+                                        class="input-field pl-8"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-box mt-5 rounded-xl p-4 flex items-start gap-3">
+
+                            <i class='bx bx-lock-alt text-emerald-500 text-lg mt-0.5'></i>
+
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-5">
+                                Mystery Box rewards must be generated and validated by the backend. Never determine the actual reward from frontend JavaScript.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- QUIZ -->
+                <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm mb-5">
+
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+
+                        <div class="flex items-center justify-between gap-4">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="section-icon">
+                                    <i class='bx bx-help-circle text-xl'></i>
+                                </div>
+
+                                <div>
+
+                                    <h2 class="font-sora font-semibold text-base text-main">
+                                        Quiz Settings
+                                    </h2>
+
+                                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                        Configure quiz requirements and reward boundaries.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <div class="flex items-center gap-3">
+
+                                <a href="quizzes.html"
+                                    class="hidden sm:inline-flex px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:border-emerald-300 transition">
+                                    Manage Questions
+                                </a>
+
+                                <label class="switch">
+
+                                    <input id="quizEnabled"
+                                        type="checkbox">
+
+                                    <span class="slider"></span>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <a href="quizzes.html"
+                            class="sm:hidden inline-flex mb-5 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                            <i class='bx bx-edit-alt mr-1'></i>
+                            Manage Questions
+                        </a>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                            <div>
+
+                                <label for="minimumQuestions"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    Minimum Questions
+                                </label>
+
+                                <input id="minimumQuestions"
+                                    class="input-field"
+                                    type="number"
+                                    min="1"
+                                    step="1"
+                                    placeholder="">
+
+                            </div>
+
+
+                            <div>
+
+                                <label for="quizMinReward"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    Minimum Reward
+                                </label>
+
+                                <div class="relative">
+
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-semibold">
+                                        $
+                                    </span>
+
+                                    <input id="quizMinReward"
+                                        class="input-field pl-8"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="">
+
+                                </div>
+
+                            </div>
+
+
+                            <div>
+
+                                <label for="quizMaxReward"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    Maximum Reward
+                                </label>
+
+                                <div class="relative">
+
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-semibold">
+                                        $
+                                    </span>
+
+                                    <input id="quizMaxReward"
+                                        class="input-field pl-8"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-box mt-5 rounded-xl p-4 flex items-start gap-3">
+
+                            <i class='bx bx-info-circle text-emerald-500 text-lg mt-0.5'></i>
+
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-5">
+                                Quiz questions are managed from the Quiz section. Correct answers and final rewards must remain server-side.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- REFERRAL -->
+                <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm mb-5">
+
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+
+                        <div class="flex items-center justify-between gap-4">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="section-icon">
+                                    <i class='bx bx-share-alt text-xl'></i>
+                                </div>
+
+                                <div>
+
+                                    <h2 class="font-sora font-semibold text-base text-main">
+                                        Referral Settings
+                                    </h2>
+
+                                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                        Configure referral reward eligibility and protection rules.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <label class="switch">
+
+                                <input id="referralEnabled"
+                                    type="checkbox">
+
+                                <span class="slider"></span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                            <div>
+
+                                <label for="referralReward"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    Referral Reward
+                                </label>
+
+                                <div class="relative">
+
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-semibold">
+                                        $
+                                    </span>
+
+                                    <input id="referralReward"
+                                        class="input-field pl-8"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="">
+
+                                </div>
+
+                            </div>
+
+
+                            <div>
+
+                                <label class="block text-sm font-medium text-main mb-2">
+                                    Reward Trigger
+                                </label>
+
+                                <div class="h-11 flex items-center px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#092032] text-sm font-medium text-main">
+                                    After referred user validates
+                                </div>
+
+                            </div>
+
+
+                            <div class="flex items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-[#092032] border border-slate-100 dark:border-slate-800">
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-main">
+                                        Self Referral Protection
+                                    </p>
+
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                        Block users from referring themselves.
+                                    </p>
+
+                                </div>
+
+                                <label class="switch">
+
+                                    <input id="selfReferralProtection"
+                                        type="checkbox">
+
+                                    <span class="slider"></span>
+
+                                </label>
+
+                            </div>
+
+
+                            <div class="flex items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-[#092032] border border-slate-100 dark:border-slate-800">
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-main">
+                                        Referral Rewards Enabled
+                                    </p>
+
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                        Allow eligible referral rewards to be credited.
+                                    </p>
+
+                                </div>
+
+                                <label class="switch">
+
+                                    <input id="referralRewardsEnabled"
+                                        type="checkbox">
+
+                                    <span class="slider"></span>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-box mt-5 rounded-xl p-4">
+
+                            <div class="flex items-start gap-3">
+
+                                <i class='bx bx-shield-quarter text-emerald-500 text-lg mt-0.5'></i>
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-main">
+                                        Referral reward rules
+                                    </p>
+
+                                    <ul class="mt-2 space-y-1.5 text-xs text-slate-500 dark:text-slate-400">
+
+                                        <li class="flex gap-2">
+                                            <i class='bx bx-check text-emerald-500'></i>
+                                            Referral attribution must be stored server-side.
+                                        </li>
+
+                                        <li class="flex gap-2">
+                                            <i class='bx bx-check text-emerald-500'></i>
+                                            Self-referrals must be blocked.
+                                        </li>
+
+                                        <li class="flex gap-2">
+                                            <i class='bx bx-check text-emerald-500'></i>
+                                            Rewards must not be credited before validation.
+                                        </li>
+
+                                        <li class="flex gap-2">
+                                            <i class='bx bx-check text-emerald-500'></i>
+                                            Duplicate rewards must be prevented.
+                                        </li>
+
+                                    </ul>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="mt-5">
+
+                            <a href="referrals.html"
+                                class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700">
+                                Manage Referrals
+                                <i class='bx bx-right-arrow-alt'></i>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- WITHDRAWAL -->
+                <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm mb-5">
+
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+
+                        <div class="flex items-center justify-between gap-4">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="section-icon">
+                                    <i class='bx bx-money-withdraw text-xl'></i>
+                                </div>
+
+                                <div>
+
+                                    <h2 class="font-sora font-semibold text-base text-main">
+                                        Withdrawal Settings
+                                    </h2>
+
+                                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                        Configure withdrawal limits and eligibility requirements.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <label class="switch">
+
+                                <input id="withdrawalEnabled"
+                                    type="checkbox">
+
+                                <span class="slider"></span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                            <div>
+
+                                <label for="minimumWithdrawal"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    Minimum Withdrawal
+                                </label>
+
+                                <div class="relative">
+
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-semibold">
+                                        $
+                                    </span>
+
+                                    <input id="minimumWithdrawal"
+                                        class="input-field pl-8"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="">
+
+                                </div>
+
+                                <p class="text-xs text-slate-400 mt-1.5">
+                                    Currency: USD
+                                </p>
+
+                            </div>
+
+
+                            <div>
+
+                                <label class="block text-sm font-medium text-main mb-2">
+                                    NGN Equivalent
+                                </label>
+
+                                <div id="withdrawalNgn"
+                                    class="h-11 flex items-center px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#092032] text-sm font-semibold text-main">
+                                    Not configured
+                                </div>
+
+                            </div>
+
+
+                            <div class="flex items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-[#092032] border border-slate-100 dark:border-slate-800">
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-main">
+                                        E-pin Required
+                                    </p>
+
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                        Require an eligible withdrawal E-pin.
+                                    </p>
+
+                                </div>
+
+                                <label class="switch">
+
+                                    <input id="withdrawalEpinRequired"
+                                        type="checkbox">
+
+                                    <span class="slider"></span>
+
+                                </label>
+
+                            </div>
+
+
+                            <div class="flex items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-[#092032] border border-slate-100 dark:border-slate-800">
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-main">
+                                        Validation Required
+                                    </p>
+
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                        Require dashboard validation before withdrawal.
+                                    </p>
+
+                                </div>
+
+                                <label class="switch">
+
+                                    <input id="withdrawalValidationRequired"
+                                        type="checkbox">
+
+                                    <span class="slider"></span>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-box mt-5 rounded-xl p-4">
+
+                            <div class="flex items-start gap-3">
+
+                                <i class='bx bx-lock-alt text-emerald-500 text-lg mt-0.5'></i>
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-main">
+                                        Withdrawal eligibility
+                                    </p>
+
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-5 mt-1">
+                                        The backend must verify the user's balance, validation status, E-pin status, bank details, minimum amount, duplicate requests, and transaction integrity before approving a withdrawal.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="mt-5">
+
+                            <a href="withdrawals.html"
+                                class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700">
+                                Manage Withdrawals
+                                <i class='bx bx-right-arrow-alt'></i>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EPIN -->
+                <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm mb-5">
+
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+
+                        <div class="flex items-center justify-between gap-4">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="section-icon">
+                                    <i class='bx bx-key text-xl'></i>
+                                </div>
+
+                                <div>
+
+                                    <h2 class="font-sora font-semibold text-base text-main">
+                                        Withdrawal E-pin Settings
+                                    </h2>
+
+                                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                        Configure the E-pin requirement used for withdrawals.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <label class="switch">
+
+                                <input id="epinEnabled"
+                                    type="checkbox">
+
+                                <span class="slider"></span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                            <div>
+
+                                <label for="epinPrice"
+                                    class="block text-sm font-medium text-main mb-2">
+                                    E-pin Price
+                                </label>
+
+                                <div class="relative">
+
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-semibold">
+                                        $
+                                    </span>
+
+                                    <input id="epinPrice"
+                                        class="input-field pl-8"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="">
+
+                                </div>
+
+                            </div>
+
+
+                            <div>
+
+                                <label class="block text-sm font-medium text-main mb-2">
+                                    E-pin NGN Equivalent
+                                </label>
+
+                                <div id="epinNgn"
+                                    class="h-11 flex items-center px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#092032] text-sm font-semibold text-main">
+                                    Not configured
+                                </div>
+
+                            </div>
+
+
+                            <div class="flex items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-[#092032] border border-slate-100 dark:border-slate-800">
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-main">
+                                        E-pin Approval Required
+                                    </p>
+
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                        Purchased E-pins remain pending until approved.
+                                    </p>
+
+                                </div>
+
+                                <label class="switch">
+
+                                    <input id="epinApprovalRequired"
+                                        type="checkbox">
+
+                                    <span class="slider"></span>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="mt-5">
+
+                            <a href="epins.html"
+                                class="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700">
+                                Manage E-pins
+                                <i class='bx bx-right-arrow-alt'></i>
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FINANCIAL SAFETY -->
+                <div class="warning-box rounded-2xl p-6 mb-5">
+
+                    <div class="flex items-start gap-4">
+
+                        <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                            <i class='bx bx-shield-quarter text-xl text-amber-600'></i>
+                        </div>
+
+                        <div>
+
+                            <h2 class="font-sora font-semibold text-base text-amber-900 dark:text-amber-300">
+                                Financial Rules & Security
+                            </h2>
+
+                            <p class="text-sm text-amber-800/80 dark:text-amber-200/70 mt-1 leading-6">
+                                Platform settings control the rules displayed by the frontend, but financial authorization must remain server-side.
+                            </p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 mt-4">
+
+                                <div class="flex gap-2 text-xs text-amber-800 dark:text-amber-200">
+                                    <i class='bx bx-check mt-0.5'></i>
+                                    <span>Payment verification is backend-controlled.</span>
+                                </div>
+
+                                <div class="flex gap-2 text-xs text-amber-800 dark:text-amber-200">
+                                    <i class='bx bx-check mt-0.5'></i>
+                                    <span>Reward amounts are calculated server-side.</span>
+                                </div>
+
+                                <div class="flex gap-2 text-xs text-amber-800 dark:text-amber-200">
+                                    <i class='bx bx-check mt-0.5'></i>
+                                    <span>User balances are never modified by frontend JavaScript.</span>
+                                </div>
+
+                                <div class="flex gap-2 text-xs text-amber-800 dark:text-amber-200">
+                                    <i class='bx bx-check mt-0.5'></i>
+                                    <span>Withdrawal eligibility is verified server-side.</span>
+                                </div>
+
+                                <div class="flex gap-2 text-xs text-amber-800 dark:text-amber-200">
+                                    <i class='bx bx-check mt-0.5'></i>
+                                    <span>E-pin validity is verified server-side.</span>
+                                </div>
+
+                                <div class="flex gap-2 text-xs text-amber-800 dark:text-amber-200">
+                                    <i class='bx bx-check mt-0.5'></i>
+                                    <span>Referral rewards require backend attribution.</span>
+                                </div>
+
+                                <div class="flex gap-2 text-xs text-amber-800 dark:text-amber-200">
+                                    <i class='bx bx-check mt-0.5'></i>
+                                    <span>Duplicate reward claims must be prevented.</span>
+                                </div>
+
+                                <div class="flex gap-2 text-xs text-amber-800 dark:text-amber-200">
+                                    <i class='bx bx-check mt-0.5'></i>
+                                    <span>Configuration changes should be audit logged.</span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONFIGURATION STATUS -->
+                <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm mb-5">
+
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="section-icon">
+                                <i class='bx bx-server text-xl'></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="font-sora font-semibold text-base text-main">
+                                    Configuration Status
+                                </h2>
+
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                    Information currently stored by the backend.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                            <div class="soft-bg bg-slate-50 rounded-xl border border-slate-100 p-4">
+
+                                <p class="text-xs text-slate-500 dark:text-slate-400">
+                                    Platform Status
+                                </p>
+
+                                <p id="configPlatformStatus"
+                                    class="text-sm font-semibold text-main mt-2">
+                                    Not configured
+                                </p>
+
+                            </div>
+
+                            <div class="soft-bg bg-slate-50 rounded-xl border border-slate-100 p-4">
+
+                                <p class="text-xs text-slate-500 dark:text-slate-400">
+                                    Last Updated
+                                </p>
+
+                                <p id="configUpdatedAt"
+                                    class="text-sm font-semibold text-main mt-2">
+                                    Not configured
+                                </p>
+
+                            </div>
+
+                            <div class="soft-bg bg-slate-50 rounded-xl border border-slate-100 p-4">
+
+                                <p class="text-xs text-slate-500 dark:text-slate-400">
+                                    Updated By
+                                </p>
+
+                                <p id="configUpdatedBy"
+                                    class="text-sm font-semibold text-main mt-2 truncate">
+                                    Not configured
+                                </p>
+
+                            </div>
+
+                            <div class="soft-bg bg-slate-50 rounded-xl border border-slate-100 p-4">
+
+                                <p class="text-xs text-slate-500 dark:text-slate-400">
+                                    Configuration Version
+                                </p>
+
+                                <p id="configVersion"
+                                    class="text-sm font-semibold text-main mt-2">
+                                    Not configured
+                                </p>
+
+                            </div>
+
+                            <div class="soft-bg bg-slate-50 rounded-xl border border-slate-100 p-4">
+
+                                <p class="text-xs text-slate-500 dark:text-slate-400">
+                                    Currency
+                                </p>
+
+                                <p id="configCurrency"
+                                    class="text-sm font-semibold text-main mt-2">
+                                    Not configured
+                                </p>
+
+                            </div>
+
+                            <div class="soft-bg bg-slate-50 rounded-xl border border-slate-100 p-4">
+
+                                <p class="text-xs text-slate-500 dark:text-slate-400">
+                                    Conversion Rate
+                                </p>
+
+                                <p id="configRate"
+                                    class="text-sm font-semibold text-main mt-2">
+                                    Not configured
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONFIGURATION HISTORY -->
+                <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+
+                        <div>
+
+                            <h2 class="font-sora font-semibold text-base text-main">
+                                Configuration History
+                            </h2>
+
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                Recent platform configuration changes from backend audit records.
+                            </p>
+
+                        </div>
+
+                        <button id="activityBtn"
+                            class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 hover:border-emerald-300 transition">
+
+                            <i class='bx bx-history mr-1'></i>
+                            View Activity
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="px-6 pb-6">
+
+                        <div class="rounded-xl border border-dashed border-slate-200 dark:border-slate-700 p-8 text-center">
+
+                            <div class="w-11 h-11 mx-auto rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mb-3">
+
+                                <i class='bx bx-history text-xl text-slate-400'></i>
+
+                            </div>
+
+                            <p class="text-sm font-medium text-main">
+                                No configuration history available
+                            </p>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Backend audit records will appear here when available.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- TOAST -->
+    <div id="toast"
+        class="toast fixed bottom-5 right-5 z-[100] w-[calc(100%-40px)] sm:w-auto max-w-sm">
+
+        <div class="bg-[#071A2B] text-white rounded-2xl shadow-xl border border-white/10 px-4 py-3 flex items-start gap-3">
+
+            <div id="toastIcon"
+                class="w-9 h-9 rounded-xl bg-emerald-500/15 flex items-center justify-center flex-shrink-0">
+
+                <i class='bx bx-check text-emerald-400'></i>
+
+            </div>
+
+            <div class="min-w-0">
+
+                <p id="toastTitle"
+                    class="text-sm font-semibold">
+                    Settings Updated
+                </p>
+
+                <p id="toastMessage"
+                    class="text-xs text-slate-400 mt-0.5">
+                    Your platform settings have been updated.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ACTIVITY MODAL -->
+    <div id="activityModal"
+        class="hidden fixed inset-0 z-[90] bg-slate-950/50 modal-backdrop p-4 items-center justify-center">
+
+        <div class="w-full max-w-2xl bg-white dark:bg-[#0B2539] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700">
+
+            <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+
+                <div>
+
+                    <h3 class="font-sora font-semibold text-base text-main">
+                        Configuration Activity
+                    </h3>
+
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        Platform settings audit records
+                    </p>
+
+                </div>
+
+                <button id="closeActivity"
+                    aria-label="Close activity modal"
+                    class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-300 flex items-center justify-center">
+
+                    <i class='bx bx-x text-xl'></i>
+
+                </button>
+
+            </div>
+
+            <div id="activityContent"
+                class="p-6 max-h-[65vh] overflow-y-auto">
+
+                <div class="text-center py-8">
+
+                    <div class="w-12 h-12 mx-auto rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mb-3">
+
+                        <i class='bx bx-history text-2xl text-slate-400'></i>
+
+                    </div>
+
+                    <p class="text-sm font-medium text-main">
+                        No audit records available
+                    </p>
+
+                    <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                        Activity will be loaded from the backend when audit logging is connected.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+        /*
+        ==========================================================
+        OPTIFY PLATFORM SETTINGS
+        ==========================================================
+
+        Production API:
+
+        GET  /api/admin/platform-settings
+        PUT  /api/admin/platform-settings
+        GET  /api/admin/platform-settings/activity
+
+        Authentication:
+
+        Firebase Authentication
+            ↓
+        authenticated UID
+            ↓
+        admins/{uid}
+            ↓
+        role === "admin"
+            ↓
+        active === true
+            ↓
+        backend API
+
+        IMPORTANT:
+        Frontend values are never the financial source of truth.
+        Backend must enforce all platform rules.
+        ==========================================================
+        */
+
+
+        /*
+        ----------------------------------------------------------
+        API
+        ----------------------------------------------------------
+        */
+
+        const API = {
+            settings: '/api/admin/platform-settings',
+            activity: '/api/admin/platform-settings/activity'
+        };
+
+
+        /*
+        ----------------------------------------------------------
+        STATE
+        ----------------------------------------------------------
+        */
+
+        let platformSettings = null;
+        let originalSettings = null;
+        let isSaving = false;
+
+
+        /*
+        ----------------------------------------------------------
+        EMPTY SETTINGS
+        ----------------------------------------------------------
+
+        These are intentionally empty.
+
+        They are not production defaults.
+        ----------------------------------------------------------
+        */
+
+        const emptySettings = {
+            platformName: '',
+            currency: '',
+            usdToNgnRate: null,
+            platformActive: false,
+
+            validation: {
+                enabled: false,
+                fee: null,
+                paymentProvider: 'paystack'
+            },
+
+            streak: {
+                enabled: false,
+                morningReward: null,
+                afternoonReward: null,
+                nightReward: null
+            },
+
+            mysteryBox: {
+                enabled: false,
+                boxesPerRound: null,
+                minReward: null,
+                maxReward: null
+            },
+
+            quiz: {
+                enabled: false,
+                minimumQuestions: null,
+                minReward: null,
+                maxReward: null
+            },
+
+            referral: {
+                enabled: false,
+                reward: null,
+                trigger: 'validation',
+                selfReferralProtection: false
+            },
+
+            withdrawal: {
+                enabled: false,
+                minimumAmount: null,
+                epinRequired: false,
+                validationRequired: false
+            },
+
+            epin: {
+                enabled: false,
+                price: null,
+                approvalRequired: false
+            },
+
+            updatedAt: null,
+            updatedBy: null,
+            version: null
+        };
+
+
+        /*
+        ----------------------------------------------------------
+        DOM
+        ----------------------------------------------------------
+        */
+
+        const loadingState = document.getElementById('loadingState');
+        const errorState = document.getElementById('errorState');
+        const settingsContent = document.getElementById('settingsContent');
+
+        const errorMessage = document.getElementById('errorMessage');
+
+        const platformName = document.getElementById('platformName');
+        const currency = document.getElementById('currency');
+        const usdToNgnRate = document.getElementById('usdToNgnRate');
+        const platformActive = document.getElementById('platformActive');
+
+        const validationFee = document.getElementById('validationFee');
+        const validationEnabled = document.getElementById('validationEnabled');
+
+        const morningReward = document.getElementById('morningReward');
+        const afternoonReward = document.getElementById('afternoonReward');
+        const nightReward = document.getElementById('nightReward');
+        const streakEnabled = document.getElementById('streakEnabled');
+
+        const boxesPerRound = document.getElementById('boxesPerRound');
+        const mysteryMinReward = document.getElementById('mysteryMinReward');
+        const mysteryMaxReward = document.getElementById('mysteryMaxReward');
+        const mysteryEnabled = document.getElementById('mysteryEnabled');
+
+        const minimumQuestions = document.getElementById('minimumQuestions');
+        const quizMinReward = document.getElementById('quizMinReward');
+        const quizMaxReward = document.getElementById('quizMaxReward');
+        const quizEnabled = document.getElementById('quizEnabled');
+
+        const referralReward = document.getElementById('referralReward');
+        const referralEnabled = document.getElementById('referralEnabled');
+        const selfReferralProtection = document.getElementById('selfReferralProtection');
+        const referralRewardsEnabled = document.getElementById('referralRewardsEnabled');
+
+        const minimumWithdrawal = document.getElementById('minimumWithdrawal');
+        const withdrawalEnabled = document.getElementById('withdrawalEnabled');
+        const withdrawalEpinRequired = document.getElementById('withdrawalEpinRequired');
+        const withdrawalValidationRequired = document.getElementById('withdrawalValidationRequired');
+
+        const epinPrice = document.getElementById('epinPrice');
+        const epinEnabled = document.getElementById('epinEnabled');
+        const epinApprovalRequired = document.getElementById('epinApprovalRequired');
+
+        const validationNgn = document.getElementById('validationNgn');
+        const streakDailyTotal = document.getElementById('streakDailyTotal');
+        const withdrawalNgn = document.getElementById('withdrawalNgn');
+        const epinNgn = document.getElementById('epinNgn');
+
+        const overviewCurrency = document.getElementById('overviewCurrency');
+        const overviewRate = document.getElementById('overviewRate');
+        const overviewValidation = document.getElementById('overviewValidation');
+        const overviewWithdrawal = document.getElementById('overviewWithdrawal');
+        const overviewEpin = document.getElementById('overviewEpin');
+
+        const configPlatformStatus = document.getElementById('configPlatformStatus');
+        const configUpdatedAt = document.getElementById('configUpdatedAt');
+        const configUpdatedBy = document.getElementById('configUpdatedBy');
+        const configVersion = document.getElementById('configVersion');
+        const configCurrency = document.getElementById('configCurrency');
+        const configRate = document.getElementById('configRate');
+
+        const saveBtn = document.getElementById('saveBtn');
+        const discardBtn = document.getElementById('discardBtn');
+        const saveBtnText = document.getElementById('saveBtnText');
+
+        const unsavedBar = document.getElementById('unsavedBar');
+
+        const toast = document.getElementById('toast');
+        const toastIcon = document.getElementById('toastIcon');
+        const toastTitle = document.getElementById('toastTitle');
+        const toastMessage = document.getElementById('toastMessage');
+
+
+        /*
+        ----------------------------------------------------------
+        UTILITIES
+        ----------------------------------------------------------
+        */
+
+        function deepClone(value) {
+            return JSON.parse(JSON.stringify(value));
+        }
+
+
+        function normalizeSettings(data) {
+
+            if (!data) {
+                return null;
+            }
+
+            return {
+                platformName: data.platformName || '',
+                currency: data.currency || '',
+                usdToNgnRate: numberOrNull(data.usdToNgnRate),
+                platformActive: Boolean(data.platformActive),
+
+                validation: {
+                    enabled: Boolean(data.validation?.enabled),
+                    fee: numberOrNull(data.validation?.fee),
+                    paymentProvider:
+                        data.validation?.paymentProvider || 'paystack'
+                },
+
+                streak: {
+                    enabled: Boolean(data.streak?.enabled),
+                    morningReward:
+                        numberOrNull(data.streak?.morningReward),
+                    afternoonReward:
+                        numberOrNull(data.streak?.afternoonReward),
+                    nightReward:
+                        numberOrNull(data.streak?.nightReward)
+                },
+
+                mysteryBox: {
+                    enabled: Boolean(data.mysteryBox?.enabled),
+                    boxesPerRound:
+                        numberOrNull(data.mysteryBox?.boxesPerRound),
+                    minReward:
+                        numberOrNull(data.mysteryBox?.minReward),
+                    maxReward:
+                        numberOrNull(data.mysteryBox?.maxReward)
+                },
+
+                quiz: {
+                    enabled: Boolean(data.quiz?.enabled),
+                    minimumQuestions:
+                        numberOrNull(data.quiz?.minimumQuestions),
+                    minReward:
+                        numberOrNull(data.quiz?.minReward),
+                    maxReward:
+                        numberOrNull(data.quiz?.maxReward)
+                },
+
+                referral: {
+                    enabled: Boolean(data.referral?.enabled),
+                    reward:
+                        numberOrNull(data.referral?.reward),
+                    trigger:
+                        data.referral?.trigger || 'validation',
+                    selfReferralProtection:
+                        Boolean(data.referral?.selfReferralProtection)
+                },
+
+                withdrawal: {
+                    enabled: Boolean(data.withdrawal?.enabled),
+                    minimumAmount:
+                        numberOrNull(data.withdrawal?.minimumAmount),
+                    epinRequired:
+                        Boolean(data.withdrawal?.epinRequired),
+                    validationRequired:
+                        Boolean(data.withdrawal?.validationRequired)
+                },
+
+                epin: {
+                    enabled: Boolean(data.epin?.enabled),
+                    price:
+                        numberOrNull(data.epin?.price),
+                    approvalRequired:
+                        Boolean(data.epin?.approvalRequired)
+                },
+
+                updatedAt: data.updatedAt || null,
+                updatedBy: data.updatedBy || null,
+                version: data.version || null
+            };
+        }
+
+
+        function numberOrNull(value) {
+
+            if (
+                value === null ||
+                value === undefined ||
+                value === ''
+            ) {
+                return null;
+            }
+
+            const number = Number(value);
+
+            return Number.isFinite(number)
+                ? number
+                : null;
+        }
+
+
+        function numberFromInput(element) {
+
+            if (!element.value.trim()) {
+                return null;
+            }
+
+            const number = Number(element.value);
+
+            return Number.isFinite(number)
+                ? number
+                : null;
+        }
+
+
+        function formatMoney(value) {
+
+            if (value === null || value === undefined || value === '') {
+                return 'Not configured';
+            }
+
+            const number = Number(value);
+
+            if (!Number.isFinite(number)) {
+                return 'Not configured';
+            }
+
+            return '$' + number.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+
+        function formatNgn(value) {
+
+            if (value === null || value === undefined) {
+                return 'Not configured';
+            }
+
+            const number = Number(value);
+
+            if (!Number.isFinite(number)) {
+                return 'Not configured';
+            }
+
+            return '₦' + number.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+
+        function formatRate(value) {
+
+            if (value === null || value === undefined) {
+                return 'Not configured';
+            }
+
+            const number = Number(value);
+
+            if (!Number.isFinite(number)) {
+                return 'Not configured';
+            }
+
+            return '₦' + number.toLocaleString(undefined, {
+                maximumFractionDigits: 2
+            });
+        }
+
+
+        function formatDate(value) {
+
+            if (!value) {
+                return 'Not configured';
+            }
+
+            let date;
+
+            if (
+                typeof value === 'object' &&
+                value.seconds !== undefined
+            ) {
+                date = new Date(value.seconds * 1000);
+            } else {
+                date = new Date(value);
+            }
+
+            if (Number.isNaN(date.getTime())) {
+                return 'Not configured';
+            }
+
+            return date.toLocaleString([], {
+                dateStyle: 'medium',
+                timeStyle: 'short'
+            });
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        FORM → OBJECT
+        ----------------------------------------------------------
+        */
+
+        function settingsFromForm() {
+
+            return {
+                platformName: platformName.value.trim(),
+                currency: currency.value,
+                usdToNgnRate: numberFromInput(usdToNgnRate),
+                platformActive: platformActive.checked,
+
+                validation: {
+                    enabled: validationEnabled.checked,
+                    fee: numberFromInput(validationFee),
+                    paymentProvider: 'paystack'
+                },
+
+                streak: {
+                    enabled: streakEnabled.checked,
+                    morningReward: numberFromInput(morningReward),
+                    afternoonReward: numberFromInput(afternoonReward),
+                    nightReward: numberFromInput(nightReward)
+                },
+
+                mysteryBox: {
+                    enabled: mysteryEnabled.checked,
+                    boxesPerRound: numberFromInput(boxesPerRound),
+                    minReward: numberFromInput(mysteryMinReward),
+                    maxReward: numberFromInput(mysteryMaxReward)
+                },
+
+                quiz: {
+                    enabled: quizEnabled.checked,
+                    minimumQuestions: numberFromInput(minimumQuestions),
+                    minReward: numberFromInput(quizMinReward),
+                    maxReward: numberFromInput(quizMaxReward)
+                },
+
+                referral: {
+                    enabled: referralEnabled.checked,
+                    reward: numberFromInput(referralReward),
+                    trigger: 'validation',
+                    selfReferralProtection:
+                        selfReferralProtection.checked
+                },
+
+                withdrawal: {
+                    enabled: withdrawalEnabled.checked,
+                    minimumAmount:
+                        numberFromInput(minimumWithdrawal),
+                    epinRequired:
+                        withdrawalEpinRequired.checked,
+                    validationRequired:
+                        withdrawalValidationRequired.checked
+                },
+
+                epin: {
+                    enabled: epinEnabled.checked,
+                    price: numberFromInput(epinPrice),
+                    approvalRequired:
+                        epinApprovalRequired.checked
+                }
+            };
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        FORM ← OBJECT
+        ----------------------------------------------------------
+        */
+
+        function fillForm(settings) {
+
+            platformName.value =
+                settings.platformName || '';
+
+            currency.value =
+                settings.currency || '';
+
+            usdToNgnRate.value =
+                settings.usdToNgnRate ?? '';
+
+            platformActive.checked =
+                Boolean(settings.platformActive);
+
+
+            validationFee.value =
+                settings.validation?.fee ?? '';
+
+            validationEnabled.checked =
+                Boolean(settings.validation?.enabled);
+
+
+            morningReward.value =
+                settings.streak?.morningReward ?? '';
+
+            afternoonReward.value =
+                settings.streak?.afternoonReward ?? '';
+
+            nightReward.value =
+                settings.streak?.nightReward ?? '';
+
+            streakEnabled.checked =
+                Boolean(settings.streak?.enabled);
+
+
+            boxesPerRound.value =
+                settings.mysteryBox?.boxesPerRound ?? '';
+
+            mysteryMinReward.value =
+                settings.mysteryBox?.minReward ?? '';
+
+            mysteryMaxReward.value =
+                settings.mysteryBox?.maxReward ?? '';
+
+            mysteryEnabled.checked =
+                Boolean(settings.mysteryBox?.enabled);
+
+
+            minimumQuestions.value =
+                settings.quiz?.minimumQuestions ?? '';
+
+            quizMinReward.value =
+                settings.quiz?.minReward ?? '';
+
+            quizMaxReward.value =
+                settings.quiz?.maxReward ?? '';
+
+            quizEnabled.checked =
+                Boolean(settings.quiz?.enabled);
+
+
+            referralReward.value =
+                settings.referral?.reward ?? '';
+
+            referralEnabled.checked =
+                Boolean(settings.referral?.enabled);
+
+            selfReferralProtection.checked =
+                Boolean(settings.referral?.selfReferralProtection);
+
+            referralRewardsEnabled.checked =
+                Boolean(settings.referral?.enabled);
+
+
+            minimumWithdrawal.value =
+                settings.withdrawal?.minimumAmount ?? '';
+
+            withdrawalEnabled.checked =
+                Boolean(settings.withdrawal?.enabled);
+
+            withdrawalEpinRequired.checked =
+                Boolean(settings.withdrawal?.epinRequired);
+
+            withdrawalValidationRequired.checked =
+                Boolean(settings.withdrawal?.validationRequired);
+
+
+            epinPrice.value =
+                settings.epin?.price ?? '';
+
+            epinEnabled.checked =
+                Boolean(settings.epin?.enabled);
+
+            epinApprovalRequired.checked =
+                Boolean(settings.epin?.approvalRequired);
+
+
+            updateCalculatedValues();
+            updateOverview();
+            updateConfigurationStatus();
+
+            updateUnsavedState();
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        CALCULATED VALUES
+        ----------------------------------------------------------
+        */
+
+        function updateCalculatedValues() {
+
+            const rate =
+                numberFromInput(usdToNgnRate);
+
+            const validation =
+                numberFromInput(validationFee);
+
+            const withdrawal =
+                numberFromInput(minimumWithdrawal);
+
+            const epin =
+                numberFromInput(epinPrice);
+
+            const morning =
+                numberFromInput(morningReward);
+
+            const afternoon =
+                numberFromInput(afternoonReward);
+
+            const night =
+                numberFromInput(nightReward);
+
+
+            if (
+                rate !== null &&
+                validation !== null
+            ) {
+
+                validationNgn.textContent =
+                    formatNgn(validation * rate);
+
+            } else {
+
+                validationNgn.textContent =
+                    'Not configured';
+            }
+
+
+            if (
+                morning !== null &&
+                afternoon !== null &&
+                night !== null
+            ) {
+
+                streakDailyTotal.textContent =
+                    formatMoney(
+                        morning +
+                        afternoon +
+                        night
+                    );
+
+            } else {
+
+                streakDailyTotal.textContent =
+                    'Not configured';
+            }
+
+
+            if (
+                rate !== null &&
+                withdrawal !== null
+            ) {
+
+                withdrawalNgn.textContent =
+                    formatNgn(withdrawal * rate);
+
+            } else {
+
+                withdrawalNgn.textContent =
+                    'Not configured';
+            }
+
+
+            if (
+                rate !== null &&
+                epin !== null
+            ) {
+
+                epinNgn.textContent =
+                    formatNgn(epin * rate);
+
+            } else {
+
+                epinNgn.textContent =
+                    'Not configured';
+            }
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        OVERVIEW
+        ----------------------------------------------------------
+        */
+
+        function updateOverview() {
+
+            const rate =
+                numberFromInput(usdToNgnRate);
+
+            const validation =
+                numberFromInput(validationFee);
+
+            const withdrawal =
+                numberFromInput(minimumWithdrawal);
+
+            const epin =
+                numberFromInput(epinPrice);
+
+
+            overviewCurrency.textContent =
+                currency.value || 'Not configured';
+
+
+            overviewRate.textContent =
+                rate !== null
+                    ? formatRate(rate)
+                    : 'Not configured';
+
+
+            overviewValidation.textContent =
+                validation !== null
+                    ? formatMoney(validation)
+                    : 'Not configured';
+
+
+            overviewWithdrawal.textContent =
+                withdrawal !== null
+                    ? formatMoney(withdrawal)
+                    : 'Not configured';
+
+
+            overviewEpin.textContent =
+                epin !== null
+                    ? formatMoney(epin)
+                    : 'Not configured';
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        CONFIGURATION STATUS
+        ----------------------------------------------------------
+        */
+
+        function updateConfigurationStatus() {
+
+            if (!originalSettings) {
+
+                configPlatformStatus.textContent =
+                    'Not configured';
+
+                configUpdatedAt.textContent =
+                    'Not configured';
+
+                configUpdatedBy.textContent =
+                    'Not configured';
+
+                configVersion.textContent =
+                    'Not configured';
+
+                configCurrency.textContent =
+                    'Not configured';
+
+                configRate.textContent =
+                    'Not configured';
+
+                return;
+            }
+
+
+            configPlatformStatus.textContent =
+                originalSettings.platformActive
+                    ? 'Active'
+                    : 'Inactive';
+
+
+            configUpdatedAt.textContent =
+                formatDate(originalSettings.updatedAt);
+
+
+            configUpdatedBy.textContent =
+                originalSettings.updatedBy ||
+                'Not configured';
+
+
+            configVersion.textContent =
+                originalSettings.version ||
+                'Not configured';
+
+
+            configCurrency.textContent =
+                originalSettings.currency ||
+                'Not configured';
+
+
+            configRate.textContent =
+                originalSettings.usdToNgnRate !== null
+                    ? formatRate(originalSettings.usdToNgnRate)
+                    : 'Not configured';
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        UNSAVED CHANGES
+        ----------------------------------------------------------
+        */
+
+        function hasChanges() {
+
+            if (!originalSettings) {
+                return false;
+            }
+
+            const current =
+                settingsFromForm();
+
+            const original = {
+                platformName:
+                    originalSettings.platformName,
+
+                currency:
+                    originalSettings.currency,
+
+                usdToNgnRate:
+                    originalSettings.usdToNgnRate,
+
+                platformActive:
+                    originalSettings.platformActive,
+
+                validation:
+                    originalSettings.validation,
+
+                streak:
+                    originalSettings.streak,
+
+                mysteryBox:
+                    originalSettings.mysteryBox,
+
+                quiz:
+                    originalSettings.quiz,
+
+                referral: {
+                    enabled:
+                        originalSettings.referral.enabled,
+
+                    reward:
+                        originalSettings.referral.reward,
+
+                    trigger:
+                        originalSettings.referral.trigger,
+
+                    selfReferralProtection:
+                        originalSettings.referral.selfReferralProtection
+                },
+
+                withdrawal:
+                    originalSettings.withdrawal,
+
+                epin:
+                    originalSettings.epin
+            };
+
+            return JSON.stringify(current) !==
+                JSON.stringify(original);
+        }
+
+
+        function updateUnsavedState() {
+
+            const changed =
+                hasChanges();
+
+            discardBtn.disabled =
+                !changed;
+
+            unsavedBar.classList.toggle(
+                'hidden',
+                !changed
+            );
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        TOAST
+        ----------------------------------------------------------
+        */
+
+        function showToast(
+            title,
+            message,
+            type = 'success'
+        ) {
+
+            toastTitle.textContent =
+                title;
+
+            toastMessage.textContent =
+                message;
+
+
+            if (type === 'error') {
+
+                toastIcon.className =
+                    'w-9 h-9 rounded-xl bg-red-500/15 flex items-center justify-center flex-shrink-0';
+
+                toastIcon.innerHTML =
+                    "<i class='bx bx-error text-red-400'></i>";
+
+            } else {
+
+                toastIcon.className =
+                    'w-9 h-9 rounded-xl bg-emerald-500/15 flex items-center justify-center flex-shrink-0';
+
+                toastIcon.innerHTML =
+                    "<i class='bx bx-check text-emerald-400'></i>";
+            }
+
+
+            toast.classList.add('show');
+
+            clearTimeout(
+                window.optifyToastTimer
+            );
+
+            window.optifyToastTimer =
+                setTimeout(() => {
+
+                    toast.classList.remove('show');
+
+                }, 3500);
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        VALIDATION
+        ----------------------------------------------------------
+        */
+
+        function validateSettings() {
+
+            const rate =
+                numberFromInput(usdToNgnRate);
+
+            const validation =
+                numberFromInput(validationFee);
+
+            const morning =
+                numberFromInput(morningReward);
+
+            const afternoon =
+                numberFromInput(afternoonReward);
+
+            const night =
+                numberFromInput(nightReward);
+
+            const boxCount =
+                numberFromInput(boxesPerRound);
+
+            const mysteryMin =
+                numberFromInput(mysteryMinReward);
+
+            const mysteryMax =
+                numberFromInput(mysteryMaxReward);
+
+            const minimumQuizQuestions =
+                numberFromInput(minimumQuestions);
+
+            const quizMin =
+                numberFromInput(quizMinReward);
+
+            const quizMax =
+                numberFromInput(quizMaxReward);
+
+            const referral =
+                numberFromInput(referralReward);
+
+            const withdrawal =
+                numberFromInput(minimumWithdrawal);
+
+            const epin =
+                numberFromInput(epinPrice);
+
+
+            if (!platformName.value.trim()) {
+
+                showToast(
+                    'Platform name required',
+                    'Enter the platform name before saving.',
+                    'error'
+                );
+
+                platformName.focus();
+
+                return false;
+            }
+
+
+            if (!currency.value) {
+
+                showToast(
+                    'Currency required',
+                    'Select the platform currency.',
+                    'error'
+                );
+
+                currency.focus();
+
+                return false;
+            }
+
+
+            if (
+                rate === null ||
+                rate <= 0
+            ) {
+
+                showToast(
+                    'Invalid conversion rate',
+                    'The USD to NGN conversion rate must be greater than zero.',
+                    'error'
+                );
+
+                usdToNgnRate.focus();
+
+                return false;
+            }
+
+
+            if (
+                validationEnabled.checked &&
+                (validation === null || validation < 0)
+            ) {
+
+                showToast(
+                    'Invalid validation fee',
+                    'Enter a valid validation fee.',
+                    'error'
+                );
+
+                validationFee.focus();
+
+                return false;
+            }
+
+
+            if (
+                streakEnabled.checked &&
+                (
+                    morning === null ||
+                    afternoon === null ||
+                    night === null ||
+                    morning < 0 ||
+                    afternoon < 0 ||
+                    night < 0
+                )
+            ) {
+
+                showToast(
+                    'Invalid streak rewards',
+                    'Configure all three streak rewards.',
+                    'error'
+                );
+
+                return false;
+            }
+
+
+            if (
+                mysteryEnabled.checked &&
+                (
+                    boxCount === null ||
+                    boxCount < 1
+                )
+            ) {
+
+                showToast(
+                    'Invalid box count',
+                    'Mystery Box rounds must contain at least one box.',
+                    'error'
+                );
+
+                boxesPerRound.focus();
+
+                return false;
+            }
+
+
+            if (
+                mysteryEnabled.checked &&
+                (
+                    mysteryMin === null ||
+                    mysteryMax === null ||
+                    mysteryMin < 0 ||
+                    mysteryMax < 0
+                )
+            ) {
+
+                showToast(
+                    'Invalid Mystery Box rewards',
+                    'Enter valid minimum and maximum rewards.',
+                    'error'
+                );
+
+                return false;
+            }
+
+
+            if (
+                mysteryMin !== null &&
+                mysteryMax !== null &&
+                mysteryMin > mysteryMax
+            ) {
+
+                showToast(
+                    'Invalid Mystery Box range',
+                    'Minimum reward cannot exceed maximum reward.',
+                    'error'
+                );
+
+                mysteryMinReward.focus();
+
+                return false;
+            }
+
+
+            if (
+                quizEnabled.checked &&
+                (
+                    minimumQuizQuestions === null ||
+                    minimumQuizQuestions < 1
+                )
+            ) {
+
+                showToast(
+                    'Invalid question count',
+                    'Minimum quiz questions must be at least one.',
+                    'error'
+                );
+
+                minimumQuestions.focus();
+
+                return false;
+            }
+
+
+            if (
+                quizEnabled.checked &&
+                (
+                    quizMin === null ||
+                    quizMax === null ||
+                    quizMin < 0 ||
+                    quizMax < 0
+                )
+            ) {
+
+                showToast(
+                    'Invalid quiz rewards',
+                    'Enter valid minimum and maximum quiz rewards.',
+                    'error'
+                );
+
+                return false;
+            }
+
+
+            if (
+                quizMin !== null &&
+                quizMax !== null &&
+                quizMin > quizMax
+            ) {
+
+                showToast(
+                    'Invalid quiz range',
+                    'Minimum reward cannot exceed maximum reward.',
+                    'error'
+                );
+
+                quizMinReward.focus();
+
+                return false;
+            }
+
+
+            if (
+                referralEnabled.checked &&
+                (
+                    referral === null ||
+                    referral < 0
+                )
+            ) {
+
+                showToast(
+                    'Invalid referral reward',
+                    'Enter a valid referral reward.',
+                    'error'
+                );
+
+                referralReward.focus();
+
+                return false;
+            }
+
+
+            if (
+                withdrawalEnabled.checked &&
+                (
+                    withdrawal === null ||
+                    withdrawal <= 0
+                )
+            ) {
+
+                showToast(
+                    'Invalid withdrawal minimum',
+                    'Minimum withdrawal must be greater than zero.',
+                    'error'
+                );
+
+                minimumWithdrawal.focus();
+
+                return false;
+            }
+
+
+            if (
+                epinEnabled.checked &&
+                (
+                    epin === null ||
+                    epin < 0
+                )
+            ) {
+
+                showToast(
+                    'Invalid E-pin price',
+                    'Enter a valid E-pin price.',
+                    'error'
+                );
+
+                epinPrice.focus();
+
+                return false;
+            }
+
+
+            return true;
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        LOADING / ERROR / CONTENT
+        ----------------------------------------------------------
+        */
+
+        function showLoading() {
+
+            loadingState.classList.remove('hidden');
+            errorState.classList.add('hidden');
+            settingsContent.classList.add('hidden');
+        }
+
+
+        function showError(message) {
+
+            loadingState.classList.add('hidden');
+            errorState.classList.remove('hidden');
+            settingsContent.classList.add('hidden');
+
+            errorMessage.textContent =
+                message ||
+                'Something went wrong while loading the platform configuration.';
+        }
+
+
+        function showSettings() {
+
+            loadingState.classList.add('hidden');
+            errorState.classList.add('hidden');
+            settingsContent.classList.remove('hidden');
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        LOAD SETTINGS
+        ----------------------------------------------------------
+        */
+
+        async function loadPlatformSettings() {
+
+            showLoading();
+
+            try {
+
+                /*
+                ==================================================
+                PRODUCTION IMPLEMENTATION
+                ==================================================
+
+                Example:
+
+                const token =
+                    await firebase.auth().currentUser.getIdToken();
+
+                const response = await fetch(API.settings, {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(
+                        'Unable to load platform settings.'
+                    );
+                }
+
+                const data =
+                    await response.json();
+
+                platformSettings =
+                    normalizeSettings(data);
+
+                ==================================================
+                */
+
+
+                /*
+                No fake production values are returned here.
+
+                Replace this block with the real authenticated
+                backend request.
+                */
+
+                await new Promise(resolve =>
+                    setTimeout(resolve, 700)
+                );
+
+
+                /*
+                Unconfigured backend state.
+                */
+
+                platformSettings = null;
+
+
+                if (!platformSettings) {
+
+                    originalSettings =
+                        deepClone(emptySettings);
+
+                    fillForm(emptySettings);
+
+                    showSettings();
+
+                    return;
+                }
+
+
+                platformSettings =
+                    normalizeSettings(
+                        platformSettings
+                    );
+
+                originalSettings =
+                    deepClone(platformSettings);
+
+                fillForm(platformSettings);
+
+                showSettings();
+
+            } catch (error) {
+
+                console.error(error);
+
+                showError(
+                    error.message ||
+                    'Unable to load platform settings.'
+                );
+            }
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        SAVE
+        ----------------------------------------------------------
+        */
+
+        async function savePlatformSettings() {
+
+            if (isSaving) {
+                return;
+            }
+
+
+            if (!validateSettings()) {
+                return;
+            }
+
+
+            isSaving = true;
+
+            saveBtn.disabled = true;
+            discardBtn.disabled = true;
+
+            saveBtn.innerHTML =
+                "<i class='bx bx-loader-alt bx-spin'></i><span>Saving...</span>";
+
+
+            try {
+
+                const payload =
+                    settingsFromForm();
+
+
+                /*
+                ==================================================
+                PRODUCTION REQUEST
+                ==================================================
+
+                const token =
+                    await firebase.auth().currentUser.getIdToken();
+
+                const response = await fetch(API.settings, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(
+                        'Unable to save platform settings.'
+                    );
+                }
+
+                const savedData =
+                    await response.json();
+
+                platformSettings =
+                    normalizeSettings(savedData);
+
+                originalSettings =
+                    deepClone(platformSettings);
+
+                fillForm(platformSettings);
+
+                showToast(
+                    'Platform settings updated',
+                    'Your platform configuration has been saved.'
+                );
+
+                ==================================================
+                */
+
+
+                /*
+                Intentionally do not fake success before the
+                backend is connected.
+                */
+
+                await new Promise(resolve =>
+                    setTimeout(resolve, 500)
+                );
+
+
+                throw new Error(
+                    'Backend action is not connected yet.'
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+                showToast(
+                    'Unable to save',
+                    error.message ||
+                    'The platform settings could not be saved.',
+                    'error'
+                );
+
+            } finally {
+
+                isSaving = false;
+
+                saveBtn.disabled = false;
+
+                saveBtn.innerHTML =
+                    "<i class='bx bx-save'></i><span id='saveBtnText'>Save Changes</span>";
+
+                updateUnsavedState();
+            }
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        DISCARD
+        ----------------------------------------------------------
+        */
+
+        function discardChanges() {
+
+            if (!originalSettings) {
+                return;
+            }
+
+            fillForm(
+                deepClone(originalSettings)
+            );
+
+            showToast(
+                'Changes discarded',
+                'Your unsaved platform changes have been removed.'
+            );
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        INPUT EVENTS
+        ----------------------------------------------------------
+        */
+
+        const formInputs = [
+
+            platformName,
+            currency,
+            usdToNgnRate,
+            platformActive,
+
+            validationFee,
+            validationEnabled,
+
+            morningReward,
+            afternoonReward,
+            nightReward,
+            streakEnabled,
+
+            boxesPerRound,
+            mysteryMinReward,
+            mysteryMaxReward,
+            mysteryEnabled,
+
+            minimumQuestions,
+            quizMinReward,
+            quizMaxReward,
+            quizEnabled,
+
+            referralReward,
+            referralEnabled,
+            selfReferralProtection,
+            referralRewardsEnabled,
+
+            minimumWithdrawal,
+            withdrawalEnabled,
+            withdrawalEpinRequired,
+            withdrawalValidationRequired,
+
+            epinPrice,
+            epinEnabled,
+            epinApprovalRequired
+        ];
+
+
+        formInputs.forEach(element => {
+
+            element.addEventListener(
+                'input',
+                () => {
+
+                    updateCalculatedValues();
+                    updateOverview();
+                    updateUnsavedState();
+
+                }
+            );
+
+
+            element.addEventListener(
+                'change',
+                () => {
+
+                    updateCalculatedValues();
+                    updateOverview();
+                    updateUnsavedState();
+
+                }
+            );
+
+        });
+
+
+        /*
+        ----------------------------------------------------------
+        SAVE / DISCARD
+        ----------------------------------------------------------
+        */
+
+        saveBtn.addEventListener(
+            'click',
+            savePlatformSettings
+        );
+
+
+        discardBtn.addEventListener(
+            'click',
+            discardChanges
+        );
+
+
+        document.getElementById('retryBtn')
+            .addEventListener(
+                'click',
+                loadPlatformSettings
+            );
+
+
+        /*
+        ----------------------------------------------------------
+        THEME
+        ----------------------------------------------------------
+        */
+
+        const themeToggle =
+            document.getElementById('themeToggle');
+
+        const themeIcon =
+            document.getElementById('themeIcon');
+
+
+        function updateThemeIcon() {
+
+            if (
+                document.documentElement.classList.contains('dark')
+            ) {
+
+                themeIcon.className =
+                    'bx bx-sun text-lg';
+
+            } else {
+
+                themeIcon.className =
+                    'bx bx-moon text-lg';
+            }
+        }
+
+
+        function loadTheme() {
+
+            const savedTheme =
+                localStorage.getItem(
+                    'optify-admin-theme'
+                );
+
+
+            if (savedTheme === 'dark') {
+
+                document.documentElement.classList.add(
+                    'dark'
+                );
+
+            } else if (savedTheme === 'light') {
+
+                document.documentElement.classList.remove(
+                    'dark'
+                );
+
+            } else if (
+                window.matchMedia &&
+                window.matchMedia(
+                    '(prefers-color-scheme: dark)'
+                ).matches
+            ) {
+
+                document.documentElement.classList.add(
+                    'dark'
+                );
+            }
+
+
+            updateThemeIcon();
+        }
+
+
+        themeToggle.addEventListener(
+            'click',
+            () => {
+
+                const dark =
+                    document.documentElement.classList.toggle(
+                        'dark'
+                    );
+
+
+                localStorage.setItem(
+                    'optify-admin-theme',
+                    dark ? 'dark' : 'light'
+                );
+
+
+                updateThemeIcon();
+
+            }
+        );
+
+
+        /*
+        ----------------------------------------------------------
+        MOBILE SIDEBAR
+        ----------------------------------------------------------
+        */
+
+        const menuBtn =
+            document.getElementById('menuBtn');
+
+        const mobileOverlay =
+            document.getElementById('mobileOverlay');
+
+
+        function openSidebar() {
+
+            document.documentElement.classList.add(
+                'sidebar-open'
+            );
+        }
+
+
+        function closeSidebar() {
+
+            document.documentElement.classList.remove(
+                'sidebar-open'
+            );
+        }
+
+
+        menuBtn.addEventListener(
+            'click',
+            openSidebar
+        );
+
+
+        mobileOverlay.addEventListener(
+            'click',
+            closeSidebar
+        );
+
+
+        document.querySelectorAll(
+            '.sidebar a'
+        ).forEach(link => {
+
+            link.addEventListener(
+                'click',
+                () => {
+
+                    if (window.innerWidth < 1024) {
+                        closeSidebar();
+                    }
+
+                }
+            );
+
+        });
+
+
+        /*
+        ----------------------------------------------------------
+        ACTIVITY MODAL
+        ----------------------------------------------------------
+        */
+
+        const activityModal =
+            document.getElementById(
+                'activityModal'
+            );
+
+
+        document.getElementById(
+            'activityBtn'
+        ).addEventListener(
+            'click',
+            () => {
+
+                activityModal.classList.remove(
+                    'hidden'
+                );
+
+                activityModal.classList.add(
+                    'flex'
+                );
+
+            }
+        );
+
+
+        document.getElementById(
+            'closeActivity'
+        ).addEventListener(
+            'click',
+            closeActivityModal
+        );
+
+
+        activityModal.addEventListener(
+            'click',
+            event => {
+
+                if (
+                    event.target ===
+                    activityModal
+                ) {
+
+                    closeActivityModal();
+
+                }
+
+            }
+        );
+
+
+        function closeActivityModal() {
+
+            activityModal.classList.add(
+                'hidden'
+            );
+
+            activityModal.classList.remove(
+                'flex'
+            );
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        LOGOUT
+        ----------------------------------------------------------
+
+        Production:
+
+        await signOut(auth);
+        window.location.href = 'admin-login.html';
+
+        ----------------------------------------------------------
+        */
+
+        document.getElementById(
+            'logoutBtn'
+        ).addEventListener(
+            'click',
+            async () => {
+
+                /*
+                Replace with Firebase signOut()
+                after Firebase Authentication is connected.
+                */
+
+                window.location.href =
+                    'admin-login.html';
+
+            }
+        );
+
+
+        /*
+        ----------------------------------------------------------
+        UNSAVED CHANGES WARNING
+        ----------------------------------------------------------
+        */
+
+        window.addEventListener(
+            'beforeunload',
+            event => {
+
+                if (hasChanges()) {
+
+                    event.preventDefault();
+
+                    event.returnValue = '';
+
+                }
+
+            }
+        );
+
+
+        /*
+        ----------------------------------------------------------
+        INITIALIZE
+        ----------------------------------------------------------
+        */
+
+        loadTheme();
+        loadPlatformSettings();
+
+    </script>
+
+</body>
+
+</html>

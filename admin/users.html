@@ -1,0 +1,3374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Users | Optify Admin</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        sora: ['Sora', 'sans-serif']
+                    },
+                    colors: {
+                        navy: '#071A2B',
+                        emerald: '#12B76A',
+                        teal: '#0EA5A4',
+                        softgreen: '#E8F8F0',
+                        page: '#F7F9FC'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --navy: #071A2B;
+            --emerald: #12B76A;
+            --teal: #0EA5A4;
+            --soft-green: #E8F8F0;
+            --background: #F7F9FC;
+            --white: #FFFFFF;
+            --text: #101828;
+            --muted: #667085;
+            --border: #E4E7EC;
+            --warning: #F79009;
+            --danger: #F04438;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+        }
+
+        body.dark {
+            background: #07111d;
+            color: #f8fafc;
+        }
+
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--navy);
+            transition: transform .3s ease;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .sidebar-overlay {
+            display: none;
+        }
+
+        .nav-item {
+            transition: all .2s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, .07);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: rgba(18, 183, 106, .14);
+            color: #6ee7a8;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+        }
+
+        body.dark .card {
+            background: #0d1b2a;
+            border-color: #1e3447;
+        }
+
+        body.dark .page-bg {
+            background: #07111d;
+        }
+
+        body.dark .text-main {
+            color: #f8fafc;
+        }
+
+        body.dark .text-muted {
+            color: #94a3b8;
+        }
+
+        body.dark .input-field {
+            background: #0b1724;
+            border-color: #263b4e;
+            color: #f8fafc;
+        }
+
+        body.dark .input-field::placeholder {
+            color: #64748b;
+        }
+
+        body.dark .table-row:hover {
+            background: rgba(255, 255, 255, .025);
+        }
+
+        .input-field {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text);
+            border-radius: 12px;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .input-field:focus {
+            border-color: var(--emerald);
+            box-shadow: 0 0 0 3px rgba(18, 183, 106, .10);
+        }
+
+        .table-row {
+            transition: background .2s ease;
+        }
+
+        .table-row:hover {
+            background: #f9fafb;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-active {
+            color: #027a48;
+            background: #ecfdf3;
+        }
+
+        .badge-suspended {
+            color: #b54708;
+            background: #fffaeb;
+        }
+
+        .badge-disabled {
+            color: #b42318;
+            background: #fef3f2;
+        }
+
+        .badge-validated {
+            color: #027a48;
+            background: #ecfdf3;
+        }
+
+        .badge-pending {
+            color: #b54708;
+            background: #fffaeb;
+        }
+
+        .badge-unvalidated {
+            color: #667085;
+            background: #f2f4f7;
+        }
+
+        body.dark .badge-active,
+        body.dark .badge-validated {
+            background: rgba(18, 183, 106, .12);
+            color: #6ee7a8;
+        }
+
+        body.dark .badge-suspended,
+        body.dark .badge-pending {
+            background: rgba(247, 144, 9, .12);
+            color: #fdb022;
+        }
+
+        body.dark .badge-disabled {
+            background: rgba(240, 68, 56, .12);
+            color: #f97066;
+        }
+
+        body.dark .badge-unvalidated {
+            background: #182636;
+            color: #94a3b8;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-backdrop {
+            background: rgba(7, 26, 43, .58);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal {
+            animation: modalIn .2s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .toast {
+            animation: toastIn .25s ease;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .skeleton {
+            position: relative;
+            overflow: hidden;
+            background: #eaecf0;
+        }
+
+        .skeleton::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,.5),
+                transparent
+            );
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        body.dark .skeleton {
+            background: #172738;
+        }
+
+        body.dark .skeleton::after {
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,.04),
+                transparent
+            );
+        }
+
+        .mobile-bottom-nav {
+            display: none;
+        }
+
+        @media (max-width: 1100px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 60;
+                top: 0;
+                bottom: 0;
+                left: 0;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, .45);
+                z-index: 50;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .desktop-table {
+                display: none;
+            }
+
+            .mobile-users {
+                display: block !important;
+            }
+
+            .mobile-bottom-nav {
+                display: flex;
+            }
+
+            .main-content {
+                padding-bottom: 75px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-users {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page-header-actions {
+                width: 100%;
+            }
+
+            .page-header-actions button {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR OVERLAY -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar fixed left-0 top-0 bottom-0 z-[60] text-white overflow-y-auto">
+
+        <div class="px-5 py-6">
+
+            <!-- Logo -->
+            <div class="flex items-center gap-3 mb-8">
+
+                <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
+                    <i class='bx bx-layer text-2xl'></i>
+                </div>
+
+                <div>
+                    <div class="font-sora font-bold text-lg tracking-tight">
+                        OPTIFY
+                    </div>
+
+                    <div class="text-[10px] text-slate-400 uppercase tracking-[.18em]">
+                        Admin Portal
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- Main Menu -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Main Menu
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="admin.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-grid-alt text-lg'></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a href="users.html"
+                       class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm">
+                        <i class='bx bx-group text-lg'></i>
+                        <span>Users</span>
+                    </a>
+
+
+
+
+                    <a href="quizzes.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-help-circle text-lg'></i>
+                        <span>Quiz</span>
+                    </a>
+
+                    <a href="referrals.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-share-alt text-lg'></i>
+                        <span>Referrals</span>
+                    </a>
+
+                </nav>
+            </div>
+
+
+            <!-- Finance -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Finance
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="epins.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-key text-lg'></i>
+                        <span>E-pins</span>
+                    </a>
+
+                    <a href="withdrawals.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-money-withdraw text-lg'></i>
+                        <span>Withdrawals</span>
+                    </a>
+
+                    <!-- <a href="transactions.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-transfer-alt text-lg'></i>
+                        <span>Transactions</span>
+                    </a> -->
+
+                </nav>
+            </div>
+
+
+            <!-- Platform -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Platform
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="community-settings.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-link text-lg'></i>
+                        <span>Community Settings</span>
+                    </a>
+
+                    <a href="platform-settings.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-cog text-lg'></i>
+                        <span>Platform Settings</span>
+                    </a>
+
+                </nav>
+            </div>
+
+        </div>
+
+
+        <!-- Sidebar Bottom -->
+        <div class="absolute bottom-0 left-0 right-0 p-5 border-t border-white/10 bg-[#071A2B]">
+
+            <a href="admin-profile.html"
+               class="flex items-center gap-3 mb-4">
+
+                <div class="w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center">
+                    <i class='bx bx-user text-emerald-400'></i>
+                </div>
+
+                <div class="min-w-0">
+                    <p id="sidebarAdminName" class="text-sm font-medium truncate">
+                        Optify Admin
+                    </p>
+
+                    <p class="text-xs text-slate-500">
+                        Administrator
+                    </p>
+                </div>
+
+            </a>
+
+            <button
+                id="logoutBtn"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-400 hover:bg-white/5 hover:text-white transition">
+
+                <i class='bx bx-log-out text-lg'></i>
+                Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main-content page-bg">
+
+        <!-- TOPBAR -->
+        <header class="sticky top-0 z-40 bg-white/90 dark:bg-[#07111d]/90 backdrop-blur border-b border-slate-200 dark:border-slate-800">
+
+            <div class="h-[72px] px-5 md:px-8 flex items-center justify-between">
+
+                <div class="flex items-center gap-4">
+
+                    <button
+                        id="menuBtn"
+                        class="lg:hidden w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300">
+
+                        <i class='bx bx-menu text-xl'></i>
+
+                    </button>
+
+                    <div>
+                        <div class="flex items-center gap-2 text-xs text-slate-400">
+                            <span>Admin</span>
+                            <i class='bx bx-chevron-right'></i>
+                            <span>Users</span>
+                        </div>
+
+                        <p class="hidden sm:block text-sm font-semibold text-main mt-0.5">
+                            User Management
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="flex items-center gap-2">
+
+                    <!-- Theme -->
+                    <button
+                        id="themeToggle"
+                        class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 transition">
+
+                        <i id="themeIcon" class='bx bx-moon text-lg'></i>
+
+                    </button>
+
+
+                    <!-- Notifications -->
+                    <button
+                        class="relative w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 transition">
+
+                        <i class='bx bx-bell text-lg'></i>
+
+                        <span class="absolute top-2 right-2 w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+
+                    </button>
+
+
+                    <!-- Admin -->
+                    <div class="hidden sm:flex items-center gap-3 ml-2 pl-3 border-l border-slate-200 dark:border-slate-700">
+
+                        <div class="w-9 h-9 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+                            <i class='bx bx-shield-quarter text-emerald-600 dark:text-emerald-400'></i>
+                        </div>
+
+                        <div>
+                            <p id="topAdminName" class="text-sm font-semibold text-main">
+                                Optify Admin
+                            </p>
+
+                            <p class="text-[11px] text-slate-400">
+                                Administrator
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+        <div class="p-5 md:p-8 max-w-[1600px] mx-auto">
+
+            <!-- PAGE HEADER -->
+            <section class="mb-7">
+
+                <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+
+                    <div>
+
+                        <p class="text-xs font-semibold uppercase tracking-[.16em] text-emerald-600 dark:text-emerald-400 mb-2">
+                            User Management
+                        </p>
+
+                        <h1 class="font-sora text-2xl md:text-3xl font-bold text-main">
+                            Users
+                        </h1>
+
+                        <p class="text-sm text-muted mt-2 max-w-2xl">
+                            View, search and manage registered Optify users,
+                            account status, validation and wallet activity.
+                        </p>
+
+                    </div>
+
+
+                    <div class="page-header-actions">
+
+                        <button
+                            id="refreshUsersBtn"
+                            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#071A2B] text-white text-sm font-semibold hover:bg-[#0b2b45] transition">
+
+                            <i class='bx bx-refresh text-lg'></i>
+                            Refresh Users
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- STATISTICS -->
+            <section class="stats-grid grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+
+                <!-- Total Users -->
+                <div class="card p-5">
+
+                    <div class="flex items-start justify-between">
+
+                        <div>
+
+                            <p class="text-xs text-muted font-medium">
+                                Total Users
+                            </p>
+
+                            <h3 id="totalUsers"
+                                class="font-sora text-xl font-bold text-main mt-2">
+                                0
+                            </h3>
+
+                        </div>
+
+                        <div class="stat-icon bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                            <i class='bx bx-group text-xl'></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+            </section>
+
+
+            <!-- FILTERS -->
+            <section class="card p-4 md:p-5 mb-6">
+
+                <div class="flex items-center justify-between mb-4">
+
+                    <div>
+
+                        <h2 class="font-sora font-semibold text-main">
+                            User Directory
+                        </h2>
+
+                        <p class="text-xs text-muted mt-1">
+                            Search and filter registered accounts.
+                        </p>
+
+                    </div>
+
+                    <span
+                        id="resultCount"
+                        class="text-xs font-medium text-slate-400">
+                        0 users
+                    </span>
+
+                </div>
+
+
+                <div class="filter-grid grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3">
+
+                    <!-- Search -->
+                    <div class="xl:col-span-2 relative">
+
+                        <i class='bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400'></i>
+
+                        <input
+                            id="searchInput"
+                            type="text"
+                            placeholder="Search name, username, email or UID..."
+                            class="input-field pl-10 pr-4 py-2.5 text-sm">
+
+                    </div>
+
+
+                    <!-- Status -->
+                    <select id="statusFilter"
+                            class="input-field px-3 py-2.5 text-sm">
+
+                        <option value="all">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="suspended">Suspended</option>
+                        <option value="disabled">Disabled</option>
+
+                    </select>
+
+
+                    <!-- Validation -->
+                    <select id="validationFilter"
+                            class="input-field px-3 py-2.5 text-sm">
+
+                        <option value="all">All Validation</option>
+                        <option value="validated">Validated</option>
+                        <option value="pending">Pending</option>
+                        <option value="not_validated">Not Validated</option>
+
+                    </select>
+
+
+                    <!-- Country -->
+                    <select id="countryFilter"
+                            class="input-field px-3 py-2.5 text-sm">
+
+                        <option value="all">All Countries</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="flex flex-wrap items-center justify-between gap-3 mt-3">
+
+                    <div class="flex items-center gap-2">
+
+                        <label class="text-xs text-muted">
+                            Joined
+                        </label>
+
+                        <select
+                            id="dateFilter"
+                            class="input-field px-3 py-2 text-xs w-auto">
+
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="30days">Last 30 Days</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <button
+                        id="clearFiltersBtn"
+                        class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">
+
+                        Clear Filters
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- USERS TABLE -->
+            <section class="card overflow-hidden">
+
+                <!-- Loading -->
+                <div id="loadingState" class="hidden">
+
+                    <div class="p-5 space-y-4">
+
+                        <div class="skeleton h-5 rounded w-48"></div>
+
+                        <div class="space-y-3">
+
+                            <div class="skeleton h-14 rounded-xl"></div>
+                            <div class="skeleton h-14 rounded-xl"></div>
+                            <div class="skeleton h-14 rounded-xl"></div>
+                            <div class="skeleton h-14 rounded-xl"></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Error -->
+                <div id="errorState" class="hidden p-10 text-center">
+
+                    <div class="w-12 h-12 rounded-full bg-red-50 dark:bg-red-500/10 text-red-500 flex items-center justify-center mx-auto mb-4">
+                        <i class='bx bx-error-circle text-2xl'></i>
+                    </div>
+
+                    <h3 class="font-sora font-semibold text-main">
+                        Unable to load users
+                    </h3>
+
+                    <p id="errorMessage" class="text-sm text-muted mt-2">
+                        Something went wrong while loading the user directory.
+                    </p>
+
+                    <button
+                        id="retryBtn"
+                        class="mt-5 px-4 py-2.5 rounded-xl bg-[#071A2B] text-white text-sm font-semibold">
+
+                        Try Again
+
+                    </button>
+
+                </div>
+
+
+                <!-- Desktop Table -->
+                <div id="tableWrapper" class="desktop-table overflow-x-auto">
+
+                    <table class="w-full text-left">
+
+                        <thead class="bg-slate-50 dark:bg-[#0a1724] border-b border-slate-200 dark:border-slate-800">
+
+                            <tr>
+
+                                <th class="px-5 py-4 text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
+                                    User
+                                </th>
+
+                                <th class="px-5 py-4 text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
+                                    Status
+                                </th>
+
+                                <th class="px-5 py-4 text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
+                                    Validation
+                                </th>
+
+                                <th class="px-5 py-4 text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
+                                    Balance
+                                </th>
+
+                                <th class="px-5 py-4 text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
+                                    Total Earned
+                                </th>
+
+                                <th class="px-5 py-4 text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
+                                    Joined
+                                </th>
+
+                                <th class="px-5 py-4 text-[11px] uppercase tracking-wider text-slate-400 font-semibold text-right">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="usersTableBody">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- Mobile Users -->
+                <div id="mobileUsers"
+                     class="mobile-users hidden p-4 space-y-3">
+
+                </div>
+
+
+                <!-- Empty -->
+                <div id="emptyState" class="hidden p-12 text-center">
+
+                    <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
+
+                        <i class='bx bx-group text-2xl text-slate-400'></i>
+
+                    </div>
+
+                    <h3 class="font-sora font-semibold text-main">
+                        No users found
+                    </h3>
+
+                    <p class="text-sm text-muted mt-2 max-w-sm mx-auto">
+                        No users match your current search or filter settings.
+                    </p>
+
+                    <button
+                        id="emptyClearBtn"
+                        class="mt-4 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+
+                        Clear Filters
+
+                    </button>
+
+                </div>
+
+
+                <!-- Pagination -->
+                <div id="pagination"
+                     class="hidden px-5 py-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+
+                    <div class="flex items-center gap-2">
+
+                        <span class="text-xs text-muted">
+                            Rows
+                        </span>
+
+                        <select
+                            id="pageSize"
+                            class="input-field px-2 py-1.5 text-xs w-auto">
+
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="flex items-center gap-3">
+
+                        <span id="paginationInfo"
+                              class="text-xs text-muted">
+                            0–0 of 0
+                        </span>
+
+                        <div class="flex items-center gap-1">
+
+                            <button
+                                id="prevPage"
+                                class="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 disabled:opacity-40">
+
+                                <i class='bx bx-chevron-left'></i>
+
+                            </button>
+
+                            <button
+                                id="nextPage"
+                                class="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 disabled:opacity-40">
+
+                                <i class='bx bx-chevron-right'></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- USER DETAILS MODAL -->
+    <div
+        id="userModal"
+        class="hidden fixed inset-0 z-[100] modal-backdrop p-4 overflow-y-auto">
+
+        <div class="min-h-full flex items-center justify-center">
+
+            <div class="modal card w-full max-w-5xl my-8 overflow-hidden">
+
+                <!-- Modal Header -->
+                <div class="px-5 md:px-6 py-5 border-b border-slate-200 dark:border-slate-800 flex items-start justify-between gap-4">
+
+                    <div class="flex items-center gap-4">
+
+                        <div id="modalAvatar"
+                             class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-sora font-bold">
+
+                            U
+
+                        </div>
+
+                        <div>
+
+                            <h2 id="modalUserName"
+                                class="font-sora text-lg font-semibold text-main">
+                                User
+                            </h2>
+
+                            <p id="modalUserUsername"
+                               class="text-xs text-muted mt-1">
+                                @username
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        id="closeUserModal"
+                        class="w-9 h-9 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 flex items-center justify-center text-slate-500">
+
+                        <i class='bx bx-x text-xl'></i>
+
+                    </button>
+
+                </div>
+
+
+                <!-- Modal Body -->
+                <div class="p-5 md:p-6 max-h-[75vh] overflow-y-auto">
+
+                    <!-- Profile -->
+                    <div class="mb-7">
+
+                        <div class="flex items-center justify-between mb-4">
+
+                            <h3 class="font-sora font-semibold text-main">
+                                Profile Information
+                            </h3>
+
+                            <span id="modalStatusBadge"></span>
+
+                        </div>
+
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                            <div>
+                                <p class="text-[11px] text-muted">Full Name</p>
+                                <p id="detailFullName" class="text-sm font-medium text-main mt-1">—</p>
+                            </div>
+
+                            <div>
+                                <p class="text-[11px] text-muted">Username</p>
+                                <p id="detailUsername" class="text-sm font-medium text-main mt-1">—</p>
+                            </div>
+
+                            <div>
+                                <p class="text-[11px] text-muted">Email</p>
+                                <p id="detailEmail" class="text-sm font-medium text-main mt-1 break-all">—</p>
+                            </div>
+
+                            <div>
+                                <p class="text-[11px] text-muted">Phone</p>
+                                <p id="detailPhone" class="text-sm font-medium text-main mt-1">—</p>
+                            </div>
+
+                            <div>
+                                <p class="text-[11px] text-muted">Country</p>
+                                <p id="detailCountry" class="text-sm font-medium text-main mt-1">—</p>
+                            </div>
+
+                            <div>
+                                <p class="text-[11px] text-muted">Referral Code</p>
+                                <p id="detailReferralCode" class="text-sm font-medium text-main mt-1">—</p>
+                            </div>
+
+                            <div>
+                                <p class="text-[11px] text-muted">User ID</p>
+                                <p id="detailUid" class="text-sm font-medium text-main mt-1 break-all">—</p>
+                            </div>
+
+                            <div>
+                                <p class="text-[11px] text-muted">Registered</p>
+                                <p id="detailCreated" class="text-sm font-medium text-main mt-1">—</p>
+                            </div>
+
+                            <div>
+                                <p class="text-[11px] text-muted">Last Active</p>
+                                <p id="detailLastActive" class="text-sm font-medium text-main mt-1">—</p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Validation -->
+                    <div class="mb-7">
+
+                        <h3 class="font-sora font-semibold text-main mb-4">
+                            Validation
+                        </h3>
+
+                        <div class="card p-4 bg-slate-50 dark:bg-[#0a1724]">
+
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+
+                                <div class="flex items-center gap-3">
+
+                                    <div id="validationIcon"
+                                         class="w-10 h-10 rounded-xl flex items-center justify-center">
+
+                                        <i class='bx bx-shield'></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <p id="detailValidationStatus"
+                                           class="text-sm font-semibold text-main">
+                                            Not Validated
+                                        </p>
+
+                                        <p id="detailValidationText"
+                                           class="text-xs text-muted mt-1">
+                                            No validation payment recorded.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="text-left sm:text-right">
+
+                                    <p class="text-[11px] text-muted">
+                                        Validation Fee
+                                    </p>
+
+                                    <p id="detailValidationFee"
+                                       class="font-sora font-semibold text-main mt-1">
+                                        $5.00
+                                    </p>
+
+                                    <p class="text-[10px] text-muted">
+                                        ≈ ₦5,000
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Wallet -->
+                    <div class="mb-7">
+
+                        <h3 class="font-sora font-semibold text-main mb-4">
+                            Wallet Summary
+                        </h3>
+
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+
+                            <div class="card p-4 bg-slate-50 dark:bg-[#0a1724]">
+
+                                <p class="text-[11px] text-muted">
+                                    Available Balance
+                                </p>
+
+                                <p id="detailBalance"
+                                   class="font-sora text-lg font-semibold text-main mt-2">
+                                    $0.00
+                                </p>
+
+                                <p id="detailBalanceNgn"
+                                   class="text-[10px] text-muted mt-1">
+                                    ≈ ₦0
+                                </p>
+
+                            </div>
+
+
+                            <div class="card p-4 bg-slate-50 dark:bg-[#0a1724]">
+
+                                <p class="text-[11px] text-muted">
+                                    Total Earned
+                                </p>
+
+                                <p id="detailEarned"
+                                   class="font-sora text-lg font-semibold text-main mt-2">
+                                    $0.00
+                                </p>
+
+                            </div>
+
+
+                            <div class="card p-4 bg-slate-50 dark:bg-[#0a1724]">
+
+                                <p class="text-[11px] text-muted">
+                                    Pending Balance
+                                </p>
+
+                                <p id="detailPending"
+                                   class="font-sora text-lg font-semibold text-main mt-2">
+                                    $0.00
+                                </p>
+
+                            </div>
+
+
+                            <div class="card p-4 bg-slate-50 dark:bg-[#0a1724]">
+
+                                <p class="text-[11px] text-muted">
+                                    Total Withdrawn
+                                </p>
+
+                                <p id="detailWithdrawn"
+                                   class="font-sora text-lg font-semibold text-main mt-2">
+                                    $0.00
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Activity -->
+                    <div class="mb-7">
+
+                        <h3 class="font-sora font-semibold text-main mb-4">
+                            Activity Summary
+                        </h3>
+
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-[#0a1724]">
+                                <p class="text-[10px] text-muted">Tasks</p>
+                                <p id="detailTasks" class="font-sora font-semibold text-main mt-1">0</p>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-[#0a1724]">
+                                <p class="text-[10px] text-muted">Streak</p>
+                                <p id="detailStreak" class="font-sora font-semibold text-main mt-1">0</p>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-[#0a1724]">
+                                <p class="text-[10px] text-muted">Mystery Boxes</p>
+                                <p id="detailBoxes" class="font-sora font-semibold text-main mt-1">0</p>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-[#0a1724]">
+                                <p class="text-[10px] text-muted">Quizzes</p>
+                                <p id="detailQuizzes" class="font-sora font-semibold text-main mt-1">0</p>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-[#0a1724]">
+                                <p class="text-[10px] text-muted">Referrals</p>
+                                <p id="detailReferrals" class="font-sora font-semibold text-main mt-1">0</p>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-slate-50 dark:bg-[#0a1724]">
+                                <p class="text-[10px] text-muted">Referral Earnings</p>
+                                <p id="detailReferralEarnings" class="font-sora font-semibold text-main mt-1">$0</p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Actions -->
+                    <div>
+
+                        <h3 class="font-sora font-semibold text-main mb-4">
+                            Account Actions
+                        </h3>
+
+                        <div class="flex flex-wrap gap-2">
+
+                            <button
+                                id="viewTransactionsBtn"
+                                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold text-main hover:bg-slate-50 dark:hover:bg-white/5">
+
+                                <i class='bx bx-transfer-alt'></i>
+                                Transactions
+
+                            </button>
+
+
+                            <button
+                                id="viewWithdrawalsBtn"
+                                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold text-main hover:bg-slate-50 dark:hover:bg-white/5">
+
+                                <i class='bx bx-money-withdraw'></i>
+                                Withdrawals
+
+                            </button>
+
+
+                            <button
+                                id="suspendBtn"
+                                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 text-sm font-semibold hover:bg-amber-100 dark:hover:bg-amber-500/20">
+
+                                <i class='bx bx-pause-circle'></i>
+                                Suspend
+
+                            </button>
+
+
+                            <button
+                                id="disableBtn"
+                                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-sm font-semibold hover:bg-red-100 dark:hover:bg-red-500/20">
+
+                                <i class='bx bx-user-x'></i>
+                                Disable
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CONFIRMATION MODAL -->
+    <div
+        id="confirmModal"
+        class="hidden fixed inset-0 z-[120] modal-backdrop p-4">
+
+        <div class="h-full flex items-center justify-center">
+
+            <div class="modal card w-full max-w-md p-6">
+
+                <div id="confirmIcon"
+                     class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 flex items-center justify-center mb-4">
+
+                    <i class='bx bx-error-circle text-2xl'></i>
+
+                </div>
+
+                <h2 id="confirmTitle"
+                    class="font-sora text-lg font-semibold text-main">
+                    Confirm Action
+                </h2>
+
+                <p id="confirmMessage"
+                   class="text-sm text-muted mt-2 leading-6">
+                    Are you sure you want to continue?
+                </p>
+
+
+                <div class="flex gap-3 mt-6">
+
+                    <button
+                        id="cancelConfirm"
+                        class="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold text-main">
+
+                        Cancel
+
+                    </button>
+
+                    <button
+                        id="confirmAction"
+                        class="flex-1 px-4 py-2.5 rounded-xl bg-[#071A2B] text-white text-sm font-semibold">
+
+                        Confirm
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOAST -->
+    <div
+        id="toastContainer"
+        class="fixed right-4 bottom-4 z-[200] space-y-2">
+    </div>
+
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav class="mobile-bottom-nav fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-[#0d1b2a] border-t border-slate-200 dark:border-slate-800 h-[68px] items-center justify-around">
+
+        <a href="admin.html"
+           class="flex flex-col items-center gap-1 text-slate-400 text-[10px]">
+            <i class='bx bx-grid-alt text-xl'></i>
+            Home
+        </a>
+
+        <a href="users.html"
+           class="flex flex-col items-center gap-1 text-emerald-600 dark:text-emerald-400 text-[10px]">
+            <i class='bx bx-group text-xl'></i>
+            Users
+        </a>
+
+        <a href="validations.html"
+           class="flex flex-col items-center gap-1 text-slate-400 text-[10px]">
+            <i class='bx bx-badge-check text-xl'></i>
+            Validate
+        </a>
+
+        <a href="withdrawals.html"
+           class="flex flex-col items-center gap-1 text-slate-400 text-[10px]">
+            <i class='bx bx-money-withdraw text-xl'></i>
+            Withdraw
+        </a>
+
+        <a href="admin-profile.html"
+           class="flex flex-col items-center gap-1 text-slate-400 text-[10px]">
+            <i class='bx bx-user text-xl'></i>
+            Profile
+        </a>
+
+    </nav>
+
+
+    <script>
+        /*
+        ============================================================
+        OPTIFY USER MANAGEMENT
+        ============================================================
+
+        IMPORTANT:
+        This page is frontend only until the backend/Firebase
+        integration is connected.
+
+        Never trust frontend values for:
+        - user status
+        - validation
+        - wallet balance
+        - total earnings
+        - withdrawals
+        - referrals
+        - admin permissions
+
+        Those values must be controlled and verified server-side.
+        ============================================================
+        */
+
+
+        const USD_TO_NGN = 1000;
+
+
+        /*
+        ============================================================
+        DEMO DATA
+        ============================================================
+
+        Intentionally empty.
+
+        Production example:
+
+        {
+            uid: "",
+            fullName: "",
+            username: "",
+            email: "",
+            phone: "",
+            country: "",
+            referralCode: "",
+            status: "active",
+            validationStatus: "not_validated",
+            balance: 0,
+            totalEarned: 0,
+            pendingBalance: 0,
+            totalWithdrawn: 0,
+            tasksCompleted: 0,
+            currentStreak: 0,
+            mysteryBoxesOpened: 0,
+            quizzesCompleted: 0,
+            totalReferrals: 0,
+            validatedReferrals: 0,
+            referralEarnings: 0,
+            createdAt: null,
+            lastActiveAt: null
+        }
+        ============================================================
+        */
+
+        const users = [];
+
+
+        let filteredUsers = [];
+        let currentPage = 1;
+        let pageSize = 10;
+        let selectedUser = null;
+        let pendingAction = null;
+
+
+        const $ = (id) => document.getElementById(id);
+
+
+        /*
+        ============================================================
+        ELEMENTS
+        ============================================================
+        */
+
+        const sidebar = $('sidebar');
+        const sidebarOverlay = $('sidebarOverlay');
+        const menuBtn = $('menuBtn');
+
+        const themeToggle = $('themeToggle');
+        const themeIcon = $('themeIcon');
+
+        const searchInput = $('searchInput');
+        const statusFilter = $('statusFilter');
+        const validationFilter = $('validationFilter');
+        const countryFilter = $('countryFilter');
+        const dateFilter = $('dateFilter');
+
+        const usersTableBody = $('usersTableBody');
+        const mobileUsers = $('mobileUsers');
+
+        const tableWrapper = $('tableWrapper');
+        const loadingState = $('loadingState');
+        const errorState = $('errorState');
+        const emptyState = $('emptyState');
+        const pagination = $('pagination');
+
+        const userModal = $('userModal');
+        const confirmModal = $('confirmModal');
+
+
+        /*
+        ============================================================
+        FORMATTERS
+        ============================================================
+        */
+
+        function formatUSD(value) {
+
+            const amount = Number(value || 0);
+
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2
+            }).format(amount);
+
+        }
+
+
+        function formatNGN(value) {
+
+            const amount = Number(value || 0) * USD_TO_NGN;
+
+            return new Intl.NumberFormat('en-NG', {
+                style: 'currency',
+                currency: 'NGN',
+                minimumFractionDigits: 0
+            }).format(amount);
+
+        }
+
+
+        function formatDate(value) {
+
+            if (!value) {
+                return '—';
+            }
+
+            const date = value instanceof Date
+                ? value
+                : new Date(value);
+
+            if (Number.isNaN(date.getTime())) {
+                return '—';
+            }
+
+            return date.toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+
+        }
+
+
+        function formatDateTime(value) {
+
+            if (!value) {
+                return '—';
+            }
+
+            const date = new Date(value);
+
+            if (Number.isNaN(date.getTime())) {
+                return '—';
+            }
+
+            return date.toLocaleString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+        }
+
+
+        function escapeHTML(value) {
+
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+
+        }
+
+
+        function getInitials(name) {
+
+            if (!name) {
+                return 'U';
+            }
+
+            const parts = name.trim().split(/\s+/);
+
+            return parts
+                .slice(0, 2)
+                .map(part => part.charAt(0))
+                .join('')
+                .toUpperCase();
+
+        }
+
+
+        /*
+        ============================================================
+        BADGES
+        ============================================================
+        */
+
+        function statusBadge(status) {
+
+            const value = String(status || '').toLowerCase();
+
+            if (value === 'active') {
+
+                return `
+                    <span class="badge badge-active">
+                        <i class='bx bxs-circle text-[6px]'></i>
+                        Active
+                    </span>
+                `;
+
+            }
+
+            if (value === 'suspended') {
+
+                return `
+                    <span class="badge badge-suspended">
+                        <i class='bx bxs-pause-circle'></i>
+                        Suspended
+                    </span>
+                `;
+
+            }
+
+            return `
+                <span class="badge badge-disabled">
+                    <i class='bx bxs-x-circle'></i>
+                    Disabled
+                </span>
+            `;
+
+        }
+
+
+        function validationBadge(status) {
+
+            const value = String(status || '').toLowerCase();
+
+            if (value === 'validated') {
+
+                return `
+                    <span class="badge badge-validated">
+                        <i class='bx bx-check-circle'></i>
+                        Validated
+                    </span>
+                `;
+
+            }
+
+            if (value === 'pending') {
+
+                return `
+                    <span class="badge badge-pending">
+                        <i class='bx bx-time-five'></i>
+                        Pending
+                    </span>
+                `;
+
+            }
+
+            return `
+                <span class="badge badge-unvalidated">
+                    <i class='bx bx-lock-alt'></i>
+                    Not Validated
+                </span>
+            `;
+
+        }
+
+
+        /*
+        ============================================================
+        STATISTICS
+        ============================================================
+        */
+
+        function updateStatistics() {
+
+            const total = users.length;
+
+            const validated = users.filter(
+                user => user.validationStatus === 'validated'
+            ).length;
+
+            const pending = users.filter(
+                user => user.validationStatus === 'pending'
+            ).length;
+
+            const active = users.filter(
+                user => user.status === 'active'
+            ).length;
+
+            const disabled = users.filter(
+                user => user.status === 'disabled'
+            ).length;
+
+
+            $('totalUsers').textContent = total.toLocaleString();
+            $('validatedUsers').textContent = validated.toLocaleString();
+            $('pendingUsers').textContent = pending.toLocaleString();
+            $('activeUsers').textContent = active.toLocaleString();
+            $('disabledUsers').textContent = disabled.toLocaleString();
+
+        }
+
+
+        /*
+        ============================================================
+        COUNTRY FILTER
+        ============================================================
+        */
+
+        function populateCountries() {
+
+            const countries = [
+                ...new Set(
+                    users
+                        .map(user => user.country)
+                        .filter(Boolean)
+                )
+            ].sort();
+
+            countryFilter.innerHTML = `
+                <option value="all">All Countries</option>
+                ${countries.map(country => `
+                    <option value="${escapeHTML(country)}">
+                        ${escapeHTML(country)}
+                    </option>
+                `).join('')}
+            `;
+
+        }
+
+
+        /*
+        ============================================================
+        FILTERING
+        ============================================================
+        */
+
+        function filterUsers() {
+
+            const search = searchInput.value
+                .trim()
+                .toLowerCase();
+
+            const status = statusFilter.value;
+            const validation = validationFilter.value;
+            const country = countryFilter.value;
+            const date = dateFilter.value;
+
+
+            filteredUsers = users.filter(user => {
+
+                const matchesSearch =
+                    !search ||
+                    String(user.fullName || '').toLowerCase().includes(search) ||
+                    String(user.username || '').toLowerCase().includes(search) ||
+                    String(user.email || '').toLowerCase().includes(search) ||
+                    String(user.uid || '').toLowerCase().includes(search);
+
+
+                const matchesStatus =
+                    status === 'all' ||
+                    user.status === status;
+
+
+                const matchesValidation =
+                    validation === 'all' ||
+                    user.validationStatus === validation;
+
+
+                const matchesCountry =
+                    country === 'all' ||
+                    user.country === country;
+
+
+                let matchesDate = true;
+
+
+                if (date !== 'all' && user.createdAt) {
+
+                    const created = new Date(user.createdAt);
+                    const now = new Date();
+
+                    if (!Number.isNaN(created.getTime())) {
+
+                        const today = new Date(
+                            now.getFullYear(),
+                            now.getMonth(),
+                            now.getDate()
+                        );
+
+                        if (date === 'today') {
+
+                            matchesDate =
+                                created >= today;
+
+                        }
+
+                        if (date === 'week') {
+
+                            const startOfWeek = new Date(today);
+
+                            const day = startOfWeek.getDay();
+
+                            const diff = day === 0 ? 6 : day - 1;
+
+                            startOfWeek.setDate(
+                                startOfWeek.getDate() - diff
+                            );
+
+                            matchesDate =
+                                created >= startOfWeek;
+
+                        }
+
+                        if (date === 'month') {
+
+                            const startOfMonth = new Date(
+                                now.getFullYear(),
+                                now.getMonth(),
+                                1
+                            );
+
+                            matchesDate =
+                                created >= startOfMonth;
+
+                        }
+
+                        if (date === '30days') {
+
+                            const thirtyDaysAgo = new Date(now);
+
+                            thirtyDaysAgo.setDate(
+                                now.getDate() - 30
+                            );
+
+                            matchesDate =
+                                created >= thirtyDaysAgo;
+
+                        }
+
+                    }
+
+                }
+
+
+                return (
+                    matchesSearch &&
+                    matchesStatus &&
+                    matchesValidation &&
+                    matchesCountry &&
+                    matchesDate
+                );
+
+            });
+
+
+            currentPage = 1;
+
+            renderUsers();
+
+        }
+
+
+        /*
+        ============================================================
+        RENDER USERS
+        ============================================================
+        */
+
+        function renderUsers() {
+
+            const total = filteredUsers.length;
+
+            $('resultCount').textContent =
+                `${total.toLocaleString()} ${total === 1 ? 'user' : 'users'}`;
+
+
+            if (!total) {
+
+                tableWrapper.classList.add('hidden');
+                mobileUsers.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                pagination.classList.add('hidden');
+
+                return;
+
+            }
+
+
+            emptyState.classList.add('hidden');
+
+
+            const start =
+                (currentPage - 1) * pageSize;
+
+            const end =
+                Math.min(start + pageSize, total);
+
+            const pageUsers =
+                filteredUsers.slice(start, end);
+
+
+            renderDesktopUsers(pageUsers);
+            renderMobileUsers(pageUsers);
+            renderPagination(total, start, end);
+
+
+            tableWrapper.classList.remove('hidden');
+            pagination.classList.remove('hidden');
+
+        }
+
+
+        function renderDesktopUsers(pageUsers) {
+
+            usersTableBody.innerHTML = pageUsers.map(user => {
+
+                return `
+                    <tr class="table-row border-b border-slate-100 dark:border-slate-800">
+
+                        <td class="px-5 py-4">
+
+                            <button
+                                onclick="openUser('${escapeHTML(user.uid)}')"
+                                class="flex items-center gap-3 text-left">
+
+                                <div class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-bold">
+
+                                    ${escapeHTML(getInitials(user.fullName))}
+
+                                </div>
+
+                                <div class="min-w-0">
+
+                                    <p class="text-sm font-semibold text-main truncate max-w-[180px]">
+                                        ${escapeHTML(user.fullName || 'Unnamed User')}
+                                    </p>
+
+                                    <p class="text-xs text-muted mt-0.5 truncate max-w-[180px]">
+                                        @${escapeHTML(user.username || '—')}
+                                    </p>
+
+                                </div>
+
+                            </button>
+
+                        </td>
+
+
+                        <td class="px-5 py-4">
+                            ${statusBadge(user.status)}
+                        </td>
+
+
+                        <td class="px-5 py-4">
+                            ${validationBadge(user.validationStatus)}
+                        </td>
+
+
+                        <td class="px-5 py-4">
+
+                            <p class="text-sm font-semibold text-main">
+                                ${formatUSD(user.balance)}
+                            </p>
+
+                            <p class="text-[10px] text-muted">
+                                ${formatNGN(user.balance)}
+                            </p>
+
+                        </td>
+
+
+                        <td class="px-5 py-4">
+
+                            <p class="text-sm font-medium text-main">
+                                ${formatUSD(user.totalEarned)}
+                            </p>
+
+                        </td>
+
+
+                        <td class="px-5 py-4">
+
+                            <p class="text-sm text-main">
+                                ${formatDate(user.createdAt)}
+                            </p>
+
+                        </td>
+
+
+                        <td class="px-5 py-4 text-right">
+
+                            <button
+                                onclick="openUser('${escapeHTML(user.uid)}')"
+                                class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5">
+
+                                View
+                                <i class='bx bx-chevron-right'></i>
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+                `;
+
+            }).join('');
+
+        }
+
+
+        function renderMobileUsers(pageUsers) {
+
+            mobileUsers.innerHTML = pageUsers.map(user => {
+
+                return `
+                    <div class="card p-4">
+
+                        <div class="flex items-start justify-between gap-3">
+
+                            <button
+                                onclick="openUser('${escapeHTML(user.uid)}')"
+                                class="flex items-center gap-3 text-left min-w-0">
+
+                                <div class="w-10 h-10 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-bold">
+                                    ${escapeHTML(getInitials(user.fullName))}
+                                </div>
+
+                                <div class="min-w-0">
+
+                                    <p class="text-sm font-semibold text-main truncate">
+                                        ${escapeHTML(user.fullName || 'Unnamed User')}
+                                    </p>
+
+                                    <p class="text-xs text-muted truncate mt-0.5">
+                                        @${escapeHTML(user.username || '—')}
+                                    </p>
+
+                                </div>
+
+                            </button>
+
+                            ${statusBadge(user.status)}
+
+                        </div>
+
+
+                        <div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+
+                            <div>
+                                <p class="text-[10px] text-muted">
+                                    Validation
+                                </p>
+
+                                <div class="mt-1">
+                                    ${validationBadge(user.validationStatus)}
+                                </div>
+                            </div>
+
+                            <div>
+                                <p class="text-[10px] text-muted">
+                                    Balance
+                                </p>
+
+                                <p class="text-sm font-semibold text-main mt-1">
+                                    ${formatUSD(user.balance)}
+                                </p>
+                            </div>
+
+                            <div>
+                                <p class="text-[10px] text-muted">
+                                    Total Earned
+                                </p>
+
+                                <p class="text-sm font-semibold text-main mt-1">
+                                    ${formatUSD(user.totalEarned)}
+                                </p>
+                            </div>
+
+                            <div>
+                                <p class="text-[10px] text-muted">
+                                    Joined
+                                </p>
+
+                                <p class="text-sm font-medium text-main mt-1">
+                                    ${formatDate(user.createdAt)}
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            onclick="openUser('${escapeHTML(user.uid)}')"
+                            class="w-full mt-4 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 text-sm font-semibold text-main">
+
+                            View User
+
+                        </button>
+
+                    </div>
+                `;
+
+            }).join('');
+
+        }
+
+
+        /*
+        ============================================================
+        PAGINATION
+        ============================================================
+        */
+
+        function renderPagination(total, start, end) {
+
+            $('paginationInfo').textContent =
+                `${start + 1}–${end} of ${total}`;
+
+
+            $('prevPage').disabled =
+                currentPage <= 1;
+
+
+            $('nextPage').disabled =
+                end >= total;
+
+        }
+
+
+        /*
+        ============================================================
+        USER DETAILS
+        ============================================================
+        */
+
+        function openUser(uid) {
+
+            const user = users.find(
+                item => item.uid === uid
+            );
+
+            if (!user) {
+                showToast(
+                    'User details are not available.',
+                    'error'
+                );
+                return;
+            }
+
+
+            selectedUser = user;
+
+            renderUserDetails(user);
+
+            userModal.classList.remove('hidden');
+
+            document.body.style.overflow = 'hidden';
+
+        }
+
+
+        window.openUser = openUser;
+
+
+        function renderUserDetails(user) {
+
+            $('modalAvatar').textContent =
+                getInitials(user.fullName);
+
+            $('modalUserName').textContent =
+                user.fullName || 'Unnamed User';
+
+            $('modalUserUsername').textContent =
+                user.username
+                    ? `@${user.username}`
+                    : '@—';
+
+
+            $('modalStatusBadge').innerHTML =
+                statusBadge(user.status);
+
+
+            $('detailFullName').textContent =
+                user.fullName || '—';
+
+            $('detailUsername').textContent =
+                user.username
+                    ? `@${user.username}`
+                    : '—';
+
+            $('detailEmail').textContent =
+                user.email || '—';
+
+            $('detailPhone').textContent =
+                user.phone || '—';
+
+            $('detailCountry').textContent =
+                user.country || '—';
+
+            $('detailReferralCode').textContent =
+                user.referralCode || '—';
+
+            $('detailUid').textContent =
+                user.uid || '—';
+
+            $('detailCreated').textContent =
+                formatDateTime(user.createdAt);
+
+            $('detailLastActive').textContent =
+                formatDateTime(user.lastActiveAt);
+
+
+            $('detailBalance').textContent =
+                formatUSD(user.balance);
+
+            $('detailBalanceNgn').textContent =
+                formatNGN(user.balance);
+
+            $('detailEarned').textContent =
+                formatUSD(user.totalEarned);
+
+            $('detailPending').textContent =
+                formatUSD(user.pendingBalance);
+
+            $('detailWithdrawn').textContent =
+                formatUSD(user.totalWithdrawn);
+
+
+            $('detailTasks').textContent =
+                Number(user.tasksCompleted || 0).toLocaleString();
+
+            $('detailStreak').textContent =
+                Number(user.currentStreak || 0).toLocaleString();
+
+            $('detailBoxes').textContent =
+                Number(user.mysteryBoxesOpened || 0).toLocaleString();
+
+            $('detailQuizzes').textContent =
+                Number(user.quizzesCompleted || 0).toLocaleString();
+
+            $('detailReferrals').textContent =
+                Number(user.totalReferrals || 0).toLocaleString();
+
+            $('detailReferralEarnings').textContent =
+                formatUSD(user.referralEarnings);
+
+
+            renderValidationDetails(user);
+
+            updateActionButtons(user);
+
+        }
+
+
+        function renderValidationDetails(user) {
+
+            const status =
+                user.validationStatus || 'not_validated';
+
+
+            if (status === 'validated') {
+
+                $('validationIcon').className =
+                    'w-10 h-10 rounded-xl flex items-center justify-center bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
+
+                $('validationIcon').innerHTML =
+                    `<i class='bx bx-check-shield text-xl'></i>`;
+
+                $('detailValidationStatus').textContent =
+                    'Dashboard Validated';
+
+                $('detailValidationText').textContent =
+                    'The user has successfully completed validation.';
+
+                return;
+
+            }
+
+
+            if (status === 'pending') {
+
+                $('validationIcon').className =
+                    'w-10 h-10 rounded-xl flex items-center justify-center bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400';
+
+                $('validationIcon').innerHTML =
+                    `<i class='bx bx-time-five text-xl'></i>`;
+
+                $('detailValidationStatus').textContent =
+                    'Validation Pending';
+
+                $('detailValidationText').textContent =
+                    'A validation payment is awaiting verification.';
+
+                return;
+
+            }
+
+
+            $('validationIcon').className =
+                'w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-500';
+
+            $('validationIcon').innerHTML =
+                `<i class='bx bx-lock-alt text-xl'></i>`;
+
+            $('detailValidationStatus').textContent =
+                'Not Validated';
+
+            $('detailValidationText').textContent =
+                'No verified validation payment recorded.';
+
+        }
+
+
+        function updateActionButtons(user) {
+
+            const suspendBtn = $('suspendBtn');
+
+            if (user.status === 'suspended') {
+
+                suspendBtn.innerHTML =
+                    `<i class='bx bx-play-circle'></i> Reactivate`;
+
+            } else {
+
+                suspendBtn.innerHTML =
+                    `<i class='bx bx-pause-circle'></i> Suspend`;
+
+            }
+
+
+            const disableBtn = $('disableBtn');
+
+            if (user.status === 'disabled') {
+
+                disableBtn.disabled = true;
+                disableBtn.classList.add('opacity-50');
+
+            } else {
+
+                disableBtn.disabled = false;
+                disableBtn.classList.remove('opacity-50');
+
+            }
+
+        }
+
+
+        function closeUserModal() {
+
+            userModal.classList.add('hidden');
+
+            document.body.style.overflow = '';
+
+            selectedUser = null;
+
+        }
+
+
+        /*
+        ============================================================
+        CONFIRMATION ACTIONS
+        ============================================================
+        */
+
+        function askConfirmation(action, user) {
+
+            pendingAction = {
+                action,
+                user
+            };
+
+
+            const title = $('confirmTitle');
+            const message = $('confirmMessage');
+            const icon = $('confirmIcon');
+            const confirmButton = $('confirmAction');
+
+
+            if (action === 'suspend') {
+
+                const isSuspended =
+                    user.status === 'suspended';
+
+                title.textContent =
+                    isSuspended
+                        ? 'Reactivate User'
+                        : 'Suspend User';
+
+                message.textContent =
+                    isSuspended
+                        ? `Reactivate ${user.fullName || 'this user'}?`
+                        : `Suspend ${user.fullName || 'this user'}? The user will not be able to use restricted account features while suspended.`;
+
+                confirmButton.textContent =
+                    isSuspended
+                        ? 'Reactivate'
+                        : 'Suspend';
+
+                confirmButton.className =
+                    'flex-1 px-4 py-2.5 rounded-xl bg-[#071A2B] text-white text-sm font-semibold';
+
+                icon.className =
+                    'w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 flex items-center justify-center mb-4';
+
+                icon.innerHTML =
+                    `<i class='bx bx-error-circle text-2xl'></i>`;
+
+            }
+
+
+            if (action === 'disable') {
+
+                title.textContent =
+                    'Disable User';
+
+                message.textContent =
+                    `Disable ${user.fullName || 'this user'}? This is a stronger account restriction and should only be performed when appropriate.`;
+
+                confirmButton.textContent =
+                    'Disable User';
+
+                confirmButton.className =
+                    'flex-1 px-4 py-2.5 rounded-xl bg-red-600 text-white text-sm font-semibold';
+
+                icon.className =
+                    'w-12 h-12 rounded-2xl bg-red-50 dark:bg-red-500/10 text-red-600 flex items-center justify-center mb-4';
+
+                icon.innerHTML =
+                    `<i class='bx bx-user-x text-2xl'></i>`;
+
+            }
+
+
+            confirmModal.classList.remove('hidden');
+
+        }
+
+
+        function closeConfirmModal() {
+
+            confirmModal.classList.add('hidden');
+
+            pendingAction = null;
+
+        }
+
+
+        async function executePendingAction() {
+
+            if (!pendingAction) {
+                return;
+            }
+
+
+            const {
+                action,
+                user
+            } = pendingAction;
+
+
+            closeConfirmModal();
+
+
+            if (action === 'suspend') {
+
+                if (user.status === 'suspended') {
+
+                    await reactivateUser(user.uid);
+
+                } else {
+
+                    await suspendUser(user.uid);
+
+                }
+
+                return;
+
+            }
+
+
+            if (action === 'disable') {
+
+                await disableUser(user.uid);
+
+            }
+
+        }
+
+
+        /*
+        ============================================================
+        BACKEND PLACEHOLDERS
+        ============================================================
+
+        Replace these functions with Firebase/backend calls.
+
+        The frontend must NEVER directly decide whether an account
+        is validated or whether money is available.
+        ============================================================
+        */
+
+
+        async function loadUsers() {
+
+            /*
+            Production example:
+
+            const response = await fetch(
+                `/api/admin/users?page=${currentPage}&limit=${pageSize}`
+            );
+
+            if (!response.ok) {
+                throw new Error('Unable to load users');
+            }
+
+            const data = await response.json();
+
+            return data.users;
+            */
+
+            return users;
+
+        }
+
+
+        async function loadUserStats() {
+
+            /*
+            Example:
+
+            GET /api/admin/users/stats
+            */
+
+            return {
+                totalUsers: 0,
+                validatedUsers: 0,
+                pendingUsers: 0,
+                activeUsers: 0,
+                disabledUsers: 0
+            };
+
+        }
+
+
+        async function getUserDetails(uid) {
+
+            /*
+            GET /api/admin/users/:uid
+            */
+
+            return users.find(
+                user => user.uid === uid
+            );
+
+        }
+
+
+        async function suspendUser(uid) {
+
+            /*
+            Production:
+
+            POST /api/admin/users/:uid/suspend
+
+            Backend should:
+            - authenticate admin
+            - verify admin role
+            - update account status
+            - create audit log
+            - return updated user
+            */
+
+            showToast(
+                'User suspension is not connected yet.',
+                'info'
+            );
+
+        }
+
+
+        async function reactivateUser(uid) {
+
+            /*
+            POST /api/admin/users/:uid/reactivate
+            */
+
+            showToast(
+                'User reactivation is not connected yet.',
+                'info'
+            );
+
+        }
+
+
+        async function disableUser(uid) {
+
+            /*
+            POST /api/admin/users/:uid/disable
+            */
+
+            showToast(
+                'User disabling is not connected yet.',
+                'info'
+            );
+
+        }
+
+
+        async function loadUserTransactions(uid) {
+
+            /*
+            GET /api/admin/users/:uid/transactions
+            */
+
+            return [];
+
+        }
+
+
+        async function loadUserReferrals(uid) {
+
+            /*
+            GET /api/admin/users/:uid/referrals
+            */
+
+            return [];
+
+        }
+
+
+        async function loadUserActivity(uid) {
+
+            /*
+            GET /api/admin/users/:uid/activity
+            */
+
+            return [];
+
+        }
+
+
+        /*
+        ============================================================
+        AUTH GUARD
+        ============================================================
+
+        Connect this to Firebase Authentication or your backend.
+
+        Recommended production flow:
+
+        1. Check Firebase auth state.
+        2. Get authenticated UID.
+        3. Read admins/{uid}.
+        4. Require role === "admin".
+        5. Require active === true.
+        6. Only then load this page.
+
+        Do NOT rely on:
+        localStorage
+        sessionStorage
+        URL parameters
+        frontend role variables
+        hidden inputs
+        ============================================================
+        */
+
+        async function verifyAdminAccess() {
+
+            /*
+            Production example:
+
+            onAuthStateChanged(auth, async (admin) => {
+
+                if (!admin) {
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+
+                const adminDoc = await getDoc(
+                    doc(db, 'admins', admin.uid)
+                );
+
+                if (
+                    !adminDoc.exists() ||
+                    adminDoc.data().role !== 'admin' ||
+                    adminDoc.data().active !== true
+                ) {
+                    await signOut(auth);
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+
+                loadPage();
+            });
+
+            */
+
+            return true;
+
+        }
+
+
+        /*
+        ============================================================
+        PAGE LOADING
+        ============================================================
+        */
+
+        async function loadPage() {
+
+            loadingState.classList.remove('hidden');
+            tableWrapper.classList.add('hidden');
+            mobileUsers.classList.add('hidden');
+            emptyState.classList.add('hidden');
+            errorState.classList.add('hidden');
+
+
+            try {
+
+                await loadUsers();
+                await loadUserStats();
+
+                updateStatistics();
+                populateCountries();
+                filterUsers();
+
+            } catch (error) {
+
+                console.error(error);
+
+                loadingState.classList.add('hidden');
+                errorState.classList.remove('hidden');
+
+                $('errorMessage').textContent =
+                    error.message ||
+                    'Unable to load the user directory.';
+
+                return;
+
+            }
+
+
+            loadingState.classList.add('hidden');
+
+        }
+
+
+        /*
+        ============================================================
+        TOAST
+        ============================================================
+        */
+
+        function showToast(message, type = 'success') {
+
+            const toast = document.createElement('div');
+
+            const icon =
+                type === 'success'
+                    ? 'bx-check-circle'
+                    : type === 'error'
+                        ? 'bx-error-circle'
+                        : 'bx-info-circle';
+
+
+            const iconColor =
+                type === 'success'
+                    ? 'text-emerald-500'
+                    : type === 'error'
+                        ? 'text-red-500'
+                        : 'text-blue-500';
+
+
+            toast.className =
+                'toast flex items-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-[#0d1b2a] border border-slate-200 dark:border-slate-700 shadow-xl text-sm';
+
+
+            toast.innerHTML = `
+                <i class='bx ${icon} ${iconColor} text-xl'></i>
+
+                <span class="text-main">
+                    ${escapeHTML(message)}
+                </span>
+            `;
+
+
+            $('toastContainer').appendChild(toast);
+
+
+            setTimeout(() => {
+
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+
+                setTimeout(() => {
+                    toast.remove();
+                }, 250);
+
+            }, 3000);
+
+        }
+
+
+        /*
+        ============================================================
+        THEME
+        ============================================================
+        */
+
+        function applyTheme(theme) {
+
+            if (theme === 'dark') {
+
+                document.body.classList.add('dark');
+
+                themeIcon.className =
+                    'bx bx-sun text-lg';
+
+            } else {
+
+                document.body.classList.remove('dark');
+
+                themeIcon.className =
+                    'bx bx-moon text-lg';
+
+            }
+
+        }
+
+
+        function initTheme() {
+
+            const savedTheme =
+                localStorage.getItem('optify-theme');
+
+            if (savedTheme) {
+
+                applyTheme(savedTheme);
+
+                return;
+
+            }
+
+
+            const prefersDark =
+                window.matchMedia &&
+                window.matchMedia(
+                    '(prefers-color-scheme: dark)'
+                ).matches;
+
+
+            applyTheme(
+                prefersDark ? 'dark' : 'light'
+            );
+
+        }
+
+
+        themeToggle.addEventListener('click', () => {
+
+            const dark =
+                document.body.classList.contains('dark');
+
+            const nextTheme =
+                dark ? 'light' : 'dark';
+
+            localStorage.setItem(
+                'optify-theme',
+                nextTheme
+            );
+
+            applyTheme(nextTheme);
+
+        });
+
+
+        /*
+        ============================================================
+        SIDEBAR
+        ============================================================
+        */
+
+        function openSidebar() {
+
+            sidebar.classList.add('open');
+            sidebarOverlay.classList.add('show');
+
+        }
+
+
+        function closeSidebar() {
+
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('show');
+
+        }
+
+
+        menuBtn.addEventListener(
+            'click',
+            openSidebar
+        );
+
+
+        sidebarOverlay.addEventListener(
+            'click',
+            closeSidebar
+        );
+
+
+        /*
+        ============================================================
+        FILTER EVENTS
+        ============================================================
+        */
+
+        searchInput.addEventListener(
+            'input',
+            filterUsers
+        );
+
+        statusFilter.addEventListener(
+            'change',
+            filterUsers
+        );
+
+        validationFilter.addEventListener(
+            'change',
+            filterUsers
+        );
+
+        countryFilter.addEventListener(
+            'change',
+            filterUsers
+        );
+
+        dateFilter.addEventListener(
+            'change',
+            filterUsers
+        );
+
+
+        $('clearFiltersBtn').addEventListener(
+            'click',
+            clearFilters
+        );
+
+
+        $('emptyClearBtn').addEventListener(
+            'click',
+            clearFilters
+        );
+
+
+        function clearFilters() {
+
+            searchInput.value = '';
+            statusFilter.value = 'all';
+            validationFilter.value = 'all';
+            countryFilter.value = 'all';
+            dateFilter.value = 'all';
+
+            filterUsers();
+
+        }
+
+
+        /*
+        ============================================================
+        PAGINATION EVENTS
+        ============================================================
+        */
+
+        $('pageSize').addEventListener(
+            'change',
+            () => {
+
+                pageSize =
+                    Number($('pageSize').value);
+
+                currentPage = 1;
+
+                renderUsers();
+
+            }
+        );
+
+
+        $('prevPage').addEventListener(
+            'click',
+            () => {
+
+                if (currentPage > 1) {
+
+                    currentPage--;
+
+                    renderUsers();
+
+                }
+
+            }
+        );
+
+
+        $('nextPage').addEventListener(
+            'click',
+            () => {
+
+                const totalPages =
+                    Math.ceil(
+                        filteredUsers.length / pageSize
+                    );
+
+                if (currentPage < totalPages) {
+
+                    currentPage++;
+
+                    renderUsers();
+
+                }
+
+            }
+        );
+
+
+        /*
+        ============================================================
+        MODAL EVENTS
+        ============================================================
+        */
+
+        $('closeUserModal').addEventListener(
+            'click',
+            closeUserModal
+        );
+
+
+        userModal.addEventListener(
+            'click',
+            (event) => {
+
+                if (event.target === userModal) {
+                    closeUserModal();
+                }
+
+            }
+        );
+
+
+        $('cancelConfirm').addEventListener(
+            'click',
+            closeConfirmModal
+        );
+
+
+        confirmModal.addEventListener(
+            'click',
+            (event) => {
+
+                if (event.target === confirmModal) {
+                    closeConfirmModal();
+                }
+
+            }
+        );
+
+
+        $('confirmAction').addEventListener(
+            'click',
+            executePendingAction
+        );
+
+
+        $('suspendBtn').addEventListener(
+            'click',
+            () => {
+
+                if (!selectedUser) {
+                    return;
+                }
+
+                askConfirmation(
+                    'suspend',
+                    selectedUser
+                );
+
+            }
+        );
+
+
+        $('disableBtn').addEventListener(
+            'click',
+            () => {
+
+                if (!selectedUser) {
+                    return;
+                }
+
+                askConfirmation(
+                    'disable',
+                    selectedUser
+                );
+
+            }
+        );
+
+
+        $('viewTransactionsBtn').addEventListener(
+            'click',
+            () => {
+
+                if (!selectedUser) {
+                    return;
+                }
+
+                window.location.href =
+                    `transactions.html?user=${encodeURIComponent(selectedUser.uid)}`;
+
+            }
+        );
+
+
+        $('viewWithdrawalsBtn').addEventListener(
+            'click',
+            () => {
+
+                if (!selectedUser) {
+                    return;
+                }
+
+                window.location.href =
+                    `withdrawals.html?user=${encodeURIComponent(selectedUser.uid)}`;
+
+            }
+        );
+
+
+        /*
+        ============================================================
+        REFRESH
+        ============================================================
+        */
+
+        $('refreshUsersBtn').addEventListener(
+            'click',
+            async () => {
+
+                $('refreshUsersBtn').disabled = true;
+
+                $('refreshUsersBtn').innerHTML = `
+                    <i class='bx bx-loader-alt bx-spin text-lg'></i>
+                    Refreshing...
+                `;
+
+                try {
+
+                    await loadPage();
+
+                    showToast(
+                        'User directory refreshed.',
+                        'success'
+                    );
+
+                } finally {
+
+                    $('refreshUsersBtn').disabled = false;
+
+                    $('refreshUsersBtn').innerHTML = `
+                        <i class='bx bx-refresh text-lg'></i>
+                        Refresh Users
+                    `;
+
+                }
+
+            }
+        );
+
+
+        $('retryBtn').addEventListener(
+            'click',
+            loadPage
+        );
+
+
+        /*
+        ============================================================
+        LOGOUT
+        ============================================================
+        */
+
+        $('logoutBtn').addEventListener(
+            'click',
+            async () => {
+
+                /*
+                Production:
+
+                await signOut(auth);
+                window.location.href = 'admin-login.html';
+                */
+
+                showToast(
+                    'Admin logout is not connected yet.',
+                    'info'
+                );
+
+            }
+        );
+
+
+        /*
+        ============================================================
+        KEYBOARD
+        ============================================================
+        */
+
+        document.addEventListener(
+            'keydown',
+            (event) => {
+
+                if (event.key === 'Escape') {
+
+                    if (!confirmModal.classList.contains('hidden')) {
+                        closeConfirmModal();
+                    }
+
+                    if (!userModal.classList.contains('hidden')) {
+                        closeUserModal();
+                    }
+
+                    closeSidebar();
+
+                }
+
+            }
+        );
+
+
+        /*
+        ============================================================
+        INITIALIZE
+        ============================================================
+        */
+
+        document.addEventListener(
+            'DOMContentLoaded',
+            async () => {
+
+                initTheme();
+
+                const authorized =
+                    await verifyAdminAccess();
+
+                if (!authorized) {
+                    return;
+                }
+
+                await loadPage();
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

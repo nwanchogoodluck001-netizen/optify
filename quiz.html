@@ -1,0 +1,2793 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Optify — Quiz</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
+
+    <style>
+        :root {
+            --navy: #071A2B;
+            --emerald: #12B76A;
+            --teal: #0EA5A4;
+            --soft-green: #E8F8F0;
+            --background: #F7F9FC;
+            --white: #FFFFFF;
+            --text: #101828;
+            --muted: #667085;
+            --border: #E4E7EC;
+            --warning: #F79009;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: "Inter", sans-serif;
+            transition: background .25s ease, color .25s ease;
+        }
+
+        body.dark {
+            --background: #06121E;
+            --white: #0B1B2A;
+            --text: #F2F4F7;
+            --muted: #98A2B3;
+            --border: #1E3445;
+            --soft-green: #0B2C26;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-sora {
+            font-family: "Sora", sans-serif;
+        }
+
+        button,
+        a,
+        input {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--navy);
+        }
+
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+        }
+
+        .shadow-soft {
+            box-shadow: 0 10px 35px rgba(7, 26, 43, .06);
+        }
+
+        body.dark .shadow-soft {
+            box-shadow: 0 12px 35px rgba(0, 0, 0, .18);
+        }
+
+        .nav-item {
+            transition: all .2s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, .08);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: rgba(18, 183, 106, .14);
+            color: #5DE6A2;
+        }
+
+        .nav-item.active .nav-icon {
+            background: rgba(18, 183, 106, .16);
+        }
+
+        .nav-icon {
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            transition: all .2s ease;
+        }
+
+        .topbar {
+            background: rgba(247, 249, 252, .88);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        body.dark .topbar {
+            background: rgba(6, 18, 30, .88);
+        }
+
+        .gradient-card {
+            background: linear-gradient(135deg,
+                    #071A2B 0%,
+                    #0B3B4A 55%,
+                    #0EA5A4 100%);
+        }
+
+        .quiz-option {
+            transition: all .2s ease;
+            cursor: pointer;
+        }
+
+        .quiz-option:hover {
+            border-color: rgba(18, 183, 106, .55);
+            transform: translateY(-1px);
+        }
+
+        .quiz-option.selected {
+            border-color: var(--emerald);
+            background: rgba(18, 183, 106, .08);
+            box-shadow: 0 0 0 3px rgba(18, 183, 106, .08);
+        }
+
+        .quiz-option.selected .option-letter {
+            background: var(--emerald);
+            color: white;
+            border-color: var(--emerald);
+        }
+
+        .option-letter {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-family: "Sora", sans-serif;
+            font-weight: 700;
+            transition: all .2s ease;
+        }
+
+        .progress-track {
+            height: 8px;
+            background: rgba(16, 24, 40, .08);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        body.dark .progress-track {
+            background: rgba(255, 255, 255, .08);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg,
+                    var(--emerald),
+                    var(--teal));
+            border-radius: inherit;
+            transition: width .35s ease;
+        }
+
+        .step-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            transition: all .2s ease;
+            flex-shrink: 0;
+        }
+
+        .step-dot.active {
+            background: var(--emerald);
+            border-color: var(--emerald);
+            color: white;
+        }
+
+        .step-dot.completed {
+            background: var(--soft-green);
+            border-color: rgba(18, 183, 106, .25);
+            color: var(--emerald);
+        }
+
+        .modal {
+            animation: modalIn .2s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .quiz-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(152, 162, 179, .35);
+            border-radius: 20px;
+        }
+
+        .mobile-bottom-nav {
+            display: none;
+        }
+
+        @media (max-width: 1023px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+                z-index: 60;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-bottom-nav {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 639px) {
+
+            .card {
+                border-radius: 16px;
+            }
+
+            .main-content {
+                padding-bottom: 80px;
+            }
+
+            .quiz-option {
+                padding: 13px;
+            }
+
+            .option-letter {
+                width: 38px;
+                height: 38px;
+                min-width: 38px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Mobile Overlay -->
+    <div id="mobileOverlay" class="fixed inset-0 z-50 hidden bg-black/50 backdrop-blur-[3px] lg:hidden">
+    </div>
+
+
+    <!-- =========================================================
+         SIDEBAR
+    ========================================================== -->
+
+    <aside id="sidebar" class="sidebar fixed left-0 top-0 bottom-0 z-[60] flex flex-col text-white">
+
+        <div class="h-full flex flex-col">
+
+            <!-- Logo -->
+            <div class="px-6 pt-7 pb-6">
+
+                <a href="dashboard.html" class="flex items-center gap-3">
+
+                    <div
+                        class="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-400/20 flex items-center justify-center">
+                        <i class='bx bx-target-lock text-2xl text-emerald-400'></i>
+                    </div>
+
+                    <div>
+                        <div class="font-sora font-bold text-xl tracking-tight">
+                            OPTIFY
+                        </div>
+
+                        <div class="text-[10px] uppercase tracking-[.2em] text-slate-400">
+                            Earn. Complete. Grow.
+                        </div>
+                    </div>
+
+                </a>
+
+            </div>
+
+
+            <!-- Navigation -->
+            <nav class="flex-1 px-4 space-y-1 overflow-y-auto custom-scroll">
+
+                <p class="px-3 pt-2 pb-3 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Main Menu
+                </p>
+
+
+                <a href="dashboard.html" class="nav-item flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300">
+
+                    <span class="nav-icon">
+                        <i class='bx bx-grid-alt text-lg'></i>
+                    </span>
+
+                    <span class="text-sm font-medium">
+                        Dashboard
+                    </span>
+
+                </a>
+
+
+                <a href="tasks.html" class="nav-item flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300">
+
+                    <span class="nav-icon">
+                        <i class='bx bx-task text-lg'></i>
+                    </span>
+
+                    <span class="text-sm font-medium">
+                        Tasks
+                    </span>
+
+                </a>
+
+
+                <a href="streak.html" class="nav-item flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300">
+
+                    <span class="nav-icon">
+                        <i class='bx bx-calendar-check text-lg'></i>
+                    </span>
+
+                    <span class="text-sm font-medium">
+                        Streak
+                    </span>
+
+                </a>
+
+
+                <a href="mystery-box.html"
+                    class="nav-item flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300">
+
+                    <span class="nav-icon">
+                        <i class='bx bx-gift text-lg'></i>
+                    </span>
+
+                    <span class="text-sm font-medium">
+                        Mystery Box
+                    </span>
+
+                </a>
+
+
+                <a href="quiz.html" class="nav-item active flex items-center gap-3 rounded-xl px-3 py-2.5">
+
+                    <span class="nav-icon">
+                        <i class='bx bx-help-circle text-lg'></i>
+                    </span>
+
+                    <span class="text-sm font-medium">
+                        Quiz
+                    </span>
+
+                </a>
+
+
+                <a href="referral.html" class="nav-item flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300">
+
+                    <span class="nav-icon">
+                        <i class='bx bx-user-plus text-lg'></i>
+                    </span>
+
+                    <span class="text-sm font-medium">
+                        Referral
+                    </span>
+
+                </a>
+
+
+                <div class="my-4 border-t border-white/10"></div>
+
+
+                <p class="px-3 pb-3 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Account
+                </p>
+
+                <a href="epin.html"
+                    class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-white/65 hover:text-white hover:bg-white/5">
+                    <i class='bx bx-key'></i>
+                    <span>Withdrawal E-pin</span>
+                </a>
+
+
+                <a href="withdrawal.html"
+                    class="nav-item flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300">
+
+                    <span class="nav-icon">
+                        <i class='bx bx-wallet text-lg'></i>
+                    </span>
+
+                    <span class="text-sm font-medium">
+                        Withdrawal
+                    </span>
+
+                </a>
+
+
+                <a href="transactions.html"
+                    class="nav-item flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300">
+
+                    <span class="nav-icon">
+                        <i class='bx bx-transfer-alt text-lg'></i>
+                    </span>
+
+                    <span class="text-sm font-medium">
+                        Transactions
+                    </span>
+
+                </a>
+
+
+                <a href="settings.html" class="nav-item flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300">
+
+                    <span class="nav-icon">
+                        <i class='bx bx-cog text-lg'></i>
+                    </span>
+
+                    <span class="text-sm font-medium">
+                        Settings
+                    </span>
+
+                </a>
+
+            </nav>
+
+
+            <!-- Profile -->
+            <div class="p-4 border-t border-white/10">
+
+                <div class="flex items-center gap-3 px-2 mb-3">
+
+                    <div
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold">
+                        D
+                    </div>
+
+                    <div class="min-w-0 flex-1">
+
+                        <div id="sidebarName" class="text-sm font-semibold truncate">
+                            David
+                        </div>
+
+                        <div class="text-xs text-slate-400 truncate">
+                            Optify Member
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button id="logoutBtn"
+                    class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-slate-300 hover:bg-white/5 hover:text-white transition">
+
+                    <i class='bx bx-log-out text-lg'></i>
+
+                    <span class="text-sm font-medium">
+                        Logout
+                    </span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================================================
+         MAIN CONTENT
+    ========================================================== -->
+
+    <main class="main-content">
+
+        <!-- Topbar -->
+        <header class="topbar sticky top-0 z-40 h-[74px] px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+
+            <div class="flex items-center gap-3">
+
+                <button id="menuBtn"
+                    class="lg:hidden w-10 h-10 rounded-xl border border-[var(--border)] bg-[var(--white)] flex items-center justify-center">
+
+                    <i class='bx bx-menu text-xl'></i>
+
+                </button>
+
+
+                <div>
+
+                    <div class="text-xs text-[var(--muted)] font-medium">
+                        Quiz & Rewards
+                    </div>
+
+                    <div class="font-sora text-sm sm:text-base font-semibold">
+                        Answer. Complete. Earn.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="flex items-center gap-2 sm:gap-3">
+
+                <!-- Validated Status -->
+                <div
+                    class="hidden sm:flex items-center gap-2 rounded-xl bg-[var(--soft-green)] border border-emerald-100 dark:border-emerald-900/40 px-3 py-2">
+
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+
+                    <span class="text-xs font-semibold text-emerald-600">
+                        Dashboard Validated
+                    </span>
+
+                </div>
+
+
+                <!-- Theme -->
+                <button id="themeToggle" aria-label="Toggle theme"
+                    class="w-10 h-10 rounded-xl border border-[var(--border)] bg-[var(--white)] flex items-center justify-center hover:border-emerald-400 transition">
+
+                    <i id="themeIcon" class='bx bx-moon text-xl'></i>
+
+                </button>
+
+
+                <!-- Notification -->
+                <button
+                    class="hidden sm:flex relative w-10 h-10 rounded-xl border border-[var(--border)] bg-[var(--white)] items-center justify-center">
+
+                    <i class='bx bx-bell text-xl'></i>
+
+                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500"></span>
+
+                </button>
+
+
+                <!-- Profile -->
+                <div class="flex items-center gap-2 sm:gap-3 pl-1">
+
+                    <div class="hidden sm:block text-right">
+
+                        <div id="headerName" class="text-sm font-semibold">
+                            David
+                        </div>
+
+                        <div class="text-xs text-[var(--muted)]">
+                            Member
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold">
+                        D
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <div class="p-4 sm:p-6 lg:p-8">
+
+            <!-- =================================================
+                 PAGE HEADING
+            ================================================== -->
+
+            <section class="mb-7">
+
+                <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+
+                    <div>
+
+                        <div
+                            class="inline-flex items-center gap-2 rounded-full bg-[var(--soft-green)] text-emerald-600 px-3 py-1.5 text-xs font-semibold mb-3">
+
+                            <i class='bx bx-brain'></i>
+
+                            Knowledge Reward
+
+                        </div>
+
+
+                        <h1 class="font-sora text-2xl sm:text-3xl font-bold tracking-tight">
+                            Optify Quiz
+                        </h1>
+
+
+                        <p class="mt-2 text-sm sm:text-base text-[var(--muted)] max-w-xl">
+                            Test your knowledge, complete today's quiz, and earn rewards.
+                        </p>
+
+                    </div>
+
+
+                    <div class="card shadow-soft px-5 py-4 flex items-center gap-4 w-full lg:w-auto">
+
+                        <div class="w-11 h-11 rounded-xl bg-[var(--soft-green)] flex items-center justify-center">
+
+                            <i class='bx bx-money text-xl text-emerald-600'></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="text-xs text-[var(--muted)]">
+                                Reward Range
+                            </div>
+
+                            <div class="font-sora font-bold">
+                                $1 – $5
+                            </div>
+
+                            <div class="text-xs text-[var(--muted)]">
+                                ≈ ₦1,000 – ₦5,000
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 VALIDATED STATUS
+            ================================================== -->
+
+            <section class="mb-6">
+
+                <div
+                    class="rounded-2xl border border-emerald-100 dark:border-emerald-900/40 bg-[var(--soft-green)] p-4 sm:p-5">
+
+                    <div class="flex items-start gap-3">
+
+                        <div
+                            class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+
+                            <i class='bx bx-check-circle text-xl text-emerald-600'></i>
+
+                        </div>
+
+
+                        <div class="flex-1">
+
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+
+                                <div>
+
+                                    <h2 class="font-sora font-bold text-sm sm:text-base">
+                                        Dashboard Validated
+                                    </h2>
+
+                                    <p class="text-xs sm:text-sm text-[var(--muted)] mt-1">
+                                        Your quiz access is active. Complete today's quiz to become eligible for the
+                                        configured reward.
+                                    </p>
+
+                                </div>
+
+
+                                <span
+                                    class="inline-flex items-center gap-2 self-start rounded-full bg-emerald-500/10 text-emerald-600 px-3 py-1.5 text-xs font-semibold">
+
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+
+                                    Active
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 VALIDATED QUIZ SECTION
+            ================================================== -->
+
+            <section class="space-y-6">
+
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
+
+
+                    <!-- Quiz Status -->
+                    <div class="card shadow-soft p-4 sm:p-5">
+
+                        <div class="flex items-center justify-between mb-4">
+
+                            <div class="w-10 h-10 rounded-xl bg-[var(--soft-green)] flex items-center justify-center">
+
+                                <i class='bx bx-help-circle text-xl text-emerald-600'></i>
+
+                            </div>
+
+                            <span class="text-xs text-[var(--muted)]">
+                                Today
+                            </span>
+
+                        </div>
+
+
+                        <div class="text-xs text-[var(--muted)]">
+                            Today's Quiz
+                        </div>
+
+
+                        <div id="quizStatusSummary" class="font-sora text-lg sm:text-xl font-bold mt-1">
+                            Not Started
+                        </div>
+
+                    </div>
+
+
+                    <!-- Questions -->
+                    <div class="card shadow-soft p-4 sm:p-5">
+
+                        <div class="flex items-center justify-between mb-4">
+
+                            <div
+                                class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/30 flex items-center justify-center">
+
+                                <i class='bx bx-list-check text-xl text-blue-500'></i>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="text-xs text-[var(--muted)]">
+                            Questions
+                        </div>
+
+
+                        <div id="questionSummary" class="font-sora text-lg sm:text-xl font-bold mt-1">
+                            0 / 5
+                        </div>
+
+                    </div>
+
+
+                    <!-- Earnings -->
+                    <div class="card shadow-soft p-4 sm:p-5">
+
+                        <div class="flex items-center justify-between mb-4">
+
+                            <div
+                                class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/30 flex items-center justify-center">
+
+                                <i class='bx bx-dollar text-xl text-amber-500'></i>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="text-xs text-[var(--muted)]">
+                            Today's Earnings
+                        </div>
+
+
+                        <div id="quizEarningsSummary" class="font-sora text-lg sm:text-xl font-bold mt-1">
+                            $0.00
+                        </div>
+
+
+                        <div id="quizEarningsNaira" class="text-xs text-[var(--muted)]">
+                            ≈ ₦0
+                        </div>
+
+                    </div>
+
+
+                    <!-- Reward -->
+                    <div class="card shadow-soft p-4 sm:p-5">
+
+                        <div class="flex items-center justify-between mb-4">
+
+                            <div
+                                class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-950/30 flex items-center justify-center">
+
+                                <i class='bx bx-gift text-xl text-purple-500'></i>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="text-xs text-[var(--muted)]">
+                            Quiz Reward
+                        </div>
+
+
+                        <div class="font-sora text-lg sm:text-xl font-bold mt-1">
+                            $1 – $5
+                        </div>
+
+
+                        <div class="text-xs text-[var(--muted)]">
+                            ≈ ₦1,000 – ₦5,000
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     START QUIZ
+                ================================================== -->
+
+                <div id="startQuizCard" class="card shadow-soft overflow-hidden">
+
+                    <div class="gradient-card p-6 sm:p-8 text-white relative overflow-hidden">
+
+                        <div class="absolute right-0 top-0 opacity-10">
+                            <i class='bx bx-brain text-[180px]'></i>
+                        </div>
+
+
+                        <div class="relative max-w-2xl">
+
+                            <div
+                                class="w-12 h-12 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center mb-5">
+
+                                <i class='bx bx-brain text-2xl text-emerald-300'></i>
+
+                            </div>
+
+
+                            <div class="text-xs uppercase tracking-widest text-emerald-300 font-semibold mb-2">
+                                Today's Challenge
+                            </div>
+
+
+                            <h2 class="font-sora text-2xl sm:text-3xl font-bold">
+                                Ready for Today's Quiz?
+                            </h2>
+
+
+                            <p class="mt-3 text-sm sm:text-base text-slate-300 leading-7 max-w-xl">
+                                Answer at least 5 questions and complete today's quiz. Your eligible reward is
+                                determined according to the configured quiz rules after submission and verification.
+                            </p>
+
+
+                            <div class="flex flex-wrap gap-3 mt-6">
+
+                                <div class="rounded-xl bg-white/10 border border-white/10 px-4 py-3">
+
+                                    <div class="text-xs text-slate-400">
+                                        Questions
+                                    </div>
+
+                                    <div class="font-sora font-bold">
+                                        5+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="rounded-xl bg-white/10 border border-white/10 px-4 py-3">
+
+                                    <div class="text-xs text-slate-400">
+                                        Reward
+                                    </div>
+
+                                    <div class="font-sora font-bold">
+                                        $1 – $5
+                                    </div>
+
+                                </div>
+
+
+                                <div class="rounded-xl bg-white/10 border border-white/10 px-4 py-3">
+
+                                    <div class="text-xs text-slate-400">
+                                        Status
+                                    </div>
+
+                                    <div class="font-sora font-bold text-emerald-300">
+                                        Available
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <button id="startQuizBtn"
+                                class="mt-7 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white font-semibold transition shadow-lg shadow-emerald-900/20">
+
+                                <i class='bx bx-play-circle text-xl'></i>
+
+                                Start Quiz
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     QUIZ INTERFACE
+                ================================================== -->
+
+                <div id="quizInterface" class="hidden quiz-container">
+
+                    <div class="card shadow-soft p-5 sm:p-7">
+
+                        <!-- Progress Header -->
+                        <div class="flex items-center justify-between gap-4 mb-4">
+
+                            <div>
+
+                                <div class="text-xs text-[var(--muted)]">
+                                    Quiz Progress
+                                </div>
+
+                                <div id="questionCounter" class="font-sora font-bold mt-1">
+                                    Question 1 of 5
+                                </div>
+
+                            </div>
+
+
+                            <div class="text-right">
+
+                                <div class="text-xs text-[var(--muted)]">
+                                    Completed
+                                </div>
+
+                                <div id="completedCounter" class="font-sora font-bold mt-1">
+                                    0 / 5
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Progress -->
+                        <div class="progress-track">
+
+                            <div id="quizProgress" class="progress-fill" style="width: 20%;">
+                            </div>
+
+                        </div>
+
+
+                        <!-- Step Dots -->
+                        <div id="stepDots" class="flex items-center gap-2 mt-5 overflow-x-auto pb-1">
+                        </div>
+
+
+                        <!-- Question -->
+                        <div class="mt-7">
+
+                            <div
+                                class="inline-flex items-center gap-2 rounded-full bg-[var(--soft-green)] text-emerald-600 px-3 py-1.5 text-xs font-semibold mb-4">
+
+                                <i class='bx bx-question-mark'></i>
+
+                                Question
+
+                            </div>
+
+
+                            <h2 id="questionText" class="font-sora text-xl sm:text-2xl font-bold leading-relaxed">
+                            </h2>
+
+
+                            <!-- Options -->
+                            <div id="optionsContainer" class="grid grid-cols-1 gap-3 mt-6">
+                            </div>
+
+
+                            <div id="answerError"
+                                class="hidden mt-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-950/20 dark:border-red-900/40 px-4 py-3 text-sm text-red-600">
+
+                                <i class='bx bx-error-circle mr-1'></i>
+
+                                Please select an answer before continuing.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Controls -->
+                        <div
+                            class="mt-7 pt-5 border-t border-[var(--border)] flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+
+                            <button id="previousBtn"
+                                class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-[var(--border)] font-semibold hover:border-emerald-400 transition disabled:opacity-40 disabled:cursor-not-allowed">
+
+                                <i class='bx bx-left-arrow-alt text-lg'></i>
+
+                                Previous
+
+                            </button>
+
+
+                            <button id="nextBtn"
+                                class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[var(--navy)] text-white font-semibold hover:opacity-90 transition">
+
+                                Next Question
+
+                                <i class='bx bx-right-arrow-alt text-lg'></i>
+
+                            </button>
+
+
+                            <button id="submitBtn"
+                                class="hidden inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-500 text-white font-semibold hover:bg-emerald-400 transition">
+
+                                Submit Quiz
+
+                                <i class='bx bx-check-circle text-lg'></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     RESULT
+                ================================================== -->
+
+                <div id="resultCard" class="hidden card shadow-soft overflow-hidden">
+
+                    <div class="p-6 sm:p-8 text-center">
+
+                        <div
+                            class="mx-auto w-16 h-16 rounded-2xl bg-[var(--soft-green)] flex items-center justify-center">
+
+                            <i class='bx bx-check-circle text-4xl text-emerald-500'></i>
+
+                        </div>
+
+
+                        <div class="text-xs uppercase tracking-widest text-emerald-600 font-semibold mt-5">
+                            Quiz Completed
+                        </div>
+
+
+                        <h2 class="font-sora text-2xl sm:text-3xl font-bold mt-2">
+                            Great job!
+                        </h2>
+
+
+                        <p class="text-sm text-[var(--muted)] mt-2">
+                            Your quiz has been completed successfully.
+                        </p>
+
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto mt-7">
+
+
+                            <div class="rounded-xl border border-[var(--border)] p-4">
+
+                                <div class="text-xs text-[var(--muted)]">
+                                    Questions
+                                </div>
+
+                                <div id="resultQuestions" class="font-sora font-bold text-lg mt-1">
+                                    5 / 5
+                                </div>
+
+                            </div>
+
+
+                            <div class="rounded-xl border border-[var(--border)] p-4">
+
+                                <div class="text-xs text-[var(--muted)]">
+                                    Correct Answers
+                                </div>
+
+                                <div id="resultCorrect" class="font-sora font-bold text-lg mt-1">
+                                    0 / 5
+                                </div>
+
+                            </div>
+
+
+                            <div class="rounded-xl border border-[var(--border)] p-4 bg-[var(--soft-green)]">
+
+                                <div class="text-xs text-[var(--muted)]">
+                                    Eligible Reward
+                                </div>
+
+                                <div id="resultReward" class="font-sora font-bold text-lg mt-1 text-emerald-600">
+                                    $0.00
+                                </div>
+
+                                <div id="resultRewardNaira" class="text-xs text-[var(--muted)]">
+                                    ≈ ₦0
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="mt-6 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 px-4 py-3 text-xs text-amber-700 dark:text-amber-300 max-w-2xl mx-auto">
+
+                            Your quiz submission is processed by the Optify backend. The actual reward is determined and
+                            credited only after successful verification.
+
+                        </div>
+
+
+                        <div class="flex flex-col sm:flex-row justify-center gap-3 mt-7">
+
+                            <a href="tasks.html"
+                                class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-[var(--border)] font-semibold hover:border-emerald-400 transition">
+
+                                <i class='bx bx-arrow-back'></i>
+
+                                Back to Tasks
+
+                            </a>
+
+
+                            <a href="transactions.html"
+                                class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[var(--navy)] text-white font-semibold hover:opacity-90 transition">
+
+                                <i class='bx bx-transfer-alt'></i>
+
+                                View Transactions
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     INFORMATION
+                ================================================== -->
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+
+                    <!-- How It Works -->
+                    <div class="card shadow-soft p-5 sm:p-6">
+
+                        <div class="flex items-center gap-3 mb-6">
+
+                            <div class="w-10 h-10 rounded-xl bg-[var(--soft-green)] flex items-center justify-center">
+
+                                <i class='bx bx-list-check text-xl text-emerald-600'></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <h2 class="font-sora font-bold">
+                                    How Quiz Rewards Work
+                                </h2>
+
+                                <p class="text-xs text-[var(--muted)] mt-1">
+                                    A simple four-step process.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="space-y-5">
+
+
+                            <div class="flex gap-4">
+
+                                <div
+                                    class="w-9 h-9 min-w-[36px] rounded-full bg-[var(--soft-green)] text-emerald-600 flex items-center justify-center font-bold text-sm">
+                                    1
+                                </div>
+
+                                <div>
+
+                                    <h3 class="font-semibold text-sm">
+                                        Start Quiz
+                                    </h3>
+
+                                    <p class="text-xs text-[var(--muted)] mt-1 leading-5">
+                                        Open the available quiz and begin answering questions.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="flex gap-4">
+
+                                <div
+                                    class="w-9 h-9 min-w-[36px] rounded-full bg-[var(--soft-green)] text-emerald-600 flex items-center justify-center font-bold text-sm">
+                                    2
+                                </div>
+
+                                <div>
+
+                                    <h3 class="font-semibold text-sm">
+                                        Answer Questions
+                                    </h3>
+
+                                    <p class="text-xs text-[var(--muted)] mt-1 leading-5">
+                                        Complete at least five questions before submitting.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="flex gap-4">
+
+                                <div
+                                    class="w-9 h-9 min-w-[36px] rounded-full bg-[var(--soft-green)] text-emerald-600 flex items-center justify-center font-bold text-sm">
+                                    3
+                                </div>
+
+                                <div>
+
+                                    <h3 class="font-semibold text-sm">
+                                        Submit for Verification
+                                    </h3>
+
+                                    <p class="text-xs text-[var(--muted)] mt-1 leading-5">
+                                        Submit your completed answers for backend verification.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="flex gap-4">
+
+                                <div
+                                    class="w-9 h-9 min-w-[36px] rounded-full bg-[var(--soft-green)] text-emerald-600 flex items-center justify-center font-bold text-sm">
+                                    4
+                                </div>
+
+                                <div>
+
+                                    <h3 class="font-semibold text-sm">
+                                        Receive Eligible Reward
+                                    </h3>
+
+                                    <p class="text-xs text-[var(--muted)] mt-1 leading-5">
+                                        After successful verification, the eligible reward can be credited to your
+                                        account.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Rules -->
+                    <div class="card shadow-soft p-5 sm:p-6">
+
+                        <div class="flex items-center gap-3 mb-6">
+
+                            <div
+                                class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/30 flex items-center justify-center">
+
+                                <i class='bx bx-info-circle text-xl text-amber-500'></i>
+
+                            </div>
+
+
+                            <div>
+
+                                <h2 class="font-sora font-bold">
+                                    Quiz Rules
+                                </h2>
+
+                                <p class="text-xs text-[var(--muted)] mt-1">
+                                    Keep these rules in mind.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="space-y-3">
+
+
+                            <div class="flex items-start gap-3">
+
+                                <i class='bx bx-check text-emerald-500 text-lg mt-0.5'></i>
+
+                                <p class="text-sm text-[var(--muted)]">
+                                    A quiz contains at least 5 questions.
+                                </p>
+
+                            </div>
+
+
+                            <div class="flex items-start gap-3">
+
+                                <i class='bx bx-check text-emerald-500 text-lg mt-0.5'></i>
+
+                                <p class="text-sm text-[var(--muted)]">
+                                    Questions are managed through the Optify admin system.
+                                </p>
+
+                            </div>
+
+
+                            <div class="flex items-start gap-3">
+
+                                <i class='bx bx-check text-emerald-500 text-lg mt-0.5'></i>
+
+                                <p class="text-sm text-[var(--muted)]">
+                                    Answer each question before submitting.
+                                </p>
+
+                            </div>
+
+
+                            <div class="flex items-start gap-3">
+
+                                <i class='bx bx-check text-emerald-500 text-lg mt-0.5'></i>
+
+                                <p class="text-sm text-[var(--muted)]">
+                                    Quiz rewards are configured between $1 and $5.
+                                </p>
+
+                            </div>
+
+
+                            <div class="flex items-start gap-3">
+
+                                <i class='bx bx-check text-emerald-500 text-lg mt-0.5'></i>
+
+                                <p class="text-sm text-[var(--muted)]">
+                                    Rewards are credited only after successful backend verification.
+                                </p>
+
+                            </div>
+
+
+                            <div class="flex items-start gap-3">
+
+                                <i class='bx bx-check text-emerald-500 text-lg mt-0.5'></i>
+
+                                <p class="text-sm text-[var(--muted)]">
+                                    Duplicate submissions and unauthorized attempts are prevented by the backend.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Currency -->
+            <div class="mt-6 flex items-center justify-center gap-2 text-xs text-[var(--muted)]">
+
+                <i class='bx bx-transfer-alt text-emerald-500'></i>
+
+                <span>
+                    Optify currency display:
+                    <strong class="text-[var(--text)]">
+                        $1 = ₦1,000
+                    </strong>
+                </span>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================================================
+         MOBILE BOTTOM NAVIGATION
+    ========================================================== -->
+
+    <nav
+        class="mobile-bottom-nav fixed bottom-0 left-0 right-0 z-50 h-[68px] bg-[var(--white)] border-t border-[var(--border)] items-center justify-around px-2 lg:hidden">
+
+        <a href="dashboard.html"
+            class="flex flex-col items-center justify-center gap-1 text-[var(--muted)] text-[10px] w-16">
+
+            <i class='bx bx-home text-xl'></i>
+
+            Home
+
+        </a>
+
+
+        <a href="tasks.html"
+            class="flex flex-col items-center justify-center gap-1 text-[var(--muted)] text-[10px] w-16">
+
+            <i class='bx bx-task text-xl'></i>
+
+            Tasks
+
+        </a>
+
+
+        <a href="quiz.html" class="flex flex-col items-center justify-center gap-1 text-emerald-500 text-[10px] w-16">
+
+            <i class='bx bx-help-circle text-xl'></i>
+
+            Quiz
+
+        </a>
+
+
+        <a href="withdrawal.html"
+            class="flex flex-col items-center justify-center gap-1 text-[var(--muted)] text-[10px] w-16">
+
+            <i class='bx bx-wallet text-xl'></i>
+
+            Wallet
+
+        </a>
+
+
+        <a href="settings.html"
+            class="flex flex-col items-center justify-center gap-1 text-[var(--muted)] text-[10px] w-16">
+
+            <i class='bx bx-user text-xl'></i>
+
+            Profile
+
+        </a>
+
+    </nav>
+
+
+    <!-- =========================================================
+         SUBMIT CONFIRMATION MODAL
+    ========================================================== -->
+
+    <div id="submitModal"
+        class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+
+        <div class="modal card shadow-2xl w-full max-w-md p-6 sm:p-7">
+
+            <div class="flex items-start justify-between gap-4">
+
+                <div class="w-12 h-12 rounded-xl bg-[var(--soft-green)] flex items-center justify-center">
+
+                    <i class='bx bx-check-circle text-2xl text-emerald-600'></i>
+
+                </div>
+
+
+                <button id="closeSubmitModal"
+                    class="w-9 h-9 rounded-lg border border-[var(--border)] flex items-center justify-center hover:border-emerald-400 transition">
+
+                    <i class='bx bx-x text-xl'></i>
+
+                </button>
+
+            </div>
+
+
+            <h2 class="font-sora text-xl font-bold mt-5">
+                Submit Quiz?
+            </h2>
+
+
+            <p class="text-sm text-[var(--muted)] mt-2 leading-6">
+                You have completed the quiz. Are you ready to submit your answers?
+            </p>
+
+
+            <div class="mt-5 rounded-xl border border-[var(--border)] p-4">
+
+                <div class="flex items-center justify-between">
+
+                    <span class="text-sm text-[var(--muted)]">
+                        Questions
+                    </span>
+
+                    <span id="modalQuestionCount" class="font-semibold">
+                        5 / 5
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
+
+                <button id="confirmSubmit"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white px-4 py-3 font-semibold transition">
+
+                    Submit Quiz
+
+                    <i class='bx bx-check'></i>
+
+                </button>
+
+
+                <button id="reviewQuiz"
+                    class="rounded-xl border border-[var(--border)] px-4 py-3 font-semibold hover:border-emerald-400 transition">
+
+                    Review Answers
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         SUBMISSION ERROR
+    ========================================================== -->
+
+    <div id="errorToast"
+        class="fixed top-5 right-5 z-[120] hidden max-w-sm w-[calc(100%-40px)] rounded-xl bg-[var(--white)] border border-red-200 dark:border-red-900/40 shadow-xl p-4">
+
+        <div class="flex gap-3">
+
+            <div class="w-9 h-9 rounded-lg bg-red-50 dark:bg-red-950/30 flex items-center justify-center">
+
+                <i class='bx bx-error-circle text-red-500 text-xl'></i>
+
+            </div>
+
+
+            <div>
+
+                <div class="font-semibold text-sm">
+                    Submission Error
+                </div>
+
+                <div class="text-xs text-[var(--muted)] mt-1">
+                    We couldn't submit your quiz right now. Please try again.
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================== -->
+
+    <script>
+
+        /*
+         * ========================================================
+         * OPTIFY — VALIDATED QUIZ FRONTEND
+         * ========================================================
+         *
+         * This is the validated user interface.
+         *
+         * Production backend must control:
+         *
+         * - Authentication
+         * - User validation status
+         * - Quiz availability
+         * - Quiz questions
+         * - Correct answers
+         * - Attempt eligibility
+         * - Scoring
+         * - Reward calculation
+         * - Balance updates
+         * - Transaction creation
+         * - Duplicate submission protection
+         *
+         * The frontend must never be the financial authority.
+         */
+
+
+        const NGN_RATE = 1000;
+
+
+        /*
+         * ========================================================
+         * VALIDATED USER
+         * ========================================================
+         *
+         * In production this information should come from the
+         * authenticated backend/session.
+         */
+
+        const user = {
+
+            name: "David",
+
+            validated: true,
+
+            balance: 0,
+
+            totalEarned: 0,
+
+            quizCompletedToday: false
+
+        };
+
+
+        /*
+         * ========================================================
+         * QUIZ CONFIGURATION
+         * ========================================================
+         */
+
+        const quiz = {
+
+            id: "quiz_demo_001",
+
+            minimumQuestions: 5,
+
+            rewardMin: 1,
+
+            rewardMax: 5
+
+        };
+
+
+        /*
+         * ========================================================
+         * DEMO QUESTIONS
+         * ========================================================
+         *
+         * These questions are only for frontend preview.
+         *
+         * Production:
+         * GET /api/user/quiz
+         *
+         * Questions should be provided by the backend/admin system.
+         */
+
+        const quizQuestions = [
+
+            {
+                id: "q1",
+
+                question:
+                    "Which planet is known as the Red Planet?",
+
+                options: [
+                    "Earth",
+                    "Mars",
+                    "Jupiter",
+                    "Venus"
+                ],
+
+                correctAnswer: 1
+            },
+
+
+            {
+                id: "q2",
+
+                question:
+                    "What is the largest ocean on Earth?",
+
+                options: [
+                    "Atlantic Ocean",
+                    "Indian Ocean",
+                    "Pacific Ocean",
+                    "Arctic Ocean"
+                ],
+
+                correctAnswer: 2
+            },
+
+
+            {
+                id: "q3",
+
+                question:
+                    "Which language is primarily used to structure content on a web page?",
+
+                options: [
+                    "HTML",
+                    "SQL",
+                    "Python",
+                    "PHP"
+                ],
+
+                correctAnswer: 0
+            },
+
+
+            {
+                id: "q4",
+
+                question:
+                    "How many sides does a hexagon have?",
+
+                options: [
+                    "Four",
+                    "Five",
+                    "Six",
+                    "Eight"
+                ],
+
+                correctAnswer: 2
+            },
+
+
+            {
+                id: "q5",
+
+                question:
+                    "Which gas do plants primarily absorb from the atmosphere during photosynthesis?",
+
+                options: [
+                    "Oxygen",
+                    "Carbon dioxide",
+                    "Nitrogen",
+                    "Hydrogen"
+                ],
+
+                correctAnswer: 1
+            }
+
+        ];
+
+
+        let currentQuestion = 0;
+
+        let answers =
+            new Array(quizQuestions.length).fill(null);
+
+        let quizStarted = false;
+
+
+        /*
+         * ========================================================
+         * DOM ELEMENTS
+         * ========================================================
+         */
+
+        const body = document.body;
+
+        const sidebar =
+            document.getElementById("sidebar");
+
+        const menuBtn =
+            document.getElementById("menuBtn");
+
+        const mobileOverlay =
+            document.getElementById("mobileOverlay");
+
+
+        const themeToggle =
+            document.getElementById("themeToggle");
+
+        const themeIcon =
+            document.getElementById("themeIcon");
+
+
+        const startQuizCard =
+            document.getElementById("startQuizCard");
+
+        const startQuizBtn =
+            document.getElementById("startQuizBtn");
+
+
+        const quizInterface =
+            document.getElementById("quizInterface");
+
+        const resultCard =
+            document.getElementById("resultCard");
+
+
+        const questionCounter =
+            document.getElementById("questionCounter");
+
+        const completedCounter =
+            document.getElementById("completedCounter");
+
+        const quizProgress =
+            document.getElementById("quizProgress");
+
+        const stepDots =
+            document.getElementById("stepDots");
+
+
+        const questionText =
+            document.getElementById("questionText");
+
+        const optionsContainer =
+            document.getElementById("optionsContainer");
+
+        const answerError =
+            document.getElementById("answerError");
+
+
+        const previousBtn =
+            document.getElementById("previousBtn");
+
+        const nextBtn =
+            document.getElementById("nextBtn");
+
+        const submitBtn =
+            document.getElementById("submitBtn");
+
+
+        const submitModal =
+            document.getElementById("submitModal");
+
+        const closeSubmitModal =
+            document.getElementById("closeSubmitModal");
+
+        const confirmSubmit =
+            document.getElementById("confirmSubmit");
+
+        const reviewQuiz =
+            document.getElementById("reviewQuiz");
+
+        const modalQuestionCount =
+            document.getElementById("modalQuestionCount");
+
+
+        /*
+         * ========================================================
+         * THEME
+         * ========================================================
+         */
+
+        function applyTheme(theme) {
+
+            if (theme === "dark") {
+
+                body.classList.add("dark");
+
+                themeIcon.className =
+                    "bx bx-sun text-xl";
+
+            } else {
+
+                body.classList.remove("dark");
+
+                themeIcon.className =
+                    "bx bx-moon text-xl";
+
+            }
+
+        }
+
+
+        const savedTheme =
+            localStorage.getItem("optify-theme") ||
+            "light";
+
+
+        applyTheme(savedTheme);
+
+
+        themeToggle.addEventListener("click", () => {
+
+            const nextTheme =
+                body.classList.contains("dark")
+                    ? "light"
+                    : "dark";
+
+
+            localStorage.setItem(
+                "optify-theme",
+                nextTheme
+            );
+
+
+            applyTheme(nextTheme);
+
+        });
+
+
+        /*
+         * ========================================================
+         * MOBILE SIDEBAR
+         * ========================================================
+         */
+
+        function openSidebar() {
+
+            sidebar.classList.add("open");
+
+            mobileOverlay.classList.remove("hidden");
+
+        }
+
+
+        function closeSidebar() {
+
+            sidebar.classList.remove("open");
+
+            mobileOverlay.classList.add("hidden");
+
+        }
+
+
+        menuBtn.addEventListener(
+            "click",
+            openSidebar
+        );
+
+
+        mobileOverlay.addEventListener(
+            "click",
+            closeSidebar
+        );
+
+
+        document
+            .querySelectorAll(".sidebar a")
+            .forEach(link => {
+
+                link.addEventListener("click", () => {
+
+                    if (window.innerWidth < 1024) {
+
+                        closeSidebar();
+
+                    }
+
+                });
+
+            });
+
+
+        /*
+         * ========================================================
+         * USER DISPLAY
+         * ========================================================
+         */
+
+        document.getElementById(
+            "headerName"
+        ).textContent = user.name;
+
+
+        document.getElementById(
+            "sidebarName"
+        ).textContent = user.name;
+
+
+        /*
+         * ========================================================
+         * CHECK CURRENT QUIZ STATE
+         * ========================================================
+         */
+
+        function renderQuizState() {
+
+            if (user.quizCompletedToday) {
+
+                document.getElementById(
+                    "quizStatusSummary"
+                ).textContent = "Completed";
+
+            } else {
+
+                document.getElementById(
+                    "quizStatusSummary"
+                ).textContent = "Not Started";
+
+            }
+
+        }
+
+
+        renderQuizState();
+
+
+        /*
+         * ========================================================
+         * START QUIZ
+         * ========================================================
+         */
+
+        startQuizBtn.addEventListener(
+            "click",
+            () => {
+
+                if (!user.validated) {
+
+                    /*
+                     * Production:
+                     * Backend should determine this.
+                     */
+
+                    return;
+
+                }
+
+
+                if (user.quizCompletedToday) {
+
+                    return;
+
+                }
+
+
+                quizStarted = true;
+
+                currentQuestion = 0;
+
+                answers =
+                    new Array(
+                        quizQuestions.length
+                    ).fill(null);
+
+
+                startQuizCard.classList.add("hidden");
+
+                resultCard.classList.add("hidden");
+
+                quizInterface.classList.remove("hidden");
+
+
+                renderQuestion();
+
+            }
+        );
+
+
+        /*
+         * ========================================================
+         * STEP DOTS
+         * ========================================================
+         */
+
+        function renderStepDots() {
+
+            stepDots.innerHTML = "";
+
+
+            quizQuestions.forEach(
+                (question, index) => {
+
+                    const dot =
+                        document.createElement("div");
+
+
+                    dot.className =
+                        "step-dot";
+
+
+                    if (
+                        index === currentQuestion
+                    ) {
+
+                        dot.classList.add(
+                            "active"
+                        );
+
+                    } else if (
+                        answers[index] !== null
+                    ) {
+
+                        dot.classList.add(
+                            "completed"
+                        );
+
+                    }
+
+
+                    dot.textContent =
+                        index + 1;
+
+
+                    stepDots.appendChild(dot);
+
+                }
+            );
+
+        }
+
+
+        /*
+         * ========================================================
+         * RENDER QUESTION
+         * ========================================================
+         */
+
+        function renderQuestion() {
+
+            const question =
+                quizQuestions[currentQuestion];
+
+
+            questionCounter.textContent =
+                `Question ${currentQuestion + 1} of ${quizQuestions.length}`;
+
+
+            const answeredCount =
+                answers.filter(
+                    answer => answer !== null
+                ).length;
+
+
+            completedCounter.textContent =
+                `${answeredCount} / ${quizQuestions.length}`;
+
+
+            const progress =
+                (
+                    (currentQuestion + 1) /
+                    quizQuestions.length
+                ) * 100;
+
+
+            quizProgress.style.width =
+                `${progress}%`;
+
+
+            questionText.textContent =
+                question.question;
+
+
+            optionsContainer.innerHTML = "";
+
+
+            question.options.forEach(
+                (option, index) => {
+
+                    const optionButton =
+                        document.createElement("button");
+
+
+                    optionButton.type = "button";
+
+
+                    optionButton.className =
+                        "quiz-option w-full text-left rounded-xl border border-[var(--border)] p-4 flex items-center gap-4 bg-[var(--white)]";
+
+
+                    if (
+                        answers[currentQuestion] ===
+                        index
+                    ) {
+
+                        optionButton.classList.add(
+                            "selected"
+                        );
+
+                    }
+
+
+                    optionButton.innerHTML = `
+
+                        <span class="option-letter">
+                            ${String.fromCharCode(65 + index)}
+                        </span>
+
+                        <span class="font-medium text-sm sm:text-base">
+                            ${option}
+                        </span>
+
+                    `;
+
+
+                    optionButton.addEventListener(
+                        "click",
+                        () => {
+
+                            selectAnswer(index);
+
+                        }
+                    );
+
+
+                    optionsContainer.appendChild(
+                        optionButton
+                    );
+
+                }
+            );
+
+
+            previousBtn.disabled =
+                currentQuestion === 0;
+
+
+            if (
+                currentQuestion ===
+                quizQuestions.length - 1
+            ) {
+
+                nextBtn.classList.add("hidden");
+
+                submitBtn.classList.remove(
+                    "hidden"
+                );
+
+            } else {
+
+                nextBtn.classList.remove(
+                    "hidden"
+                );
+
+                submitBtn.classList.add(
+                    "hidden"
+                );
+
+            }
+
+
+            answerError.classList.add(
+                "hidden"
+            );
+
+
+            renderStepDots();
+
+        }
+
+
+        /*
+         * ========================================================
+         * SELECT ANSWER
+         * ========================================================
+         */
+
+        function selectAnswer(index) {
+
+            answers[currentQuestion] =
+                index;
+
+
+            answerError.classList.add(
+                "hidden"
+            );
+
+
+            renderQuestion();
+
+        }
+
+
+        /*
+         * ========================================================
+         * PREVIOUS
+         * ========================================================
+         */
+
+        previousBtn.addEventListener(
+            "click",
+            () => {
+
+                if (currentQuestion === 0) {
+
+                    return;
+
+                }
+
+
+                currentQuestion--;
+
+                renderQuestion();
+
+            }
+        );
+
+
+        /*
+         * ========================================================
+         * NEXT
+         * ========================================================
+         */
+
+        nextBtn.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    answers[currentQuestion] ===
+                    null
+                ) {
+
+                    answerError.classList.remove(
+                        "hidden"
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    currentQuestion <
+                    quizQuestions.length - 1
+                ) {
+
+                    currentQuestion++;
+
+                    renderQuestion();
+
+                }
+
+            }
+        );
+
+
+        /*
+         * ========================================================
+         * SUBMIT
+         * ========================================================
+         */
+
+        submitBtn.addEventListener(
+            "click",
+            () => {
+
+                const unanswered =
+                    answers.some(
+                        answer =>
+                            answer === null
+                    );
+
+
+                if (unanswered) {
+
+                    answerError.textContent =
+                        "Please answer every question before submitting.";
+
+
+                    answerError.classList.remove(
+                        "hidden"
+                    );
+
+
+                    return;
+
+                }
+
+
+                modalQuestionCount.textContent =
+                    `${quizQuestions.length} / ${quizQuestions.length}`;
+
+
+                submitModal.classList.remove(
+                    "hidden"
+                );
+
+                submitModal.classList.add(
+                    "flex"
+                );
+
+
+                document.body.classList.add(
+                    "overflow-hidden"
+                );
+
+            }
+        );
+
+
+        /*
+         * ========================================================
+         * SUBMIT MODAL
+         * ========================================================
+         */
+
+        function closeSubmit() {
+
+            submitModal.classList.add(
+                "hidden"
+            );
+
+            submitModal.classList.remove(
+                "flex"
+            );
+
+            document.body.classList.remove(
+                "overflow-hidden"
+            );
+
+        }
+
+
+        closeSubmitModal.addEventListener(
+            "click",
+            closeSubmit
+        );
+
+
+        reviewQuiz.addEventListener(
+            "click",
+            closeSubmit
+        );
+
+
+        submitModal.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target ===
+                    submitModal
+                ) {
+
+                    closeSubmit();
+
+                }
+
+            }
+        );
+
+
+        /*
+         * ========================================================
+         * SUBMIT QUIZ
+         * ========================================================
+         */
+
+        confirmSubmit.addEventListener(
+            "click",
+            async () => {
+
+                closeSubmit();
+
+
+                /*
+                 * =================================================
+                 * PRODUCTION BACKEND REQUEST
+                 * =================================================
+                 *
+                 * Replace this demo call with:
+                 *
+                 * POST /api/user/quiz/submit
+                 *
+                 * Body:
+                 *
+                 * {
+                 *     quizId,
+                 *     answers
+                 * }
+                 *
+                 * Backend must:
+                 *
+                 * 1. Authenticate user.
+                 * 2. Confirm dashboard validation.
+                 * 3. Confirm quiz is available.
+                 * 4. Confirm user has not already completed it.
+                 * 5. Verify the submitted answers.
+                 * 6. Calculate score.
+                 * 7. Determine eligible reward.
+                 * 8. Update balance atomically.
+                 * 9. Create transaction.
+                 * 10. Prevent replay/duplicate submission.
+                 *
+                 * Never perform those financial operations
+                 * directly in the browser.
+                 */
+
+
+                processDemoResult();
+
+            }
+        );
+
+
+        /*
+         * ========================================================
+         * DEMO RESULT
+         * ========================================================
+         *
+         * Frontend preview only.
+         *
+         * Production reward MUST come from backend.
+         */
+
+        function processDemoResult() {
+
+            const correctCount =
+                answers.reduce(
+                    (total, answer, index) => {
+
+                        return total +
+                            (
+                                answer ===
+                                    quizQuestions[index]
+                                        .correctAnswer
+                                    ? 1
+                                    : 0
+                            );
+
+                    },
+                    0
+                );
+
+
+            /*
+             * Demo reward.
+             *
+             * This does NOT update the real user balance.
+             */
+
+            let demoReward = 1;
+
+
+            if (correctCount >= 4) {
+
+                demoReward = 5;
+
+            } else if (correctCount === 3) {
+
+                demoReward = 3;
+
+            } else if (correctCount === 2) {
+
+                demoReward = 2;
+
+            }
+
+
+            document.getElementById(
+                "resultQuestions"
+            ).textContent =
+                `${quizQuestions.length} / ${quizQuestions.length}`;
+
+
+            document.getElementById(
+                "resultCorrect"
+            ).textContent =
+                `${correctCount} / ${quizQuestions.length}`;
+
+
+            document.getElementById(
+                "resultReward"
+            ).textContent =
+                `$${demoReward.toFixed(2)}`;
+
+
+            document.getElementById(
+                "resultRewardNaira"
+            ).textContent =
+                `≈ ₦${(
+                    demoReward *
+                    NGN_RATE
+                ).toLocaleString()}`;
+
+
+            document.getElementById(
+                "quizStatusSummary"
+            ).textContent =
+                "Completed";
+
+
+            document.getElementById(
+                "questionSummary"
+            ).textContent =
+                `${quizQuestions.length} / ${quizQuestions.length}`;
+
+
+            document.getElementById(
+                "quizEarningsSummary"
+            ).textContent =
+                `$${demoReward.toFixed(2)}`;
+
+
+            document.getElementById(
+                "quizEarningsNaira"
+            ).textContent =
+                `≈ ₦${(
+                    demoReward *
+                    NGN_RATE
+                ).toLocaleString()}`;
+
+
+            quizInterface.classList.add(
+                "hidden"
+            );
+
+
+            startQuizCard.classList.add(
+                "hidden"
+            );
+
+
+            resultCard.classList.remove(
+                "hidden"
+            );
+
+
+            resultCard.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
+
+
+        /*
+         * ========================================================
+         * KEYBOARD NAVIGATION
+         * ========================================================
+         */
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (!quizStarted) {
+
+                    return;
+
+                }
+
+
+                if (
+                    event.key === "ArrowLeft" &&
+                    currentQuestion > 0
+                ) {
+
+                    currentQuestion--;
+
+                    renderQuestion();
+
+                }
+
+
+                if (
+                    event.key === "ArrowRight" &&
+                    currentQuestion <
+                    quizQuestions.length - 1
+                ) {
+
+                    if (
+                        answers[currentQuestion] !==
+                        null
+                    ) {
+
+                        currentQuestion++;
+
+                        renderQuestion();
+
+                    } else {
+
+                        answerError.classList.remove(
+                            "hidden"
+                        );
+
+                    }
+
+                }
+
+            }
+        );
+
+
+        /*
+         * ========================================================
+         * LOGOUT
+         * ========================================================
+         *
+         * Placeholder until Firebase authentication is connected.
+         */
+
+        document.getElementById(
+            "logoutBtn"
+        ).addEventListener(
+            "click",
+            () => {
+
+                /*
+                 * Production:
+                 *
+                 * await signOut(auth);
+                 *
+                 * then redirect to login.html
+                 */
+
+                window.location.href =
+                    "login.html";
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

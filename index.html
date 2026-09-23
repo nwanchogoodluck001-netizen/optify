@@ -1,0 +1,3667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Optify — Turn Activities Into Rewards</title>
+
+    <meta
+        name="description"
+        content="Optify is a modern rewards platform where users can complete activities, discover challenges, invite friends and earn eligible rewards."
+    >
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        sora: ['Sora', 'sans-serif']
+                    },
+                    colors: {
+                        optify: {
+                            navy: '#071A2B',
+                            emerald: '#12B76A',
+                            teal: '#0EA5A4',
+                            soft: '#E8F8F0',
+                            bg: '#F7F9FC',
+                            text: '#101828',
+                            muted: '#667085',
+                            border: '#E4E7EC'
+                        }
+                    },
+                    boxShadow: {
+                        soft: '0 15px 45px rgba(7, 26, 43, 0.08)',
+                        card: '0 8px 30px rgba(7, 26, 43, 0.06)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Boxicons -->
+    <link
+        href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        :root {
+            --navy: #071A2B;
+            --emerald: #12B76A;
+            --teal: #0EA5A4;
+            --soft-green: #E8F8F0;
+            --background: #F7F9FC;
+            --text: #101828;
+            --muted: #667085;
+            --border: #E4E7EC;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Sora', sans-serif;
+        }
+
+        ::selection {
+            background: rgba(18, 183, 106, 0.18);
+            color: var(--navy);
+        }
+
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        /* =========================================
+           LOADER
+        ========================================= */
+
+        #pageLoader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            transition:
+                opacity .45s ease,
+                visibility .45s ease;
+        }
+
+        #pageLoader.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-logo {
+            width: 52px;
+            height: 52px;
+            border-radius: 15px;
+            background: var(--navy);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            box-shadow: 0 12px 30px rgba(7, 26, 43, .15);
+        }
+
+        .loader-ring {
+            width: 76px;
+            height: 76px;
+            position: absolute;
+            border: 2px solid #E9EEF3;
+            border-top-color: var(--emerald);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* =========================================
+           NAVBAR
+        ========================================= */
+
+        #navbar {
+            transition:
+                background .25s ease,
+                box-shadow .25s ease,
+                border-color .25s ease,
+                padding .25s ease;
+        }
+
+        #navbar.scrolled {
+            background: rgba(255, 255, 255, .94);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            box-shadow: 0 8px 30px rgba(7, 26, 43, .06);
+            border-bottom: 1px solid rgba(228, 231, 236, .8);
+        }
+
+        .nav-link {
+            position: relative;
+            transition: color .2s ease;
+        }
+
+        .nav-link::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -8px;
+            width: 0;
+            height: 2px;
+            border-radius: 99px;
+            background: var(--emerald);
+            transform: translateX(-50%);
+            transition: width .25s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--emerald);
+        }
+
+        .nav-link:hover::after {
+            width: 18px;
+        }
+
+        .mobile-menu {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition:
+                max-height .35s ease,
+                opacity .25s ease;
+        }
+
+        .mobile-menu.open {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        /* =========================================
+           HERO
+        ========================================= */
+
+        .hero-background {
+            background:
+                radial-gradient(
+                    circle at 85% 20%,
+                    rgba(14, 165, 164, .10),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 10% 80%,
+                    rgba(18, 183, 106, .07),
+                    transparent 28%
+                );
+        }
+
+        .hero-grid {
+            background-image:
+                linear-gradient(
+                    rgba(7, 26, 43, .035) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(7, 26, 43, .035) 1px,
+                    transparent 1px
+                );
+            background-size: 45px 45px;
+            mask-image: linear-gradient(to bottom, black, transparent);
+        }
+
+        .hero-badge {
+            animation: heroBadge 3s ease-in-out infinite;
+        }
+
+        @keyframes heroBadge {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        .dashboard-preview {
+            background:
+                linear-gradient(
+                    145deg,
+                    #071A2B 0%,
+                    #0B3344 55%,
+                    #0EA5A4 100%
+                );
+        }
+
+        .dashboard-glow {
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            right: -100px;
+            top: -100px;
+            background: rgba(18, 183, 106, .16);
+            filter: blur(45px);
+            border-radius: 50%;
+        }
+
+        .dashboard-glow-two {
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            left: -100px;
+            bottom: -100px;
+            background: rgba(14, 165, 164, .14);
+            filter: blur(45px);
+            border-radius: 50%;
+        }
+
+        .floating-card {
+            animation: floatingCard 4s ease-in-out infinite;
+        }
+
+        .floating-card.two {
+            animation-delay: -1.7s;
+        }
+
+        @keyframes floatingCard {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* =========================================
+           GENERAL
+        ========================================= */
+
+        .section-label {
+            letter-spacing: .13em;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(25px);
+            transition:
+                opacity .7s ease,
+                transform .7s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-card {
+            transition:
+                transform .25s ease,
+                box-shadow .25s ease,
+                border-color .25s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 18px 45px rgba(7, 26, 43, .09);
+            border-color: rgba(18, 183, 106, .25);
+        }
+
+        .primary-btn {
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease,
+                background .2s ease;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(18, 183, 106, .22);
+        }
+
+        .primary-btn:active {
+            transform: translateY(0);
+        }
+
+        .secondary-btn {
+            transition:
+                background .2s ease,
+                border-color .2s ease,
+                transform .2s ease;
+        }
+
+        .secondary-btn:hover {
+            background: #F1F4F7;
+            border-color: #D4D9E0;
+            transform: translateY(-2px);
+        }
+
+        /* =========================================
+           TABS
+        ========================================= */
+
+        .reward-tab {
+            transition:
+                background .2s ease,
+                color .2s ease,
+                border-color .2s ease;
+        }
+
+        .reward-tab.active {
+            background: var(--navy);
+            color: white;
+            border-color: var(--navy);
+        }
+
+        .reward-content {
+            display: none;
+        }
+
+        .reward-content.active {
+            display: block;
+            animation: tabFade .35s ease;
+        }
+
+        @keyframes tabFade {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================================
+           FAQ
+        ========================================= */
+
+        .faq-item {
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            transition: border-color .2s ease;
+        }
+
+        .faq-item.open {
+            border-color: rgba(18, 183, 106, .35);
+        }
+
+        .faq-button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+            padding: 21px 22px;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition:
+                max-height .35s ease,
+                opacity .25s ease,
+                padding .35s ease;
+            padding: 0 22px;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 180px;
+            opacity: 1;
+            padding: 0 22px 21px;
+        }
+
+        .faq-icon {
+            transition: transform .25s ease;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        /* =========================================
+           CTA
+        ========================================= */
+
+        .final-cta {
+            background:
+                radial-gradient(
+                    circle at 90% 10%,
+                    rgba(18, 183, 106, .18),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    135deg,
+                    #071A2B,
+                    #0B3344
+                );
+        }
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 767px) {
+            .hero-grid {
+                background-size: 32px 32px;
+            }
+
+            .dashboard-preview {
+                border-radius: 22px;
+            }
+
+            .floating-card {
+                display: none;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================================
+         LOADER
+    ========================================= -->
+
+    <div id="pageLoader">
+        <div class="loader-ring"></div>
+        <div class="loader-logo">O</div>
+    </div>
+
+
+    <!-- =========================================
+         NAVBAR
+    ========================================= -->
+
+    <header
+        id="navbar"
+        class="fixed top-0 left-0 right-0 z-50 border-b border-transparent"
+    >
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+
+            <div class="h-[76px] flex items-center justify-between">
+
+                <!-- Logo -->
+                <a
+                    href="#home"
+                    class="flex items-center gap-2.5 shrink-0"
+                    aria-label="Optify Home"
+                >
+                    <div
+                        class="w-10 h-10 rounded-xl bg-[#071A2B] text-white flex items-center justify-center shadow-sm"
+                    >
+                        <i class='bx bx-target-lock text-xl'></i>
+                    </div>
+
+                    <span class="font-sora text-xl font-bold tracking-[-0.04em] text-[#071A2B]">
+                        OPTIFY
+                    </span>
+                </a>
+
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden lg:flex items-center gap-8">
+                    <a href="#home" class="nav-link text-sm font-medium text-[#101828]">
+                        Home
+                    </a>
+
+                    <a href="#how-it-works" class="nav-link text-sm font-medium text-[#667085]">
+                        How It Works
+                    </a>
+
+                    <a href="#features" class="nav-link text-sm font-medium text-[#667085]">
+                        Features
+                    </a>
+
+                    <a href="#rewards" class="nav-link text-sm font-medium text-[#667085]">
+                        Rewards
+                    </a>
+
+                    <a href="#faq" class="nav-link text-sm font-medium text-[#667085]">
+                        FAQ
+                    </a>
+                </nav>
+
+
+                <!-- Desktop Actions -->
+                <div class="hidden lg:flex items-center gap-3">
+
+                    <a
+                        href="login.html"
+                        class="px-4 py-2.5 text-sm font-semibold text-[#071A2B] hover:text-[#12B76A] transition"
+                    >
+                        Login
+                    </a>
+
+                    <a
+                        href="register.html"
+                        class="primary-btn inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#12B76A] text-white text-sm font-semibold"
+                    >
+                        Get Started
+                        <i class='bx bx-right-arrow-alt text-lg'></i>
+                    </a>
+
+                </div>
+
+
+                <!-- Mobile Menu Button -->
+                <button
+                    id="mobileMenuButton"
+                    type="button"
+                    class="lg:hidden w-11 h-11 rounded-xl border border-[#E4E7EC] bg-white flex items-center justify-center text-[#071A2B]"
+                    aria-label="Open menu"
+                    aria-expanded="false"
+                >
+                    <i id="menuIcon" class='bx bx-menu text-2xl'></i>
+                </button>
+
+            </div>
+
+
+            <!-- Mobile Navigation -->
+            <div id="mobileMenu" class="mobile-menu lg:hidden">
+
+                <div class="pb-5 pt-2">
+
+                    <nav class="bg-white border border-[#E4E7EC] rounded-2xl p-2 shadow-card">
+
+                        <a
+                            href="#home"
+                            class="mobile-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-[#F7F9FC]"
+                        >
+                            <i class='bx bx-home-alt-2 text-lg text-[#12B76A]'></i>
+                            Home
+                        </a>
+
+                        <a
+                            href="#how-it-works"
+                            class="mobile-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-[#F7F9FC]"
+                        >
+                            <i class='bx bx-list-check text-lg text-[#12B76A]'></i>
+                            How It Works
+                        </a>
+
+                        <a
+                            href="#features"
+                            class="mobile-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-[#F7F9FC]"
+                        >
+                            <i class='bx bx-grid-alt text-lg text-[#12B76A]'></i>
+                            Features
+                        </a>
+
+                        <a
+                            href="#rewards"
+                            class="mobile-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-[#F7F9FC]"
+                        >
+                            <i class='bx bx-wallet text-lg text-[#12B76A]'></i>
+                            Rewards
+                        </a>
+
+                        <a
+                            href="#faq"
+                            class="mobile-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-[#F7F9FC]"
+                        >
+                            <i class='bx bx-help-circle text-lg text-[#12B76A]'></i>
+                            FAQ
+                        </a>
+
+                        <div class="h-px bg-[#E4E7EC] my-2"></div>
+
+                        <a
+                            href="login.html"
+                            class="mobile-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold"
+                        >
+                            <i class='bx bx-log-in text-lg text-[#071A2B]'></i>
+                            Login
+                        </a>
+
+                        <a
+                            href="register.html"
+                            class="flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl bg-[#071A2B] text-white text-sm font-semibold mt-1"
+                        >
+                            Create Account
+                            <i class='bx bx-right-arrow-alt text-lg'></i>
+                        </a>
+
+                    </nav>
+
+                </div>
+
+            </div>
+
+        </div>
+    </header>
+
+
+    <!-- =========================================
+         HERO
+    ========================================= -->
+
+    <main>
+
+        <section
+            id="home"
+            class="relative pt-32 pb-16 sm:pt-36 sm:pb-20 lg:pt-44 lg:pb-28 overflow-hidden hero-background"
+        >
+
+            <div class="absolute inset-0 hero-grid pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 relative">
+
+                <div class="grid lg:grid-cols-[1fr_.95fr] gap-14 lg:gap-16 items-center">
+
+                    <!-- Hero Content -->
+                    <div class="reveal">
+
+                        <div
+                            class="hero-badge inline-flex items-center gap-2 rounded-full border border-[#DDEFE6] bg-[#F1FAF5] px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#087443] mb-6"
+                        >
+                            <span class="w-2 h-2 rounded-full bg-[#12B76A]"></span>
+                            A smarter way to earn rewards
+                        </div>
+
+
+                        <h1
+                            class="font-sora text-[2.55rem] leading-[1.12] sm:text-5xl lg:text-[4.1rem] font-semibold tracking-[-0.055em] text-[#071A2B] max-w-2xl"
+                        >
+                            Turn Simple Activities Into
+                            <span class="text-[#12B76A]">
+                                Real Rewards.
+                            </span>
+                        </h1>
+
+
+                        <p
+                            class="mt-6 text-base sm:text-lg leading-8 text-[#667085] max-w-xl"
+                        >
+                            Complete daily activities, discover exciting challenges,
+                            invite friends, and build your rewards balance with Optify.
+                        </p>
+
+
+                        <div class="mt-8 flex flex-col sm:flex-row gap-3">
+
+                            <a
+                                href="register.html"
+                                class="primary-btn inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#12B76A] text-white font-semibold text-sm"
+                            >
+                                Get Started
+                                <i class='bx bx-right-arrow-alt text-xl'></i>
+                            </a>
+
+                            <a
+                                href="#how-it-works"
+                                class="secondary-btn inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl border border-[#E4E7EC] bg-white text-[#071A2B] font-semibold text-sm"
+                            >
+                                <i class='bx bx-play-circle text-lg'></i>
+                                How It Works
+                            </a>
+
+                        </div>
+
+
+                        <div class="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm text-[#667085]">
+
+                            <span class="flex items-center gap-2">
+                                <i class='bx bx-check-circle text-[#12B76A] text-lg'></i>
+                                Simple
+                            </span>
+
+                            <span class="w-1 h-1 rounded-full bg-[#C4CAD3]"></span>
+
+                            <span class="flex items-center gap-2">
+                                <i class='bx bx-check-circle text-[#12B76A] text-lg'></i>
+                                Transparent
+                            </span>
+
+                            <span class="w-1 h-1 rounded-full bg-[#C4CAD3]"></span>
+
+                            <span class="flex items-center gap-2">
+                                <i class='bx bx-check-circle text-[#12B76A] text-lg'></i>
+                                Rewarding
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Dashboard Visual -->
+                    <div class="relative reveal">
+
+                        <!-- Floating Reward -->
+                        <div
+                            class="floating-card absolute -left-5 sm:-left-9 top-12 z-20 bg-white rounded-2xl border border-[#E4E7EC] shadow-soft px-4 py-3 flex items-center gap-3"
+                        >
+                            <div class="w-10 h-10 rounded-xl bg-[#E8F8F0] text-[#12B76A] flex items-center justify-center">
+                                <i class='bx bx-trending-up text-xl'></i>
+                            </div>
+
+                            <div>
+                                <p class="text-[11px] text-[#667085] font-medium">
+                                    Streak Reward
+                                </p>
+
+                                <p class="text-sm font-bold text-[#101828]">
+                                    +$1.50
+                                </p>
+                            </div>
+                        </div>
+
+
+                        <!-- Floating Referral -->
+                        <div
+                            class="floating-card two absolute -right-4 sm:-right-7 bottom-16 z-20 bg-white rounded-2xl border border-[#E4E7EC] shadow-soft px-4 py-3 flex items-center gap-3"
+                        >
+                            <div class="w-10 h-10 rounded-xl bg-[#EEF8FA] text-[#0EA5A4] flex items-center justify-center">
+                                <i class='bx bx-user-plus text-xl'></i>
+                            </div>
+
+                            <div>
+                                <p class="text-[11px] text-[#667085] font-medium">
+                                    Referral Reward
+                                </p>
+
+                                <p class="text-sm font-bold text-[#101828]">
+                                    +$5.00
+                                </p>
+                            </div>
+                        </div>
+
+
+                        <!-- Dashboard -->
+                        <div class="dashboard-preview relative overflow-hidden rounded-[28px] p-4 sm:p-5 shadow-[0_35px_80px_rgba(7,26,43,.18)]">
+
+                            <div class="dashboard-glow"></div>
+                            <div class="dashboard-glow-two"></div>
+
+                            <div class="relative">
+
+                                <!-- Dashboard Top -->
+                                <div class="flex items-center justify-between mb-4">
+
+                                    <div class="flex items-center gap-2.5">
+
+                                        <div class="w-9 h-9 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center text-white">
+                                            <i class='bx bx-target-lock'></i>
+                                        </div>
+
+                                        <span class="text-white font-sora font-semibold text-sm">
+                                            OPTIFY
+                                        </span>
+
+                                    </div>
+
+                                    <div class="flex items-center gap-2">
+
+                                        <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/80">
+                                            <i class='bx bx-bell text-sm'></i>
+                                        </div>
+
+                                        <div class="w-8 h-8 rounded-full bg-[#12B76A] text-white flex items-center justify-center text-xs font-bold">
+                                            D
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- Dashboard Body -->
+                                <div class="grid md:grid-cols-[1.35fr_.65fr] gap-3">
+
+                                    <!-- Balance -->
+                                    <div class="rounded-2xl bg-white/10 border border-white/10 p-5">
+
+                                        <div class="flex items-center justify-between">
+
+                                            <p class="text-white/60 text-xs">
+                                                Available Balance
+                                            </p>
+
+                                            <span class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                                                <i class='bx bx-wallet text-white/80'></i>
+                                            </span>
+
+                                        </div>
+
+                                        <div class="mt-3">
+
+                                            <p class="font-sora text-3xl sm:text-4xl font-semibold text-white tracking-tight">
+                                                $24.50
+                                            </p>
+
+                                            <p class="text-white/50 text-xs mt-1">
+                                                ≈ ₦24,500
+                                            </p>
+
+                                        </div>
+
+
+                                        <div class="grid grid-cols-2 gap-2.5 mt-6">
+
+                                            <div class="rounded-xl bg-black/10 border border-white/10 p-3">
+                                                <p class="text-[10px] text-white/45">
+                                                    Total Earned
+                                                </p>
+                                                <p class="text-sm font-semibold text-white mt-1">
+                                                    $48.50
+                                                </p>
+                                            </div>
+
+                                            <div class="rounded-xl bg-black/10 border border-white/10 p-3">
+                                                <p class="text-[10px] text-white/45">
+                                                    Withdrawn
+                                                </p>
+                                                <p class="text-sm font-semibold text-white mt-1">
+                                                    $0.00
+                                                </p>
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="flex gap-2 mt-4">
+
+                                            <div class="flex-1 rounded-xl bg-[#12B76A] text-white text-center py-2.5 text-xs font-semibold">
+                                                Withdraw
+                                            </div>
+
+                                            <div class="flex-1 rounded-xl bg-white/10 text-white text-center py-2.5 text-xs font-semibold border border-white/10">
+                                                Transactions
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- Validation -->
+                                    <div class="rounded-2xl bg-white p-4">
+
+                                        <div class="w-10 h-10 rounded-xl bg-[#E8F8F0] text-[#12B76A] flex items-center justify-center">
+                                            <i class='bx bx-check-shield text-xl'></i>
+                                        </div>
+
+                                        <p class="text-[#101828] text-sm font-semibold mt-4">
+                                            Account Validated
+                                        </p>
+
+                                        <p class="text-[#667085] text-[11px] leading-5 mt-1">
+                                            Your earning features are available.
+                                        </p>
+
+                                        <div class="mt-4 flex items-center gap-1.5 text-[#12B76A] text-[11px] font-semibold">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-[#12B76A]"></span>
+                                            Active
+                                        </div>
+
+                                        <button
+                                            class="mt-4 text-[11px] font-semibold text-[#071A2B] flex items-center gap-1"
+                                        >
+                                            View Details
+                                            <i class='bx bx-chevron-right'></i>
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- Tasks -->
+                                <div class="mt-3 rounded-2xl bg-white p-4">
+
+                                    <div class="flex items-center justify-between mb-3">
+
+                                        <div>
+                                            <p class="text-[#101828] text-sm font-semibold">
+                                                Available Tasks
+                                            </p>
+
+                                            <p class="text-[#667085] text-[10px] mt-0.5">
+                                                Explore today's available rewards
+                                            </p>
+                                        </div>
+
+                                        <span class="text-[10px] text-[#12B76A] font-semibold">
+                                            View all
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+
+                                        <div class="rounded-xl bg-[#F7F9FC] border border-[#E4E7EC] p-3">
+
+                                            <div class="w-8 h-8 rounded-lg bg-[#E8F8F0] text-[#12B76A] flex items-center justify-center">
+                                                <i class='bx bx-sun text-base'></i>
+                                            </div>
+
+                                            <p class="text-xs font-semibold text-[#101828] mt-2">
+                                                Streak
+                                            </p>
+
+                                            <p class="text-[10px] text-[#667085] mt-0.5">
+                                                Up to $4.50
+                                            </p>
+
+                                        </div>
+
+
+                                        <div class="rounded-xl bg-[#F7F9FC] border border-[#E4E7EC] p-3">
+
+                                            <div class="w-8 h-8 rounded-lg bg-[#EEF8FA] text-[#0EA5A4] flex items-center justify-center">
+                                                <i class='bx bx-gift text-base'></i>
+                                            </div>
+
+                                            <p class="text-xs font-semibold text-[#101828] mt-2">
+                                                Mystery
+                                            </p>
+
+                                            <p class="text-[10px] text-[#667085] mt-0.5">
+                                                $1 – $5
+                                            </p>
+
+                                        </div>
+
+
+                                        <div class="rounded-xl bg-[#F7F9FC] border border-[#E4E7EC] p-3">
+
+                                            <div class="w-8 h-8 rounded-lg bg-[#EEF4FF] text-[#155EEF] flex items-center justify-center">
+                                                <i class='bx bx-help-circle text-base'></i>
+                                            </div>
+
+                                            <p class="text-xs font-semibold text-[#101828] mt-2">
+                                                Quiz
+                                            </p>
+
+                                            <p class="text-[10px] text-[#667085] mt-0.5">
+                                                $1 – $5
+                                            </p>
+
+                                        </div>
+
+
+                                        <div class="rounded-xl bg-[#F7F9FC] border border-[#E4E7EC] p-3">
+
+                                            <div class="w-8 h-8 rounded-lg bg-[#FFF6E8] text-[#D97706] flex items-center justify-center">
+                                                <i class='bx bx-group text-base'></i>
+                                            </div>
+
+                                            <p class="text-xs font-semibold text-[#101828] mt-2">
+                                                Referral
+                                            </p>
+
+                                            <p class="text-[10px] text-[#667085] mt-0.5">
+                                                $5.00
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             VALUE STRIP
+        ========================================= -->
+
+        <section class="relative z-10 pb-16 lg:pb-20">
+
+            <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+
+                    <div class="reveal bg-white border border-[#E4E7EC] rounded-2xl p-5">
+
+                        <div class="w-10 h-10 rounded-xl bg-[#E8F8F0] text-[#12B76A] flex items-center justify-center">
+                            <i class='bx bx-calendar-check text-xl'></i>
+                        </div>
+
+                        <h3 class="font-sora text-sm font-semibold mt-4">
+                            Daily Rewards
+                        </h3>
+
+                        <p class="text-xs leading-5 text-[#667085] mt-1.5">
+                            Claim eligible daily rewards as they become available.
+                        </p>
+
+                    </div>
+
+
+                    <div class="reveal bg-white border border-[#E4E7EC] rounded-2xl p-5">
+
+                        <div class="w-10 h-10 rounded-xl bg-[#EEF8FA] text-[#0EA5A4] flex items-center justify-center">
+                            <i class='bx bx-joystick text-xl'></i>
+                        </div>
+
+                        <h3 class="font-sora text-sm font-semibold mt-4">
+                            Fun Challenges
+                        </h3>
+
+                        <p class="text-xs leading-5 text-[#667085] mt-1.5">
+                            Complete quizzes and mystery box challenges.
+                        </p>
+
+                    </div>
+
+
+                    <div class="reveal bg-white border border-[#E4E7EC] rounded-2xl p-5">
+
+                        <div class="w-10 h-10 rounded-xl bg-[#EEF4FF] text-[#155EEF] flex items-center justify-center">
+                            <i class='bx bx-user-plus text-xl'></i>
+                        </div>
+
+                        <h3 class="font-sora text-sm font-semibold mt-4">
+                            Referral Rewards
+                        </h3>
+
+                        <p class="text-xs leading-5 text-[#667085] mt-1.5">
+                            Invite friends and earn when they meet the requirements.
+                        </p>
+
+                    </div>
+
+
+                    <div class="reveal bg-white border border-[#E4E7EC] rounded-2xl p-5">
+
+                        <div class="w-10 h-10 rounded-xl bg-[#FFF6E8] text-[#D97706] flex items-center justify-center">
+                            <i class='bx bx-money-withdraw text-xl'></i>
+                        </div>
+
+                        <h3 class="font-sora text-sm font-semibold mt-4">
+                            Easy Withdrawals
+                        </h3>
+
+                        <p class="text-xs leading-5 text-[#667085] mt-1.5">
+                            Request withdrawals once you meet the requirements.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             HOW IT WORKS
+        ========================================= -->
+
+        <section
+            id="how-it-works"
+            class="py-20 lg:py-28 bg-white"
+        >
+
+            <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+
+                <div class="max-w-2xl reveal">
+
+                    <p class="section-label uppercase text-[11px] font-bold text-[#12B76A]">
+                        Getting Started
+                    </p>
+
+                    <h2 class="font-sora text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.04em] text-[#071A2B] mt-3">
+                        How Optify Works
+                    </h2>
+
+                    <p class="text-[#667085] leading-7 mt-4 max-w-xl">
+                        Getting started takes only a few simple steps.
+                    </p>
+
+                </div>
+
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mt-12">
+
+                    <!-- Step 1 -->
+                    <div class="reveal relative">
+
+                        <div class="h-full rounded-2xl border border-[#E4E7EC] bg-[#F7F9FC] p-6">
+
+                            <div class="flex items-center justify-between">
+
+                                <span class="font-sora text-4xl font-semibold text-[#DDE3EA]">
+                                    01
+                                </span>
+
+                                <div class="w-11 h-11 rounded-xl bg-white border border-[#E4E7EC] flex items-center justify-center text-[#12B76A]">
+                                    <i class='bx bx-user-plus text-xl'></i>
+                                </div>
+
+                            </div>
+
+                            <h3 class="font-sora text-base font-semibold mt-8">
+                                Create Your Account
+                            </h3>
+
+                            <p class="text-sm text-[#667085] leading-6 mt-2">
+                                Register your Optify account in a few simple steps.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Step 2 -->
+                    <div class="reveal relative">
+
+                        <div class="h-full rounded-2xl border border-[#E4E7EC] bg-[#F7F9FC] p-6">
+
+                            <div class="flex items-center justify-between">
+
+                                <span class="font-sora text-4xl font-semibold text-[#DDE3EA]">
+                                    02
+                                </span>
+
+                                <div class="w-11 h-11 rounded-xl bg-white border border-[#E4E7EC] flex items-center justify-center text-[#12B76A]">
+                                    <i class='bx bx-check-shield text-xl'></i>
+                                </div>
+
+                            </div>
+
+                            <h3 class="font-sora text-base font-semibold mt-8">
+                                Validate Your Dashboard
+                            </h3>
+
+                            <p class="text-sm text-[#667085] leading-6 mt-2">
+                                Complete the dashboard validation payment to unlock earning features.
+                            </p>
+
+                            <div class="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#E8F8F0] px-3 py-2 text-xs font-semibold text-[#087443]">
+                                $5
+                                <span class="text-[#83A99A]">≈</span>
+                                ₦5,000
+                            </div>
+
+                            <p class="text-[10px] text-[#667085] mt-2">
+                                Validation fee.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Step 3 -->
+                    <div class="reveal relative">
+
+                        <div class="h-full rounded-2xl border border-[#E4E7EC] bg-[#F7F9FC] p-6">
+
+                            <div class="flex items-center justify-between">
+
+                                <span class="font-sora text-4xl font-semibold text-[#DDE3EA]">
+                                    03
+                                </span>
+
+                                <div class="w-11 h-11 rounded-xl bg-white border border-[#E4E7EC] flex items-center justify-center text-[#12B76A]">
+                                    <i class='bx bx-task text-xl'></i>
+                                </div>
+
+                            </div>
+
+                            <h3 class="font-sora text-base font-semibold mt-8">
+                                Complete Activities
+                            </h3>
+
+                            <p class="text-sm text-[#667085] leading-6 mt-2">
+                                Access available rewards such as Streaks, Mystery Boxes, Quizzes and Referrals.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Step 4 -->
+                    <div class="reveal relative">
+
+                        <div class="h-full rounded-2xl border border-[#E4E7EC] bg-[#F7F9FC] p-6">
+
+                            <div class="flex items-center justify-between">
+
+                                <span class="font-sora text-4xl font-semibold text-[#DDE3EA]">
+                                    04
+                                </span>
+
+                                <div class="w-11 h-11 rounded-xl bg-white border border-[#E4E7EC] flex items-center justify-center text-[#12B76A]">
+                                    <i class='bx bx-money-withdraw text-xl'></i>
+                                </div>
+
+                            </div>
+
+                            <h3 class="font-sora text-base font-semibold mt-8">
+                                Withdraw Your Rewards
+                            </h3>
+
+                            <p class="text-sm text-[#667085] leading-6 mt-2">
+                                Once eligible, request a withdrawal using your saved bank details.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+<!-- =========================================
+     FEATURES SLIDESHOW
+========================================= -->
+
+<section
+    id="features"
+    class="py-20 lg:py-28 bg-[#F7F9FC]"
+>
+
+    <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+
+        <!-- Section Header -->
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 reveal">
+
+            <div>
+
+                <p class="section-label uppercase text-[11px] font-bold text-[#12B76A]">
+                    Platform Features
+                </p>
+
+                <h2 class="font-sora text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.04em] text-[#071A2B] mt-3">
+                    Everything You Need<br class="hidden sm:block">
+                    in One Place
+                </h2>
+
+            </div>
+
+            <p class="text-[#667085] leading-7 max-w-md">
+                Explore different ways to participate, complete activities,
+                and build your rewards balance.
+            </p>
+
+        </div>
+
+
+        <!-- =========================================
+             SLIDESHOW
+        ========================================== -->
+
+        <div
+            id="featuresSlider"
+            class="relative mt-12 overflow-hidden"
+        >
+
+            <div
+                id="featuresTrack"
+                class="flex transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)]"
+            >
+
+                <!-- =========================================
+                     SLIDE 1 - STREAK
+                ========================================== -->
+
+                <div class="feature-slide min-w-full px-1">
+
+                    <div class="feature-card bg-white border border-[#E4E7EC] rounded-3xl p-7 sm:p-9">
+
+                        <div class="flex items-start justify-between">
+
+                            <div class="w-12 h-12 rounded-2xl bg-[#E8F8F0] text-[#12B76A] flex items-center justify-center">
+                                <i class='bx bx-sun text-2xl'></i>
+                            </div>
+
+                            <span class="rounded-full bg-[#E8F8F0] px-3 py-1.5 text-xs font-semibold text-[#087443]">
+                                Up to $4.50/day
+                            </span>
+
+                        </div>
+
+
+                        <h3 class="font-sora text-xl sm:text-2xl font-semibold text-[#071A2B] mt-7">
+                            Daily Streak
+                        </h3>
+
+                        <p class="text-sm sm:text-base text-[#667085] leading-7 mt-2 max-w-xl">
+                            Claim eligible morning, afternoon, and night rewards
+                            throughout the day and keep your daily streak active.
+                        </p>
+
+
+                        <!-- Streak Visual -->
+
+                        <div class="mt-8 max-w-xl">
+
+                            <div class="flex items-center justify-between mb-3">
+
+                                <span class="text-xs font-medium text-[#667085]">
+                                    Today's progress
+                                </span>
+
+                                <span class="text-xs font-semibold text-[#071A2B]">
+                                    2 / 3 claims
+                                </span>
+
+                            </div>
+
+                            <div class="h-2.5 rounded-full bg-[#E8F8F0] overflow-hidden">
+
+                                <div class="w-2/3 h-full bg-[#12B76A] rounded-full"></div>
+
+                            </div>
+
+
+                            <div class="flex justify-between mt-5">
+
+                                <div class="text-center">
+
+                                    <div class="w-10 h-10 rounded-xl bg-[#E8F8F0] text-[#12B76A] flex items-center justify-center mx-auto">
+                                        <i class='bx bx-sun'></i>
+                                    </div>
+
+                                    <span class="text-[11px] text-[#667085] mt-2 block">
+                                        Morning
+                                    </span>
+
+                                </div>
+
+
+                                <div class="text-center">
+
+                                    <div class="w-10 h-10 rounded-xl bg-[#E8F8F0] text-[#12B76A] flex items-center justify-center mx-auto">
+                                        <i class='bx bx-cloud-sun'></i>
+                                    </div>
+
+                                    <span class="text-[11px] text-[#667085] mt-2 block">
+                                        Afternoon
+                                    </span>
+
+                                </div>
+
+
+                                <div class="text-center">
+
+                                    <div class="w-10 h-10 rounded-xl bg-[#F7F9FC] border border-[#E4E7EC] text-[#98A2B3] flex items-center justify-center mx-auto">
+                                        <i class='bx bx-moon'></i>
+                                    </div>
+
+                                    <span class="text-[11px] text-[#667085] mt-2 block">
+                                        Night
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     SLIDE 2 - MYSTERY BOX
+                ========================================== -->
+
+                <div class="feature-slide min-w-full px-1">
+
+                    <div class="feature-card bg-white border border-[#E4E7EC] rounded-3xl p-7 sm:p-9">
+
+                        <div class="flex items-start justify-between">
+
+                            <div class="w-12 h-12 rounded-2xl bg-[#EEF8FA] text-[#0EA5A4] flex items-center justify-center">
+                                <i class='bx bx-gift text-2xl'></i>
+                            </div>
+
+                            <span class="rounded-full bg-[#EEF8FA] px-3 py-1.5 text-xs font-semibold text-[#08777A]">
+                                $1 – $5
+                            </span>
+
+                        </div>
+
+
+                        <h3 class="font-sora text-xl sm:text-2xl font-semibold text-[#071A2B] mt-7">
+                            Mystery Box
+                        </h3>
+
+                        <p class="text-sm sm:text-base text-[#667085] leading-7 mt-2 max-w-xl">
+                            Open up to three mystery boxes and discover the reward
+                            available inside each one.
+                        </p>
+
+
+                        <!-- Mystery Boxes -->
+
+                        <div class="flex gap-4 mt-8">
+
+                            <div class="group w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#F7F9FC] border border-[#E4E7EC] flex items-center justify-center text-[#0EA5A4]">
+
+                                <div class="text-center">
+
+                                    <i class='bx bx-gift text-3xl'></i>
+
+                                    <span class="block text-[10px] text-[#667085] mt-1">
+                                        Box 01
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="group w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#F7F9FC] border border-[#E4E7EC] flex items-center justify-center text-[#0EA5A4]">
+
+                                <div class="text-center">
+
+                                    <i class='bx bx-gift text-3xl'></i>
+
+                                    <span class="block text-[10px] text-[#667085] mt-1">
+                                        Box 02
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="group w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#F7F9FC] border border-[#E4E7EC] flex items-center justify-center text-[#0EA5A4]">
+
+                                <div class="text-center">
+
+                                    <i class='bx bx-gift text-3xl'></i>
+
+                                    <span class="block text-[10px] text-[#667085] mt-1">
+                                        Box 03
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     SLIDE 3 - QUIZ
+                ========================================== -->
+
+                <div class="feature-slide min-w-full px-1">
+
+                    <div class="feature-card bg-white border border-[#E4E7EC] rounded-3xl p-7 sm:p-9">
+
+                        <div class="flex items-start justify-between">
+
+                            <div class="w-12 h-12 rounded-2xl bg-[#EEF4FF] text-[#155EEF] flex items-center justify-center">
+                                <i class='bx bx-help-circle text-2xl'></i>
+                            </div>
+
+                            <span class="rounded-full bg-[#EEF4FF] px-3 py-1.5 text-xs font-semibold text-[#155EEF]">
+                                $1 – $5
+                            </span>
+
+                        </div>
+
+
+                        <h3 class="font-sora text-xl sm:text-2xl font-semibold text-[#071A2B] mt-7">
+                            Quiz
+                        </h3>
+
+                        <p class="text-sm sm:text-base text-[#667085] leading-7 mt-2 max-w-xl">
+                            Answer available quiz questions and receive the reward
+                            assigned to eligible quiz activities.
+                        </p>
+
+
+                        <!-- Quiz Preview -->
+
+                        <div class="mt-8 max-w-xl rounded-2xl bg-[#F7F9FC] border border-[#E4E7EC] p-5">
+
+                            <div class="flex items-center justify-between">
+
+                                <span class="text-xs font-semibold text-[#667085]">
+                                    Question 03 of 05
+                                </span>
+
+                                <span class="text-xs font-semibold text-[#155EEF]">
+                                    +$2.50
+                                </span>
+
+                            </div>
+
+
+                            <div class="mt-5">
+
+                                <div class="h-3 w-4/5 bg-[#E2E7EF] rounded-full"></div>
+
+                                <div class="h-3 w-3/5 bg-[#E8ECF2] rounded-full mt-2"></div>
+
+                            </div>
+
+
+                            <div class="grid grid-cols-2 gap-3 mt-5">
+
+                                <div class="h-10 rounded-xl bg-white border border-[#E4E7EC]"></div>
+
+                                <div class="h-10 rounded-xl bg-white border border-[#E4E7EC]"></div>
+
+                                <div class="h-10 rounded-xl bg-white border border-[#E4E7EC]"></div>
+
+                                <div class="h-10 rounded-xl bg-white border border-[#E4E7EC]"></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     SLIDE 4 - REFERRAL
+                ========================================== -->
+
+                <div class="feature-slide min-w-full px-1">
+
+                    <div class="feature-card bg-white border border-[#E4E7EC] rounded-3xl p-7 sm:p-9">
+
+                        <div class="flex items-start justify-between">
+
+                            <div class="w-12 h-12 rounded-2xl bg-[#FFF6E8] text-[#D97706] flex items-center justify-center">
+                                <i class='bx bx-group text-2xl'></i>
+                            </div>
+
+                            <span class="rounded-full bg-[#FFF6E8] px-3 py-1.5 text-xs font-semibold text-[#B45309]">
+                                $5 / referral
+                            </span>
+
+                        </div>
+
+
+                        <h3 class="font-sora text-xl sm:text-2xl font-semibold text-[#071A2B] mt-7">
+                            Referral
+                        </h3>
+
+                        <p class="text-sm sm:text-base text-[#667085] leading-7 mt-2 max-w-xl">
+                            Invite friends and receive a referral reward when the
+                            referred user completes the required validation.
+                        </p>
+
+
+                        <!-- Referral Preview -->
+
+                        <div class="mt-8 flex flex-col sm:flex-row sm:items-center gap-5">
+
+                            <div class="flex -space-x-3">
+
+                                <div class="w-12 h-12 rounded-full border-2 border-white bg-[#071A2B] text-white flex items-center justify-center text-sm font-semibold">
+                                    A
+                                </div>
+
+                                <div class="w-12 h-12 rounded-full border-2 border-white bg-[#0EA5A4] text-white flex items-center justify-center text-sm font-semibold">
+                                    J
+                                </div>
+
+                                <div class="w-12 h-12 rounded-full border-2 border-white bg-[#12B76A] text-white flex items-center justify-center text-sm font-semibold">
+                                    M
+                                </div>
+
+                                <div class="w-12 h-12 rounded-full border-2 border-white bg-[#155EEF] text-white flex items-center justify-center text-sm font-semibold">
+                                    +
+                                </div>
+
+                            </div>
+
+
+                            <div>
+
+                                <p class="text-sm font-semibold text-[#071A2B]">
+                                    Invite friends
+                                </p>
+
+                                <p class="text-xs text-[#667085] mt-1">
+                                    Earn $5 for each qualified referral.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================================
+                 NAVIGATION BUTTONS
+            ========================================== -->
+
+            <button
+                id="featurePrev"
+                type="button"
+                aria-label="Previous feature"
+                class="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white border border-[#E4E7EC] shadow-sm flex items-center justify-center text-[#071A2B] hover:bg-[#F7F9FC] hover:border-[#D0D5DD] transition-all duration-200"
+            >
+                <i class='bx bx-chevron-left text-xl'></i>
+            </button>
+
+
+            <button
+                id="featureNext"
+                type="button"
+                aria-label="Next feature"
+                class="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white border border-[#E4E7EC] shadow-sm flex items-center justify-center text-[#071A2B] hover:bg-[#F7F9FC] hover:border-[#D0D5DD] transition-all duration-200"
+            >
+                <i class='bx bx-chevron-right text-xl'></i>
+            </button>
+
+        </div>
+
+
+        <!-- =========================================
+             DOT INDICATORS
+        ========================================== -->
+
+        <div
+            id="featureDots"
+            class="flex justify-center items-center gap-2 mt-7"
+        >
+
+            <button
+                type="button"
+                data-slide="0"
+                aria-label="Go to Daily Streak"
+                class="feature-dot w-7 h-2 rounded-full bg-[#12B76A] transition-all duration-300"
+            ></button>
+
+            <button
+                type="button"
+                data-slide="1"
+                aria-label="Go to Mystery Box"
+                class="feature-dot w-2 h-2 rounded-full bg-[#D0D5DD] transition-all duration-300"
+            ></button>
+
+            <button
+                type="button"
+                data-slide="2"
+                aria-label="Go to Quiz"
+                class="feature-dot w-2 h-2 rounded-full bg-[#D0D5DD] transition-all duration-300"
+            ></button>
+
+            <button
+                type="button"
+                data-slide="3"
+                aria-label="Go to Referral"
+                class="feature-dot w-2 h-2 rounded-full bg-[#D0D5DD] transition-all duration-300"
+            ></button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================
+     FEATURES SLIDESHOW SCRIPT
+========================================= -->
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const track = document.getElementById("featuresTrack");
+        const slider = document.getElementById("featuresSlider");
+        const prevButton = document.getElementById("featurePrev");
+        const nextButton = document.getElementById("featureNext");
+        const dots = document.querySelectorAll(".feature-dot");
+
+        const totalSlides = dots.length;
+
+        let currentSlide = 0;
+        let autoSlide;
+
+
+        function updateSlider() {
+
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+
+            dots.forEach((dot, index) => {
+
+                if (index === currentSlide) {
+
+                    dot.classList.remove(
+                        "w-2",
+                        "bg-[#D0D5DD]"
+                    );
+
+                    dot.classList.add(
+                        "w-7",
+                        "bg-[#12B76A]"
+                    );
+
+                } else {
+
+                    dot.classList.remove(
+                        "w-7",
+                        "bg-[#12B76A]"
+                    );
+
+                    dot.classList.add(
+                        "w-2",
+                        "bg-[#D0D5DD]"
+                    );
+
+                }
+
+            });
+
+        }
+
+
+        function nextSlide() {
+
+            currentSlide++;
+
+            if (currentSlide >= totalSlides) {
+                currentSlide = 0;
+            }
+
+            updateSlider();
+
+        }
+
+
+        function previousSlide() {
+
+            currentSlide--;
+
+            if (currentSlide < 0) {
+                currentSlide = totalSlides - 1;
+            }
+
+            updateSlider();
+
+        }
+
+
+        function startAutoSlide() {
+
+            clearInterval(autoSlide);
+
+            autoSlide = setInterval(() => {
+
+                nextSlide();
+
+            }, 5000);
+
+        }
+
+
+        function stopAutoSlide() {
+
+            clearInterval(autoSlide);
+
+        }
+
+
+        nextButton.addEventListener("click", function () {
+
+            nextSlide();
+            startAutoSlide();
+
+        });
+
+
+        prevButton.addEventListener("click", function () {
+
+            previousSlide();
+            startAutoSlide();
+
+        });
+
+
+        dots.forEach((dot) => {
+
+            dot.addEventListener("click", function () {
+
+                currentSlide = Number(this.dataset.slide);
+
+                updateSlider();
+                startAutoSlide();
+
+            });
+
+        });
+
+
+        /*
+        =========================================
+        PAUSE WHILE HOVERING
+        =========================================
+        */
+
+        slider.addEventListener("mouseenter", stopAutoSlide);
+
+        slider.addEventListener("mouseleave", startAutoSlide);
+
+
+        /*
+        =========================================
+        TOUCH / SWIPE SUPPORT
+        =========================================
+        */
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+
+        slider.addEventListener("touchstart", function (event) {
+
+            touchStartX = event.changedTouches[0].screenX;
+
+            stopAutoSlide();
+
+        }, {
+            passive: true
+        });
+
+
+        slider.addEventListener("touchend", function (event) {
+
+            touchEndX = event.changedTouches[0].screenX;
+
+            const swipeDistance = touchEndX - touchStartX;
+
+
+            if (Math.abs(swipeDistance) > 50) {
+
+                if (swipeDistance < 0) {
+
+                    nextSlide();
+
+                } else {
+
+                    previousSlide();
+
+                }
+
+            }
+
+            startAutoSlide();
+
+        }, {
+            passive: true
+        });
+
+
+        /*
+        =========================================
+        KEYBOARD SUPPORT
+        =========================================
+        */
+
+        document.addEventListener("keydown", function (event) {
+
+            if (event.key === "ArrowRight") {
+
+                nextSlide();
+                startAutoSlide();
+
+            }
+
+            if (event.key === "ArrowLeft") {
+
+                previousSlide();
+                startAutoSlide();
+
+            }
+
+        });
+
+
+        /*
+        =========================================
+        INITIALIZE
+        =========================================
+        */
+
+        updateSlider();
+        startAutoSlide();
+
+    });
+
+</script>
+
+        <!-- =========================================
+             REWARDS PREVIEW
+        ========================================= -->
+
+        <section
+            id="rewards"
+            class="py-20 lg:py-28 bg-white"
+        >
+
+            <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+
+                <div class="grid lg:grid-cols-[.8fr_1.2fr] gap-10 lg:gap-16 items-center">
+
+                    <!-- Text -->
+                    <div class="reveal">
+
+                        <p class="section-label uppercase text-[11px] font-bold text-[#12B76A]">
+                            Your Balance
+                        </p>
+
+                        <h2 class="font-sora text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.04em] text-[#071A2B] mt-3">
+                            Your Rewards,
+                            <span class="text-[#12B76A]">
+                                Clearly Explained.
+                            </span>
+                        </h2>
+
+                        <p class="text-[#667085] leading-7 mt-5 max-w-lg">
+                            Keep track of your available balance, earned rewards and
+                            withdrawals from one simple dashboard.
+                        </p>
+
+
+                        <div class="mt-7 flex items-center gap-3">
+
+                            <div class="w-10 h-10 rounded-xl bg-[#E8F8F0] text-[#12B76A] flex items-center justify-center">
+                                <i class='bx bx-check-shield text-xl'></i>
+                            </div>
+
+                            <div>
+                                <p class="text-sm font-semibold text-[#101828]">
+                                    Clear balance display
+                                </p>
+
+                                <p class="text-xs text-[#667085] mt-0.5">
+                                    USD first with the equivalent NGN value.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Wallet -->
+                    <div class="reveal">
+
+                        <div class="rounded-[28px] bg-[#071A2B] p-5 sm:p-7 shadow-soft">
+
+                            <div class="flex items-center justify-between">
+
+                                <div>
+
+                                    <p class="text-xs text-white/50">
+                                        Available Balance
+                                    </p>
+
+                                    <p class="font-sora text-4xl sm:text-5xl font-semibold text-white tracking-tight mt-2">
+                                        $24.50
+                                    </p>
+
+                                    <p class="text-xs text-white/45 mt-1">
+                                        ≈ ₦24,500
+                                    </p>
+
+                                </div>
+
+                                <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-white">
+                                    <i class='bx bx-wallet-alt text-2xl'></i>
+                                </div>
+
+                            </div>
+
+
+                            <div class="grid grid-cols-2 gap-3 mt-7">
+
+                                <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
+
+                                    <p class="text-[11px] text-white/45">
+                                        Total Earned
+                                    </p>
+
+                                    <p class="text-lg font-semibold text-white mt-1">
+                                        $48.50
+                                    </p>
+
+                                </div>
+
+                                <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
+
+                                    <p class="text-[11px] text-white/45">
+                                        Total Withdrawn
+                                    </p>
+
+                                    <p class="text-lg font-semibold text-white mt-1">
+                                        $0.00
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="mt-4 rounded-2xl bg-[#12B76A] p-4 flex items-center justify-between">
+
+                                <div>
+
+                                    <p class="text-[11px] text-white/75">
+                                        Current conversion
+                                    </p>
+
+                                    <p class="text-sm font-semibold text-white mt-0.5">
+                                        $1 = ₦1,000
+                                    </p>
+
+                                </div>
+
+                                <i class='bx bx-transfer-alt text-2xl text-white/80'></i>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Conversion -->
+                        <div class="mt-4 rounded-2xl border border-[#E4E7EC] bg-[#F7F9FC] p-5">
+
+                            <div class="flex items-center justify-between mb-4">
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-[#101828]">
+                                        Currency Conversion
+                                    </p>
+
+                                    <p class="text-xs text-[#667085] mt-1">
+                                        Platform display rate
+                                    </p>
+
+                                </div>
+
+                                <div class="w-9 h-9 rounded-xl bg-white border border-[#E4E7EC] flex items-center justify-center text-[#12B76A]">
+                                    <i class='bx bx-transfer'></i>
+                                </div>
+
+                            </div>
+
+
+                            <div class="grid grid-cols-3 gap-2">
+
+                                <div class="rounded-xl bg-white border border-[#E4E7EC] p-3 text-center">
+                                    <p class="text-xs text-[#667085]">
+                                        $1
+                                    </p>
+                                    <p class="text-sm font-semibold text-[#101828] mt-1">
+                                        ₦1,000
+                                    </p>
+                                </div>
+
+                                <div class="rounded-xl bg-white border border-[#E4E7EC] p-3 text-center">
+                                    <p class="text-xs text-[#667085]">
+                                        $5
+                                    </p>
+                                    <p class="text-sm font-semibold text-[#101828] mt-1">
+                                        ₦5,000
+                                    </p>
+                                </div>
+
+                                <div class="rounded-xl bg-white border border-[#E4E7EC] p-3 text-center">
+                                    <p class="text-xs text-[#667085]">
+                                        $10
+                                    </p>
+                                    <p class="text-sm font-semibold text-[#101828] mt-1">
+                                        ₦10,000
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             COMMUNITY
+        ========================================= -->
+
+        <section class="py-20 lg:py-24 bg-[#F7F9FC]">
+
+            <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+
+                <div class="relative overflow-hidden rounded-[30px] bg-[#071A2B] p-7 sm:p-10 lg:p-14 reveal">
+
+                    <div class="absolute -right-20 -top-20 w-72 h-72 rounded-full bg-[#0EA5A4]/20 blur-3xl"></div>
+                    <div class="absolute -left-20 -bottom-20 w-72 h-72 rounded-full bg-[#12B76A]/10 blur-3xl"></div>
+
+                    <div class="relative grid lg:grid-cols-[1fr_auto] gap-8 items-center">
+
+                        <div>
+
+                            <div class="w-12 h-12 rounded-2xl bg-white/10 text-[#12B76A] flex items-center justify-center mb-5">
+                                <i class='bx bxl-telegram text-2xl'></i>
+                            </div>
+
+                            <h2 class="font-sora text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-[-0.035em] text-white">
+                                Stay Connected With Optify
+                            </h2>
+
+                            <p class="text-sm sm:text-base leading-7 text-white/55 max-w-2xl mt-3">
+                                Join our official community channel for announcements,
+                                updates, important notices, and platform information.
+                            </p>
+
+                        </div>
+
+
+                        <a
+                            id="communityButton"
+                            href="#"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#12B76A] text-white text-sm font-semibold primary-btn whitespace-nowrap"
+                        >
+                            Join Our Community
+                            <i class='bx bx-right-arrow-alt text-xl'></i>
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             WHY OPTIFY
+        ========================================= -->
+
+        <section class="py-20 lg:py-28 bg-white">
+
+            <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+
+                <div class="grid lg:grid-cols-[.8fr_1.2fr] gap-12 lg:gap-20 items-center">
+
+                    <div class="reveal">
+
+                        <p class="section-label uppercase text-[11px] font-bold text-[#12B76A]">
+                            Designed With Clarity
+                        </p>
+
+                        <h2 class="font-sora text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.04em] text-[#071A2B] mt-3">
+                            Built Around
+                            <span class="text-[#12B76A]">
+                                Clarity.
+                            </span>
+                        </h2>
+
+                        <p class="text-[#667085] leading-7 mt-5 max-w-lg">
+                            Optify is designed to keep important requirements,
+                            available activities and reward information easy to understand.
+                        </p>
+
+                    </div>
+
+
+                    <div class="grid sm:grid-cols-2 gap-4">
+
+                        <div class="reveal rounded-2xl border border-[#E4E7EC] p-6">
+
+                            <div class="w-11 h-11 rounded-xl bg-[#E8F8F0] text-[#12B76A] flex items-center justify-center">
+                                <i class='bx bx-list-check text-xl'></i>
+                            </div>
+
+                            <h3 class="font-sora text-base font-semibold mt-5">
+                                Clear Reward Rules
+                            </h3>
+
+                            <p class="text-sm leading-6 text-[#667085] mt-2">
+                                Reward values and activity requirements can be clearly presented.
+                            </p>
+
+                        </div>
+
+
+                        <div class="reveal rounded-2xl border border-[#E4E7EC] p-6">
+
+                            <div class="w-11 h-11 rounded-xl bg-[#EEF8FA] text-[#0EA5A4] flex items-center justify-center">
+                                <i class='bx bx-info-circle text-xl'></i>
+                            </div>
+
+                            <h3 class="font-sora text-base font-semibold mt-5">
+                                Transparent Requirements
+                            </h3>
+
+                            <p class="text-sm leading-6 text-[#667085] mt-2">
+                                Important eligibility requirements are shown before users take action.
+                            </p>
+
+                        </div>
+
+
+                        <div class="reveal rounded-2xl border border-[#E4E7EC] p-6">
+
+                            <div class="w-11 h-11 rounded-xl bg-[#EEF4FF] text-[#155EEF] flex items-center justify-center">
+                                <i class='bx bx-layout text-xl'></i>
+                            </div>
+
+                            <h3 class="font-sora text-base font-semibold mt-5">
+                                Simple Dashboard
+                            </h3>
+
+                            <p class="text-sm leading-6 text-[#667085] mt-2">
+                                Keep your rewards, activities and transactions organized in one place.
+                            </p>
+
+                        </div>
+
+
+                        <div class="reveal rounded-2xl border border-[#E4E7EC] p-6">
+
+                            <div class="w-11 h-11 rounded-xl bg-[#FFF6E8] text-[#D97706] flex items-center justify-center">
+                                <i class='bx bx-shield-quarter text-xl'></i>
+                            </div>
+
+                            <h3 class="font-sora text-base font-semibold mt-5">
+                                Secure Payments
+                            </h3>
+
+                            <p class="text-sm leading-6 text-[#667085] mt-2">
+                                Supported payments can be processed through Paystack.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             INTERACTIVE REWARD PREVIEW
+        ========================================= -->
+
+        <section class="py-20 lg:py-28 bg-[#F7F9FC]">
+
+            <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+
+                <div class="text-center max-w-2xl mx-auto reveal">
+
+                    <p class="section-label uppercase text-[11px] font-bold text-[#12B76A]">
+                        Explore Rewards
+                    </p>
+
+                    <h2 class="font-sora text-3xl sm:text-4xl font-semibold tracking-[-0.04em] text-[#071A2B] mt-3">
+                        See How Activities Work
+                    </h2>
+
+                    <p class="text-[#667085] leading-7 mt-4">
+                        Explore the different reward activities available on the platform.
+                    </p>
+
+                </div>
+
+
+                <!-- Tabs -->
+                <div class="mt-10 flex justify-center">
+
+                    <div class="inline-flex flex-wrap justify-center gap-2 p-1.5 bg-white border border-[#E4E7EC] rounded-2xl">
+
+                        <button
+                            class="reward-tab active px-4 py-2.5 rounded-xl border border-transparent text-xs sm:text-sm font-semibold"
+                            data-tab="streak"
+                        >
+                            <i class='bx bx-sun mr-1'></i>
+                            Streak
+                        </button>
+
+                        <button
+                            class="reward-tab px-4 py-2.5 rounded-xl border border-transparent text-xs sm:text-sm font-semibold text-[#667085]"
+                            data-tab="mystery"
+                        >
+                            <i class='bx bx-gift mr-1'></i>
+                            Mystery Box
+                        </button>
+
+                        <button
+                            class="reward-tab px-4 py-2.5 rounded-xl border border-transparent text-xs sm:text-sm font-semibold text-[#667085]"
+                            data-tab="quiz"
+                        >
+                            <i class='bx bx-help-circle mr-1'></i>
+                            Quiz
+                        </button>
+
+                        <button
+                            class="reward-tab px-4 py-2.5 rounded-xl border border-transparent text-xs sm:text-sm font-semibold text-[#667085]"
+                            data-tab="referral"
+                        >
+                            <i class='bx bx-group mr-1'></i>
+                            Referral
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Content -->
+                <div class="max-w-4xl mx-auto mt-6">
+
+                    <!-- STREAK -->
+                    <div
+                        class="reward-content active bg-white border border-[#E4E7EC] rounded-3xl p-6 sm:p-8"
+                        data-content="streak"
+                    >
+
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+
+                            <div>
+
+                                <div class="w-12 h-12 rounded-2xl bg-[#E8F8F0] text-[#12B76A] flex items-center justify-center">
+                                    <i class='bx bx-sun text-2xl'></i>
+                                </div>
+
+                                <h3 class="font-sora text-xl font-semibold mt-5">
+                                    Daily Streak
+                                </h3>
+
+                                <p class="text-sm text-[#667085] leading-6 mt-2 max-w-xl">
+                                    Claim eligible rewards during the morning, afternoon and night.
+                                </p>
+
+                            </div>
+
+                            <div class="rounded-2xl bg-[#071A2B] text-white px-6 py-5 min-w-[160px]">
+
+                                <p class="text-[11px] text-white/50">
+                                    Daily maximum
+                                </p>
+
+                                <p class="font-sora text-2xl font-semibold mt-1">
+                                    $4.50
+                                </p>
+
+                                <p class="text-[10px] text-white/45 mt-1">
+                                    ≈ ₦4,500
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="grid sm:grid-cols-3 gap-3 mt-7">
+
+                            <div class="rounded-2xl bg-[#F7F9FC] border border-[#E4E7EC] p-4">
+
+                                <div class="flex items-center justify-between">
+
+                                    <span class="text-xs text-[#667085]">
+                                        Morning
+                                    </span>
+
+                                    <i class='bx bx-sun text-[#12B76A]'></i>
+
+                                </div>
+
+                                <p class="text-lg font-semibold mt-3">
+                                    $1.50
+                                </p>
+
+                            </div>
+
+                            <div class="rounded-2xl bg-[#F7F9FC] border border-[#E4E7EC] p-4">
+
+                                <div class="flex items-center justify-between">
+
+                                    <span class="text-xs text-[#667085]">
+                                        Afternoon
+                                    </span>
+
+                                    <i class='bx bx-sun text-[#12B76A]'></i>
+
+                                </div>
+
+                                <p class="text-lg font-semibold mt-3">
+                                    $1.50
+                                </p>
+
+                            </div>
+
+                            <div class="rounded-2xl bg-[#F7F9FC] border border-[#E4E7EC] p-4">
+
+                                <div class="flex items-center justify-between">
+
+                                    <span class="text-xs text-[#667085]">
+                                        Night
+                                    </span>
+
+                                    <i class='bx bx-moon text-[#12B76A]'></i>
+
+                                </div>
+
+                                <p class="text-lg font-semibold mt-3">
+                                    $1.50
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- MYSTERY -->
+                    <div
+                        class="reward-content bg-white border border-[#E4E7EC] rounded-3xl p-6 sm:p-8"
+                        data-content="mystery"
+                    >
+
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+
+                            <div>
+
+                                <div class="w-12 h-12 rounded-2xl bg-[#EEF8FA] text-[#0EA5A4] flex items-center justify-center">
+                                    <i class='bx bx-gift text-2xl'></i>
+                                </div>
+
+                                <h3 class="font-sora text-xl font-semibold mt-5">
+                                    Mystery Box
+                                </h3>
+
+                                <p class="text-sm text-[#667085] leading-6 mt-2 max-w-xl">
+                                    Open up to three boxes, one at a time, and reveal the reward assigned to each box.
+                                </p>
+
+                            </div>
+
+                            <div class="rounded-2xl bg-[#071A2B] text-white px-6 py-5 min-w-[160px]">
+
+                                <p class="text-[11px] text-white/50">
+                                    Reward range
+                                </p>
+
+                                <p class="font-sora text-2xl font-semibold mt-1">
+                                    $1 – $5
+                                </p>
+
+                                <p class="text-[10px] text-white/45 mt-1">
+                                    Per box
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="grid grid-cols-3 gap-3 mt-7">
+
+                            <div class="aspect-square rounded-2xl bg-[#F7F9FC] border border-[#E4E7EC] flex flex-col items-center justify-center">
+
+                                <div class="w-12 h-12 rounded-xl bg-[#EEF8FA] text-[#0EA5A4] flex items-center justify-center">
+                                    <i class='bx bx-gift text-2xl'></i>
+                                </div>
+
+                                <span class="text-xs font-semibold mt-3">
+                                    Box 1
+                                </span>
+
+                            </div>
+
+                            <div class="aspect-square rounded-2xl bg-[#F7F9FC] border border-[#E4E7EC] flex flex-col items-center justify-center">
+
+                                <div class="w-12 h-12 rounded-xl bg-[#EEF8FA] text-[#0EA5A4] flex items-center justify-center">
+                                    <i class='bx bx-gift text-2xl'></i>
+                                </div>
+
+                                <span class="text-xs font-semibold mt-3">
+                                    Box 2
+                                </span>
+
+                            </div>
+
+                            <div class="aspect-square rounded-2xl bg-[#F7F9FC] border border-[#E4E7EC] flex flex-col items-center justify-center">
+
+                                <div class="w-12 h-12 rounded-xl bg-[#EEF8FA] text-[#0EA5A4] flex items-center justify-center">
+                                    <i class='bx bx-gift text-2xl'></i>
+                                </div>
+
+                                <span class="text-xs font-semibold mt-3">
+                                    Box 3
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- QUIZ -->
+                    <div
+                        class="reward-content bg-white border border-[#E4E7EC] rounded-3xl p-6 sm:p-8"
+                        data-content="quiz"
+                    >
+
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+
+                            <div>
+
+                                <div class="w-12 h-12 rounded-2xl bg-[#EEF4FF] text-[#155EEF] flex items-center justify-center">
+                                    <i class='bx bx-help-circle text-2xl'></i>
+                                </div>
+
+                                <h3 class="font-sora text-xl font-semibold mt-5">
+                                    Quiz
+                                </h3>
+
+                                <p class="text-sm text-[#667085] leading-6 mt-2 max-w-xl">
+                                    Answer available questions and receive the reward assigned to eligible quiz activities.
+                                </p>
+
+                            </div>
+
+                            <div class="rounded-2xl bg-[#071A2B] text-white px-6 py-5 min-w-[160px]">
+
+                                <p class="text-[11px] text-white/50">
+                                    Reward range
+                                </p>
+
+                                <p class="font-sora text-2xl font-semibold mt-1">
+                                    $1 – $5
+                                </p>
+
+                                <p class="text-[10px] text-white/45 mt-1">
+                                    Per eligible quiz
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="mt-7 rounded-2xl border border-[#E4E7EC] bg-[#F7F9FC] p-5">
+
+                            <div class="flex items-start gap-3">
+
+                                <div class="w-8 h-8 rounded-lg bg-white border border-[#E4E7EC] flex items-center justify-center text-[#155EEF] text-sm font-bold">
+                                    1
+                                </div>
+
+                                <div class="flex-1">
+
+                                    <div class="h-2.5 bg-[#DDE3EA] rounded-full w-4/5"></div>
+                                    <div class="h-2.5 bg-[#E8ECF2] rounded-full w-2/5 mt-2"></div>
+
+                                    <div class="grid grid-cols-2 gap-2 mt-5">
+
+                                        <div class="h-10 bg-white border border-[#E4E7EC] rounded-xl"></div>
+                                        <div class="h-10 bg-white border border-[#E4E7EC] rounded-xl"></div>
+                                        <div class="h-10 bg-white border border-[#E4E7EC] rounded-xl"></div>
+                                        <div class="h-10 bg-white border border-[#E4E7EC] rounded-xl"></div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- REFERRAL -->
+                    <div
+                        class="reward-content bg-white border border-[#E4E7EC] rounded-3xl p-6 sm:p-8"
+                        data-content="referral"
+                    >
+
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+
+                            <div>
+
+                                <div class="w-12 h-12 rounded-2xl bg-[#FFF6E8] text-[#D97706] flex items-center justify-center">
+                                    <i class='bx bx-group text-2xl'></i>
+                                </div>
+
+                                <h3 class="font-sora text-xl font-semibold mt-5">
+                                    Referral Rewards
+                                </h3>
+
+                                <p class="text-sm text-[#667085] leading-6 mt-2 max-w-xl">
+                                    Invite friends using your referral link and receive a reward when the required qualification is completed.
+                                </p>
+
+                            </div>
+
+                            <div class="rounded-2xl bg-[#071A2B] text-white px-6 py-5 min-w-[160px]">
+
+                                <p class="text-[11px] text-white/50">
+                                    Qualified referral
+                                </p>
+
+                                <p class="font-sora text-2xl font-semibold mt-1">
+                                    $5.00
+                                </p>
+
+                                <p class="text-[10px] text-white/45 mt-1">
+                                    ≈ ₦5,000
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="mt-7 flex flex-col sm:flex-row items-center gap-4">
+
+                            <div class="flex -space-x-3">
+
+                                <div class="w-14 h-14 rounded-full bg-[#071A2B] border-4 border-white text-white flex items-center justify-center font-semibold">
+                                    A
+                                </div>
+
+                                <div class="w-14 h-14 rounded-full bg-[#0EA5A4] border-4 border-white text-white flex items-center justify-center font-semibold">
+                                    J
+                                </div>
+
+                                <div class="w-14 h-14 rounded-full bg-[#12B76A] border-4 border-white text-white flex items-center justify-center font-semibold">
+                                    M
+                                </div>
+
+                                <div class="w-14 h-14 rounded-full bg-[#D97706] border-4 border-white text-white flex items-center justify-center font-semibold">
+                                    +
+                                </div>
+
+                            </div>
+
+                            <div class="text-center sm:text-left">
+
+                                <p class="text-sm font-semibold text-[#101828]">
+                                    Invite friends
+                                </p>
+
+                                <p class="text-xs text-[#667085] mt-1">
+                                    Rewards are subject to the platform's qualification rules.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             FAQ
+        ========================================= -->
+
+        <section
+            id="faq"
+            class="py-20 lg:py-28 bg-white"
+        >
+
+            <div class="max-w-4xl mx-auto px-5 sm:px-6 lg:px-8">
+
+                <div class="text-center reveal">
+
+                    <p class="section-label uppercase text-[11px] font-bold text-[#12B76A]">
+                        FAQ
+                    </p>
+
+                    <h2 class="font-sora text-3xl sm:text-4xl font-semibold tracking-[-0.04em] text-[#071A2B] mt-3">
+                        Frequently Asked Questions
+                    </h2>
+
+                    <p class="text-[#667085] leading-7 mt-4">
+                        Find answers to common questions about Optify.
+                    </p>
+
+                </div>
+
+
+                <div class="space-y-3 mt-10">
+
+                    <!-- FAQ 1 -->
+                    <div class="faq-item reveal">
+
+                        <button
+                            type="button"
+                            class="faq-button"
+                            aria-expanded="false"
+                        >
+
+                            <span class="font-semibold text-sm sm:text-base text-[#101828]">
+                                What is Optify?
+                            </span>
+
+                            <i class='faq-icon bx bx-chevron-down text-xl text-[#667085]'></i>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            <p class="text-sm text-[#667085] leading-6">
+                                Optify is a rewards platform where registered users can
+                                access available activities and earn eligible rewards
+                                according to the platform's rules.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FAQ 2 -->
+                    <div class="faq-item reveal">
+
+                        <button
+                            type="button"
+                            class="faq-button"
+                            aria-expanded="false"
+                        >
+
+                            <span class="font-semibold text-sm sm:text-base text-[#101828]">
+                                How do I start earning?
+                            </span>
+
+                            <i class='faq-icon bx bx-chevron-down text-xl text-[#667085]'></i>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            <p class="text-sm text-[#667085] leading-6">
+                                Create an account, complete the required dashboard
+                                validation process, and then access the earning
+                                activities available to your account.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FAQ 3 -->
+                    <div class="faq-item reveal">
+
+                        <button
+                            type="button"
+                            class="faq-button"
+                            aria-expanded="false"
+                        >
+
+                            <span class="font-semibold text-sm sm:text-base text-[#101828]">
+                                How much is dashboard validation?
+                            </span>
+
+                            <i class='faq-icon bx bx-chevron-down text-xl text-[#667085]'></i>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            <p class="text-sm text-[#667085] leading-6">
+                                The current dashboard validation fee is
+                                <strong class="text-[#101828]">$5</strong>,
+                                displayed as approximately
+                                <strong class="text-[#101828]">₦5,000</strong>
+                                using Optify's current platform conversion.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FAQ 4 -->
+                    <div class="faq-item reveal">
+
+                        <button
+                            type="button"
+                            class="faq-button"
+                            aria-expanded="false"
+                        >
+
+                            <span class="font-semibold text-sm sm:text-base text-[#101828]">
+                                What rewards are available?
+                            </span>
+
+                            <i class='faq-icon bx bx-chevron-down text-xl text-[#667085]'></i>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            <p class="text-sm text-[#667085] leading-6">
+                                Available activities include Streaks, Mystery Boxes,
+                                Quizzes and Referral rewards. Availability and reward
+                                values may depend on the platform's current rules.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FAQ 5 -->
+                    <div class="faq-item reveal">
+
+                        <button
+                            type="button"
+                            class="faq-button"
+                            aria-expanded="false"
+                        >
+
+                            <span class="font-semibold text-sm sm:text-base text-[#101828]">
+                                How does the referral reward work?
+                            </span>
+
+                            <i class='faq-icon bx bx-chevron-down text-xl text-[#667085]'></i>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            <p class="text-sm text-[#667085] leading-6">
+                                A referral reward is credited when the referred user
+                                completes the required dashboard validation and the
+                                referral meets the platform's qualification rules.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FAQ 6 -->
+                    <div class="faq-item reveal">
+
+                        <button
+                            type="button"
+                            class="faq-button"
+                            aria-expanded="false"
+                        >
+
+                            <span class="font-semibold text-sm sm:text-base text-[#101828]">
+                                What is the minimum withdrawal?
+                            </span>
+
+                            <i class='faq-icon bx bx-chevron-down text-xl text-[#667085]'></i>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            <p class="text-sm text-[#667085] leading-6">
+                                The current minimum withdrawal amount is
+                                <strong class="text-[#101828]">$10</strong>,
+                                displayed as approximately
+                                <strong class="text-[#101828]">₦10,000</strong>.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FAQ 7 -->
+                    <div class="faq-item reveal">
+
+                        <button
+                            type="button"
+                            class="faq-button"
+                            aria-expanded="false"
+                        >
+
+                            <span class="font-semibold text-sm sm:text-base text-[#101828]">
+                                What is the withdrawal E-pin?
+                            </span>
+
+                            <i class='faq-icon bx bx-chevron-down text-xl text-[#667085]'></i>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            <p class="text-sm text-[#667085] leading-6">
+                                The Optify withdrawal E-pin is required before a user
+                                can submit an eligible withdrawal request. The current
+                                E-pin price is $2, displayed as approximately ₦2,000.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FAQ 8 -->
+                    <div class="faq-item reveal">
+
+                        <button
+                            type="button"
+                            class="faq-button"
+                            aria-expanded="false"
+                        >
+
+                            <span class="font-semibold text-sm sm:text-base text-[#101828]">
+                                Can I edit my bank details?
+                            </span>
+
+                            <i class='faq-icon bx bx-chevron-down text-xl text-[#667085]'></i>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            <p class="text-sm text-[#667085] leading-6">
+                                Yes. Users can manage their personal and bank details
+                                through the Settings section of their account.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FAQ 9 -->
+                    <div class="faq-item reveal">
+
+                        <button
+                            type="button"
+                            class="faq-button"
+                            aria-expanded="false"
+                        >
+
+                            <span class="font-semibold text-sm sm:text-base text-[#101828]">
+                                How are payments processed?
+                            </span>
+
+                            <i class='faq-icon bx bx-chevron-down text-xl text-[#667085]'></i>
+
+                        </button>
+
+                        <div class="faq-answer">
+
+                            <p class="text-sm text-[#667085] leading-6">
+                                Supported payments are planned to be processed through
+                                Paystack, with payment verification handled by the
+                                platform backend.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             FINAL CTA
+        ========================================= -->
+
+        <section class="py-20 lg:py-24 bg-[#F7F9FC]">
+
+            <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+
+                <div class="final-cta relative overflow-hidden rounded-[30px] p-8 sm:p-12 lg:p-16 text-center reveal">
+
+                    <div class="relative max-w-3xl mx-auto">
+
+                        <div class="mx-auto w-14 h-14 rounded-2xl bg-white/10 border border-white/10 text-[#12B76A] flex items-center justify-center">
+                            <i class='bx bx-target-lock text-2xl'></i>
+                        </div>
+
+                        <h2 class="font-sora text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.04em] text-white mt-6">
+                            Ready to Get Started With Optify?
+                        </h2>
+
+                        <p class="text-white/55 leading-7 mt-4 max-w-xl mx-auto">
+                            Create your account and explore the rewards available to you.
+                        </p>
+
+                        <div class="mt-8 flex flex-col sm:flex-row justify-center gap-3">
+
+                            <a
+                                href="register.html"
+                                class="primary-btn inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#12B76A] text-white font-semibold text-sm"
+                            >
+                                Create Your Account
+                                <i class='bx bx-right-arrow-alt text-xl'></i>
+                            </a>
+
+                            <a
+                                href="login.html"
+                                class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white/10 border border-white/10 text-white font-semibold text-sm hover:bg-white/15 transition"
+                            >
+                                Already have an account?
+                                Login
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================= -->
+
+    <footer class="bg-white border-t border-[#E4E7EC]">
+
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+
+            <div class="py-14 grid sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr] gap-10">
+
+                <!-- Brand -->
+                <div>
+
+                    <a
+                        href="#home"
+                        class="inline-flex items-center gap-2.5"
+                    >
+
+                        <div class="w-10 h-10 rounded-xl bg-[#071A2B] text-white flex items-center justify-center">
+                            <i class='bx bx-target-lock text-xl'></i>
+                        </div>
+
+                        <span class="font-sora text-xl font-bold tracking-[-0.04em] text-[#071A2B]">
+                            OPTIFY
+                        </span>
+
+                    </a>
+
+
+                    <p class="text-sm leading-6 text-[#667085] mt-5 max-w-xs">
+                        A simple rewards platform built around activities,
+                        challenges, and transparent reward rules.
+                    </p>
+
+                </div>
+
+
+                <!-- Platform -->
+                <div>
+
+                    <h3 class="text-sm font-semibold text-[#101828]">
+                        Platform
+                    </h3>
+
+                    <div class="flex flex-col gap-3 mt-5">
+
+                        <a
+                            href="#how-it-works"
+                            class="text-sm text-[#667085] hover:text-[#12B76A] transition"
+                        >
+                            How It Works
+                        </a>
+
+                        <a
+                            href="#features"
+                            class="text-sm text-[#667085] hover:text-[#12B76A] transition"
+                        >
+                            Features
+                        </a>
+
+                        <a
+                            href="#rewards"
+                            class="text-sm text-[#667085] hover:text-[#12B76A] transition"
+                        >
+                            Rewards
+                        </a>
+
+                        <a
+                            href="#faq"
+                            class="text-sm text-[#667085] hover:text-[#12B76A] transition"
+                        >
+                            FAQ
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Account -->
+                <div>
+
+                    <h3 class="text-sm font-semibold text-[#101828]">
+                        Account
+                    </h3>
+
+                    <div class="flex flex-col gap-3 mt-5">
+
+                        <a
+                            href="register.html"
+                            class="text-sm text-[#667085] hover:text-[#12B76A] transition"
+                        >
+                            Register
+                        </a>
+
+                        <a
+                            href="login.html"
+                            class="text-sm text-[#667085] hover:text-[#12B76A] transition"
+                        >
+                            Login
+                        </a>
+
+                        <a
+                            href="dashboard.html"
+                            class="text-sm text-[#667085] hover:text-[#12B76A] transition"
+                        >
+                            Dashboard
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Support -->
+                <div>
+
+                    <h3 class="text-sm font-semibold text-[#101828]">
+                        Support
+                    </h3>
+
+                    <div class="flex flex-col gap-3 mt-5">
+
+                        <a
+                            href="#"
+                            class="text-sm text-[#667085] hover:text-[#12B76A] transition"
+                        >
+                            Help
+                        </a>
+
+                        <a
+                            id="footerCommunityLink"
+                            href="#"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-sm text-[#667085] hover:text-[#12B76A] transition"
+                        >
+                            Community
+                        </a>
+
+                        <a
+                            href="#"
+                            class="text-sm text-[#667085] hover:text-[#12B76A] transition"
+                        >
+                            Contact
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="h-px bg-[#E4E7EC]"></div>
+
+
+            <div class="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+
+                <p class="text-xs text-[#667085] text-center sm:text-left">
+                    © 2026 Optify. All rights reserved.
+                </p>
+
+                <div class="flex items-center gap-5">
+
+                    <a
+                        href="#"
+                        class="text-xs text-[#667085] hover:text-[#12B76A] transition"
+                    >
+                        Privacy Policy
+                    </a>
+
+                    <a
+                        href="#"
+                        class="text-xs text-[#667085] hover:text-[#12B76A] transition"
+                    >
+                        Terms & Conditions
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================= -->
+
+    <script>
+
+        /* =========================================
+           OPTIFY CONFIG
+        ========================================= */
+
+        const OPTIFY_COMMUNITY_LINK = "#";
+
+
+        /* =========================================
+           PAGE LOADER
+        ========================================= */
+
+        window.addEventListener("load", function () {
+
+            const loader = document.getElementById("pageLoader");
+
+            setTimeout(() => {
+                loader.classList.add("hide");
+            }, 350);
+
+        });
+
+
+        /* =========================================
+           NAVBAR SCROLL STATE
+        ========================================= */
+
+        const navbar = document.getElementById("navbar");
+
+        function updateNavbar() {
+
+            if (window.scrollY > 25) {
+                navbar.classList.add("scrolled");
+            } else {
+                navbar.classList.remove("scrolled");
+            }
+
+        }
+
+        window.addEventListener("scroll", updateNavbar);
+
+        updateNavbar();
+
+
+        /* =========================================
+           MOBILE MENU
+        ========================================= */
+
+        const mobileMenuButton = document.getElementById("mobileMenuButton");
+        const mobileMenu = document.getElementById("mobileMenu");
+        const menuIcon = document.getElementById("menuIcon");
+
+        mobileMenuButton.addEventListener("click", function () {
+
+            const isOpen = mobileMenu.classList.toggle("open");
+
+            mobileMenuButton.setAttribute(
+                "aria-expanded",
+                isOpen ? "true" : "false"
+            );
+
+            menuIcon.className = isOpen
+                ? "bx bx-x text-2xl"
+                : "bx bx-menu text-2xl";
+
+        });
+
+
+        /* Close mobile menu after clicking link */
+
+        document.querySelectorAll(".mobile-link").forEach(link => {
+
+            link.addEventListener("click", function () {
+
+                mobileMenu.classList.remove("open");
+
+                mobileMenuButton.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+                menuIcon.className = "bx bx-menu text-2xl";
+
+            });
+
+        });
+
+
+        /* =========================================
+           COMMUNITY LINK
+        ========================================= */
+
+        const communityButton =
+            document.getElementById("communityButton");
+
+        const footerCommunityLink =
+            document.getElementById("footerCommunityLink");
+
+        if (OPTIFY_COMMUNITY_LINK && OPTIFY_COMMUNITY_LINK !== "#") {
+
+            communityButton.href = OPTIFY_COMMUNITY_LINK;
+            footerCommunityLink.href = OPTIFY_COMMUNITY_LINK;
+
+        }
+
+
+        /* =========================================
+           SCROLL REVEAL
+        ========================================= */
+
+        const revealElements =
+            document.querySelectorAll(".reveal");
+
+        const revealObserver =
+            new IntersectionObserver(
+                (entries, observer) => {
+
+                    entries.forEach(entry => {
+
+                        if (entry.isIntersecting) {
+
+                            entry.target.classList.add("visible");
+
+                            observer.unobserve(entry.target);
+
+                        }
+
+                    });
+
+                },
+                {
+                    threshold: 0.12,
+                    rootMargin: "0px 0px -30px 0px"
+                }
+            );
+
+
+        revealElements.forEach(element => {
+            revealObserver.observe(element);
+        });
+
+
+        /* =========================================
+           REWARD TABS
+        ========================================= */
+
+        const rewardTabs =
+            document.querySelectorAll(".reward-tab");
+
+        const rewardContents =
+            document.querySelectorAll(".reward-content");
+
+
+        rewardTabs.forEach(tab => {
+
+            tab.addEventListener("click", function () {
+
+                const target =
+                    this.dataset.tab;
+
+
+                rewardTabs.forEach(item => {
+
+                    item.classList.remove("active");
+                    item.classList.add("text-[#667085]");
+
+                });
+
+
+                this.classList.add("active");
+                this.classList.remove("text-[#667085]");
+
+
+                rewardContents.forEach(content => {
+
+                    content.classList.remove("active");
+
+                });
+
+
+                const targetContent =
+                    document.querySelector(
+                        `[data-content="${target}"]`
+                    );
+
+
+                if (targetContent) {
+                    targetContent.classList.add("active");
+                }
+
+            });
+
+        });
+
+
+        /* =========================================
+           FAQ ACCORDION
+        ========================================= */
+
+        const faqItems =
+            document.querySelectorAll(".faq-item");
+
+
+        faqItems.forEach(item => {
+
+            const button =
+                item.querySelector(".faq-button");
+
+
+            button.addEventListener("click", function () {
+
+                const isOpen =
+                    item.classList.contains("open");
+
+
+                /* Close other FAQs */
+
+                faqItems.forEach(otherItem => {
+
+                    if (otherItem !== item) {
+
+                        otherItem.classList.remove("open");
+
+                        const otherButton =
+                            otherItem.querySelector(".faq-button");
+
+                        otherButton.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+
+                    }
+
+                });
+
+
+                /* Toggle current FAQ */
+
+                item.classList.toggle("open");
+
+                button.setAttribute(
+                    "aria-expanded",
+                    item.classList.contains("open")
+                        ? "true"
+                        : "false"
+                );
+
+            });
+
+        });
+
+
+        /* =========================================
+           SMOOTH INTERNAL LINKS
+        ========================================= */
+
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+
+            link.addEventListener("click", function (event) {
+
+                const targetId =
+                    this.getAttribute("href");
+
+                if (
+                    !targetId ||
+                    targetId === "#" ||
+                    targetId === "#!"
+                ) {
+                    return;
+                }
+
+
+                const target =
+                    document.querySelector(targetId);
+
+
+                if (target) {
+
+                    event.preventDefault();
+
+                    const navbarHeight =
+                        navbar.offsetHeight;
+
+                    const targetPosition =
+                        target.getBoundingClientRect().top +
+                        window.scrollY -
+                        navbarHeight -
+                        15;
+
+
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: "smooth"
+                    });
+
+                }
+
+            });
+
+        });
+
+    </script>
+
+</body>
+</html>

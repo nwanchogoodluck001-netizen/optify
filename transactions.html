@@ -1,0 +1,3898 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Transactions | Optify</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #071A2B;
+            --navy-2: #0B2638;
+            --emerald: #12B76A;
+            --teal: #0EA5A4;
+            --green-soft: #E8F8F0;
+            --background: #F7F9FC;
+            --white: #FFFFFF;
+            --text: #101828;
+            --muted: #667085;
+            --border: #E4E7EC;
+            --warning: #F79009;
+            --danger: #F04438;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-sora {
+            font-family: "Sora", sans-serif;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        ::selection {
+            background: rgba(18, 183, 106, .16);
+        }
+
+        /* =========================
+           DARK MODE
+        ========================= */
+
+        body.dark-mode {
+            --background: #06131F;
+            --white: #0B1D2B;
+            --text: #F2F4F7;
+            --muted: #98A2B3;
+            --border: #203445;
+            --green-soft: rgba(18, 183, 106, .12);
+        }
+
+        body.dark-mode .page-header,
+        body.dark-mode .summary-card,
+        body.dark-mode .filter-card,
+        body.dark-mode .transactions-card,
+        body.dark-mode .info-card,
+        body.dark-mode .rules-card,
+        body.dark-mode .security-card {
+            box-shadow: 0 10px 35px rgba(0, 0, 0, .15);
+        }
+
+        body.dark-mode input,
+        body.dark-mode select {
+            background: #081925;
+            color: #F2F4F7;
+        }
+
+        body.dark-mode .table-row:hover,
+        body.dark-mode .mobile-transaction:hover {
+            background: rgba(255, 255, 255, .025);
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: var(--navy);
+            color: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transition: transform .3s ease;
+        }
+
+        .logo-area {
+            height: 86px;
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, .07);
+        }
+
+        .logo-mark {
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--emerald);
+            color: white;
+            font-size: 21px;
+            font-weight: 700;
+            box-shadow: 0 7px 18px rgba(18, 183, 106, .2);
+        }
+
+        .logo-text {
+            margin-left: 11px;
+            font-family: "Sora", sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -.5px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 22px 14px;
+            overflow-y: auto;
+        }
+
+        .nav-section-label {
+            color: rgba(255, 255, 255, .4);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.3px;
+            text-transform: uppercase;
+            padding: 0 13px 10px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            width: 100%;
+            padding: 12px 13px;
+            margin-bottom: 4px;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, .65);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: .2s ease;
+        }
+
+        .nav-link i {
+            font-size: 19px;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, .06);
+        }
+
+        .nav-link.active {
+            color: white;
+            background: rgba(18, 183, 106, .15);
+            box-shadow: inset 3px 0 0 var(--emerald);
+        }
+
+        .nav-link.active i {
+            color: var(--emerald);
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(255, 255, 255, .07);
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .045);
+        }
+
+        .avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--teal), var(--emerald));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .sidebar-user-info {
+            min-width: 0;
+        }
+
+        .sidebar-user-name {
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .sidebar-user-status {
+            color: rgba(255, 255, 255, .42);
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 76px;
+            padding: 0 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--background);
+            color: var(--text);
+            font-size: 22px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            width: 39px;
+            height: 39px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: transparent;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            transition: .2s ease;
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            color: var(--emerald);
+            border-color: rgba(18, 183, 106, .35);
+            background: var(--green-soft);
+        }
+
+        .notification-dot {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            background: var(--emerald);
+            border: 2px solid var(--white);
+            border-radius: 50%;
+            top: 7px;
+            right: 7px;
+        }
+
+        .top-profile {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-left: 4px;
+            padding-left: 10px;
+            border-left: 1px solid var(--border);
+        }
+
+        .top-profile .avatar {
+            width: 36px;
+            height: 36px;
+        }
+
+        .top-profile-name {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .top-profile-role {
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 1px;
+        }
+
+        .page-content {
+            max-width: 1450px;
+            margin: 0 auto;
+            padding: 30px 34px 70px;
+        }
+
+        /* =========================
+           VALIDATED STATUS
+        ========================= */
+
+        .validated-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 12px 15px;
+            margin-bottom: 18px;
+            border: 1px solid rgba(18, 183, 106, .2);
+            background: var(--green-soft);
+            border-radius: 13px;
+        }
+
+        .validated-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .validated-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            background: var(--emerald);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .validated-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #087443;
+        }
+
+        .validated-text {
+            color: var(--muted);
+            font-size: 9px;
+            margin-top: 2px;
+        }
+
+        body.dark-mode .validated-title {
+            color: #56D89B;
+        }
+
+        .validated-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 9px;
+            background: rgba(18, 183, 106, .12);
+            color: var(--emerald);
+            border-radius: 7px;
+            font-size: 9px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        /* =========================
+           PAGE HEADER
+        ========================= */
+
+        .page-header {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 25px 27px;
+            margin-bottom: 20px;
+        }
+
+        .page-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .eyebrow {
+            color: var(--emerald);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 7px;
+        }
+
+        .page-title {
+            font-size: 27px;
+            line-height: 1.2;
+            font-weight: 700;
+            letter-spacing: -.7px;
+        }
+
+        .page-subtitle {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 7px;
+        }
+
+        .currency-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 13px;
+            background: var(--green-soft);
+            color: #087443;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        body.dark-mode .currency-badge {
+            color: #56D89B;
+        }
+
+        /* =========================
+           SUMMARY
+        ========================= */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 19px;
+            min-width: 0;
+        }
+
+        .summary-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .summary-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            background: var(--green-soft);
+            color: var(--emerald);
+        }
+
+        .summary-icon.withdraw {
+            background: rgba(14, 165, 164, .1);
+            color: var(--teal);
+        }
+
+        .summary-icon.pending {
+            background: rgba(247, 144, 9, .1);
+            color: var(--warning);
+        }
+
+        .summary-icon.count {
+            background: rgba(102, 112, 133, .1);
+            color: var(--muted);
+        }
+
+        .summary-label {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .summary-value {
+            font-family: "Sora", sans-serif;
+            font-size: 21px;
+            font-weight: 700;
+            margin-top: 7px;
+            letter-spacing: -.5px;
+        }
+
+        .summary-ngn {
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        /* =========================
+           CARDS
+        ========================= */
+
+        .filter-card,
+        .transactions-card,
+        .info-card,
+        .rules-card,
+        .security-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 17px;
+        }
+
+        /* =========================
+           FILTERS
+        ========================= */
+
+        .filter-card {
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-family: "Sora", sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .section-description {
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr 1fr 1fr auto;
+            gap: 11px;
+            margin-top: 17px;
+            align-items: end;
+        }
+
+        .field {
+            min-width: 0;
+        }
+
+        .field label {
+            display: block;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 17px;
+            pointer-events: none;
+        }
+
+        .form-control {
+            width: 100%;
+            height: 43px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--background);
+            color: var(--text);
+            outline: none;
+            padding: 0 12px;
+            font-size: 12px;
+            transition: .2s ease;
+        }
+
+        .input-wrap .form-control {
+            padding-left: 38px;
+        }
+
+        .form-control:focus {
+            border-color: rgba(18, 183, 106, .6);
+            box-shadow: 0 0 0 3px rgba(18, 183, 106, .08);
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        .clear-btn {
+            height: 43px;
+            padding: 0 14px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: .2s ease;
+        }
+
+        .clear-btn:hover {
+            color: var(--danger);
+            border-color: rgba(240, 68, 56, .3);
+            background: rgba(240, 68, 56, .05);
+        }
+
+        /* =========================
+           TRANSACTIONS
+        ========================= */
+
+        .transactions-card {
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .card-heading {
+            padding: 20px 21px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .transaction-count {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 780px;
+        }
+
+        .transaction-table th {
+            text-align: left;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 13px 20px;
+            background: rgba(102, 112, 133, .025);
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .transaction-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 11px;
+            vertical-align: middle;
+        }
+
+        .transaction-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-row {
+            transition: .2s ease;
+        }
+
+        .table-row:hover {
+            background: rgba(18, 183, 106, .025);
+        }
+
+        .transaction-main {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .transaction-icon {
+            width: 37px;
+            height: 37px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+        }
+
+        .transaction-icon.earning {
+            color: var(--emerald);
+            background: var(--green-soft);
+        }
+
+        .transaction-icon.withdrawal {
+            color: var(--teal);
+            background: rgba(14, 165, 164, .1);
+        }
+
+        .transaction-icon.payment {
+            color: var(--warning);
+            background: rgba(247, 144, 9, .1);
+        }
+
+        .transaction-icon.other {
+            color: var(--muted);
+            background: rgba(102, 112, 133, .1);
+        }
+
+        .transaction-title {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 11px;
+        }
+
+        .transaction-subtitle {
+            color: var(--muted);
+            font-size: 9px;
+            margin-top: 3px;
+        }
+
+        .type-text {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .amount {
+            font-family: "Sora", sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .amount.credit {
+            color: var(--emerald);
+        }
+
+        .amount.debit {
+            color: var(--text);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 8px;
+            border-radius: 7px;
+            font-size: 9px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-badge.completed {
+            color: #087443;
+            background: var(--green-soft);
+        }
+
+        .status-badge.pending {
+            color: #A15C00;
+            background: rgba(247, 144, 9, .1);
+        }
+
+        .status-badge.processing {
+            color: #087A78;
+            background: rgba(14, 165, 164, .1);
+        }
+
+        .status-badge.rejected,
+        .status-badge.cancelled {
+            color: #B42318;
+            background: rgba(240, 68, 56, .08);
+        }
+
+        .status-badge.reversed {
+            color: #667085;
+            background: rgba(102, 112, 133, .1);
+        }
+
+        body.dark-mode .status-badge.completed {
+            color: #56D89B;
+        }
+
+        body.dark-mode .status-badge.pending {
+            color: #FDB022;
+        }
+
+        body.dark-mode .status-badge.processing {
+            color: #5DD6D4;
+        }
+
+        body.dark-mode .status-badge.rejected,
+        body.dark-mode .status-badge.cancelled {
+            color: #FDA29B;
+        }
+
+        .date-text {
+            color: var(--muted);
+            font-size: 10px;
+            white-space: nowrap;
+        }
+
+        .reference {
+            color: var(--muted);
+            font-size: 9px;
+            font-family: monospace;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .details-btn {
+            width: 31px;
+            height: 31px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: .2s ease;
+        }
+
+        .details-btn:hover {
+            color: var(--emerald);
+            border-color: rgba(18, 183, 106, .3);
+            background: var(--green-soft);
+        }
+
+        /* =========================
+           EMPTY STATE
+        ========================= */
+
+        .empty-state {
+            text-align: center;
+            padding: 65px 25px;
+        }
+
+        .empty-icon {
+            width: 66px;
+            height: 66px;
+            border-radius: 18px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--emerald);
+            background: var(--green-soft);
+            font-size: 29px;
+        }
+
+        .empty-state h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .empty-state p {
+            max-width: 420px;
+            margin: 8px auto 20px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .primary-btn {
+            height: 40px;
+            padding: 0 16px;
+            border: 0;
+            border-radius: 9px;
+            background: var(--emerald);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: .2s ease;
+            text-decoration: none;
+        }
+
+        .primary-btn:hover {
+            background: #0E9F5C;
+            transform: translateY(-1px);
+            box-shadow: 0 7px 18px rgba(18, 183, 106, .18);
+        }
+
+        /* =========================
+           MOBILE TRANSACTIONS
+        ========================= */
+
+        .mobile-transactions {
+            display: none;
+        }
+
+        .mobile-transaction {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            transition: .2s ease;
+        }
+
+        .mobile-transaction:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-transaction-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .mobile-transaction-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .mobile-transaction-info {
+            min-width: 0;
+        }
+
+        .mobile-transaction-title {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .mobile-transaction-type {
+            color: var(--muted);
+            font-size: 9px;
+            margin-top: 3px;
+        }
+
+        .mobile-amount {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .mobile-transaction-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+            padding-left: 47px;
+        }
+
+        .mobile-date {
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        /* =========================
+           BOTTOM INFO
+        ========================= */
+
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-card,
+        .rules-card,
+        .security-card {
+            padding: 21px;
+        }
+
+        .info-items {
+            display: grid;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .info-item {
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            display: flex;
+            gap: 11px;
+        }
+
+        .info-item-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: var(--green-soft);
+            color: var(--emerald);
+            font-size: 16px;
+        }
+
+        .info-item h4 {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .info-item p {
+            color: var(--muted);
+            font-size: 9px;
+            line-height: 1.6;
+            margin-top: 3px;
+        }
+
+        .rules-list {
+            list-style: none;
+            display: grid;
+            gap: 11px;
+            margin-top: 16px;
+        }
+
+        .rules-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.55;
+        }
+
+        .rules-list i {
+            color: var(--emerald);
+            font-size: 15px;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .security-card {
+            background: var(--navy);
+            border-color: var(--navy);
+            color: white;
+        }
+
+        .security-card .section-description {
+            color: rgba(255, 255, 255, .55);
+        }
+
+        .security-content {
+            margin-top: 18px;
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+        }
+
+        .security-icon {
+            width: 37px;
+            height: 37px;
+            border-radius: 10px;
+            background: rgba(18, 183, 106, .13);
+            color: #45D58F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+
+        .security-content p {
+            color: rgba(255, 255, 255, .58);
+            font-size: 10px;
+            line-height: 1.7;
+        }
+
+        /* =========================
+           MODAL
+        ========================= */
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 13, 22, .62);
+            backdrop-filter: blur(6px);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 480px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 19px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, .2);
+            animation: modalIn .2s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            padding: 20px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .modal-subtitle {
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: transparent;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .detail-amount {
+            padding: 18px;
+            background: var(--green-soft);
+            border-radius: 13px;
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .detail-amount-label {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .detail-amount-value {
+            font-family: "Sora", sans-serif;
+            color: var(--emerald);
+            font-size: 25px;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .detail-list {
+            display: grid;
+            gap: 0;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .detail-value {
+            color: var(--text);
+            font-size: 10px;
+            font-weight: 600;
+            text-align: right;
+            word-break: break-all;
+        }
+
+        .copy-reference {
+            border: 0;
+            background: transparent;
+            color: var(--emerald);
+            font-size: 10px;
+            margin-left: 5px;
+        }
+
+        /* =========================
+           TOAST
+        ========================= */
+
+        .toast-container {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 5000;
+            display: grid;
+            gap: 9px;
+        }
+
+        .toast {
+            min-width: 250px;
+            max-width: 340px;
+            padding: 12px 14px;
+            background: var(--navy);
+            color: white;
+            border-radius: 11px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, .18);
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 11px;
+            animation: toastIn .25s ease;
+        }
+
+        .toast i {
+            color: #45D58F;
+            font-size: 18px;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================
+           LOADING
+        ========================= */
+
+        .loading-state {
+            padding: 50px 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(18, 183, 106, .15);
+            border-top-color: var(--emerald);
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            animation: spin .8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-state p {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        /* =========================
+           ERROR
+        ========================= */
+
+        .error-state {
+            display: none;
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .error-icon {
+            width: 55px;
+            height: 55px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: rgba(240, 68, 56, .08);
+            color: var(--danger);
+            font-size: 25px;
+        }
+
+        .error-state h3 {
+            font-size: 14px;
+        }
+
+        .error-state p {
+            color: var(--muted);
+            font-size: 10px;
+            margin: 6px 0 15px;
+        }
+
+        .retry-btn {
+            height: 37px;
+            padding: 0 14px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            border-radius: 9px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* =========================
+           MOBILE BOTTOM NAV
+        ========================= */
+
+        .mobile-bottom-nav {
+            display: none;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1200px) {
+            .filters-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filters-grid .clear-btn {
+                width: max-content;
+            }
+
+            .bottom-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .security-card {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, .4);
+                z-index: 999;
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .topbar {
+                padding: 0 22px;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .page-content {
+                padding: 20px 15px 95px;
+            }
+
+            .topbar {
+                height: 66px;
+                padding: 0 15px;
+            }
+
+            .top-profile-info {
+                display: none;
+            }
+
+            .top-profile {
+                border-left: 0;
+                padding-left: 2px;
+            }
+
+            .validated-banner {
+                align-items: flex-start;
+            }
+
+            .validated-badge {
+                margin-top: 1px;
+            }
+
+            .page-header {
+                padding: 20px;
+            }
+
+            .page-header-content {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .page-title {
+                font-size: 22px;
+            }
+
+            .summary-grid {
+                gap: 10px;
+            }
+
+            .summary-card {
+                padding: 15px;
+            }
+
+            .summary-value {
+                font-size: 17px;
+            }
+
+            .summary-top {
+                margin-bottom: 13px;
+            }
+
+            .summary-icon {
+                width: 34px;
+                height: 34px;
+                font-size: 17px;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-card {
+                padding: 16px;
+            }
+
+            .table-wrapper {
+                display: none;
+            }
+
+            .mobile-transactions {
+                display: block;
+            }
+
+            .bottom-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .security-card {
+                grid-column: auto;
+            }
+
+            .card-heading {
+                padding: 17px;
+            }
+
+            .empty-state {
+                padding: 48px 20px;
+            }
+
+            .mobile-bottom-nav {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                height: 66px;
+                background: var(--white);
+                border-top: 1px solid var(--border);
+                display: grid;
+                grid-template-columns: repeat(5, 1fr);
+                z-index: 1200;
+            }
+
+            .mobile-nav-link {
+                color: var(--muted);
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                gap: 3px;
+                font-size: 8px;
+                font-weight: 600;
+            }
+
+            .mobile-nav-link i {
+                font-size: 19px;
+            }
+
+            .mobile-nav-link.active {
+                color: var(--emerald);
+            }
+
+            .toast-container {
+                left: 15px;
+                right: 15px;
+                bottom: 78px;
+            }
+
+            .toast {
+                width: 100%;
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .summary-label {
+                font-size: 10px;
+            }
+
+            .summary-value {
+                font-size: 16px;
+            }
+
+            .summary-ngn {
+                font-size: 9px;
+            }
+
+            .topbar-right .notification-btn {
+                display: none;
+            }
+
+            .currency-badge {
+                font-size: 10px;
+            }
+
+            .validated-banner {
+                flex-direction: column;
+            }
+
+            .validated-badge {
+                margin-left: 42px;
+                margin-top: -4px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="logo-area">
+            <div class="logo-mark">O</div>
+            <div class="logo-text">OPTIFY</div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <div class="nav-section-label">Main Menu</div>
+
+            <a href="dashboard.html" class="nav-link">
+                <i class='bx bx-grid-alt'></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="tasks.html" class="nav-link">
+                <i class='bx bx-task'></i>
+                <span>Tasks</span>
+            </a>
+
+            <a href="streak.html" class="nav-link">
+                <i class='bx bx-calendar-check'></i>
+                <span>Streak</span>
+            </a>
+
+            <a href="mystery-box.html" class="nav-link">
+                <i class='bx bx-gift'></i>
+                <span>Mystery Box</span>
+            </a>
+
+            <a href="quiz.html" class="nav-link">
+                <i class='bx bx-help-circle'></i>
+                <span>Quiz</span>
+            </a>
+
+            <a href="referral.html" class="nav-link">
+                <i class='bx bx-user-plus'></i>
+                <span>Referral</span>
+            </a>
+
+            <div class="nav-section-label" style="margin-top:22px;">Wallet</div>
+
+            <a href="wallet.html" class="nav-link">
+                <i class='bx bx-wallet'></i>
+                <span>Wallet</span>
+            </a>
+
+            <a href="withdrawal.html" class="nav-link">
+                <i class='bx bx-money-withdraw'></i>
+                <span>Withdrawal</span>
+            </a>
+
+            <a href="epin.html" class="nav-link">
+                <i class='bx bx-key'></i>
+                <span>Withdrawal E-pin</span>
+            </a>
+
+            <a href="transactions.html" class="nav-link active">
+                <i class='bx bx-transfer-alt'></i>
+                <span>Transactions</span>
+            </a>
+
+            <div class="nav-section-label" style="margin-top:22px;">Account</div>
+
+            <a href="settings.html" class="nav-link">
+                <i class='bx bx-cog'></i>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <div class="sidebar-user">
+
+                <div class="avatar" id="sidebarAvatar">U</div>
+
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-name" id="sidebarName">Optify User</div>
+                    <div class="sidebar-user-status">
+                        Validated Member
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation">
+                <i class='bx bx-menu'></i>
+            </button>
+
+            <div></div>
+
+            <div class="topbar-right">
+
+                <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
+                    <i class='bx bx-moon'></i>
+                </button>
+
+                <button class="icon-btn notification-btn" aria-label="Notifications">
+                    <i class='bx bx-bell'></i>
+                    <span class="notification-dot"></span>
+                </button>
+
+                <div class="top-profile">
+
+                    <div class="avatar" id="topAvatar">U</div>
+
+                    <div class="top-profile-info">
+                        <div class="top-profile-name" id="topProfileName">
+                            Optify User
+                        </div>
+
+                        <div class="top-profile-role">
+                            Validated Member
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- PAGE -->
+        <div class="page-content">
+
+            <!-- VALIDATED STATUS -->
+            <section class="validated-banner">
+
+                <div class="validated-left">
+
+                    <div class="validated-icon">
+                        <i class='bx bx-check-shield'></i>
+                    </div>
+
+                    <div>
+                        <div class="validated-title">
+                            Dashboard Validated
+                        </div>
+
+                        <div class="validated-text">
+                            Your earning features are active and your financial activity is now available here.
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="validated-badge">
+                    <i class='bx bx-check-circle'></i>
+                    Active
+                </div>
+
+            </section>
+
+            <!-- PAGE HEADER -->
+            <section class="page-header">
+
+                <div class="page-header-content">
+
+                    <div>
+
+                        <div class="eyebrow">
+                            Wallet Activity
+                        </div>
+
+                        <h1 class="page-title">
+                            Transactions
+                        </h1>
+
+                        <p class="page-subtitle">
+                            Track your earnings, payments, withdrawals and account activity in one place.
+                        </p>
+
+                    </div>
+
+                    <div class="currency-badge">
+                        <i class='bx bx-dollar-circle'></i>
+                        <span>$1 = ₦1,000</span>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- SUMMARY -->
+            <section class="summary-grid">
+
+                <div class="summary-card">
+
+                    <div class="summary-top">
+
+                        <div class="summary-label">
+                            Total Earned
+                        </div>
+
+                        <div class="summary-icon">
+                            <i class='bx bx-trending-up'></i>
+                        </div>
+
+                    </div>
+
+                    <div class="summary-value" id="totalEarned">
+                        $0.00
+                    </div>
+
+                    <div class="summary-ngn" id="totalEarnedNgn">
+                        ≈ ₦0
+                    </div>
+
+                </div>
+
+                <div class="summary-card">
+
+                    <div class="summary-top">
+
+                        <div class="summary-label">
+                            Total Withdrawn
+                        </div>
+
+                        <div class="summary-icon withdraw">
+                            <i class='bx bx-money-withdraw'></i>
+                        </div>
+
+                    </div>
+
+                    <div class="summary-value" id="totalWithdrawn">
+                        $0.00
+                    </div>
+
+                    <div class="summary-ngn" id="totalWithdrawnNgn">
+                        ≈ ₦0
+                    </div>
+
+                </div>
+
+                <div class="summary-card">
+
+                    <div class="summary-top">
+
+                        <div class="summary-label">
+                            Pending
+                        </div>
+
+                        <div class="summary-icon pending">
+                            <i class='bx bx-time-five'></i>
+                        </div>
+
+                    </div>
+
+                    <div class="summary-value" id="pendingBalance">
+                        $0.00
+                    </div>
+
+                    <div class="summary-ngn" id="pendingBalanceNgn">
+                        ≈ ₦0
+                    </div>
+
+                </div>
+
+                <div class="summary-card">
+
+                    <div class="summary-top">
+
+                        <div class="summary-label">
+                            Transactions
+                        </div>
+
+                        <div class="summary-icon count">
+                            <i class='bx bx-transfer'></i>
+                        </div>
+
+                    </div>
+
+                    <div class="summary-value" id="transactionCount">
+                        0
+                    </div>
+
+                    <div class="summary-ngn">
+                        Total recorded activity
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- FILTERS -->
+            <section class="filter-card">
+
+                <div>
+
+                    <h2 class="section-title">
+                        Search & Filters
+                    </h2>
+
+                    <p class="section-description">
+                        Find a specific transaction using the options below.
+                    </p>
+
+                </div>
+
+                <div class="filters-grid">
+
+                    <div class="field">
+
+                        <label for="searchInput">
+                            Search
+                        </label>
+
+                        <div class="input-wrap">
+
+                            <i class='bx bx-search'></i>
+
+                            <input
+                                type="search"
+                                id="searchInput"
+                                class="form-control"
+                                placeholder="Search by description or reference..."
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <div class="field">
+
+                        <label for="typeFilter">
+                            Transaction Type
+                        </label>
+
+                        <select id="typeFilter" class="form-control">
+
+                            <option value="all">All Types</option>
+                            <option value="earnings">Earnings</option>
+                            <option value="withdrawals">Withdrawals</option>
+                            <option value="payments">Payments</option>
+                            <option value="other">Other</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="field">
+
+                        <label for="statusFilter">
+                            Status
+                        </label>
+
+                        <select id="statusFilter" class="form-control">
+
+                            <option value="all">All Statuses</option>
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="reversed">Reversed</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="field">
+
+                        <label for="dateFilter">
+                            Date
+                        </label>
+
+                        <select id="dateFilter" class="form-control">
+
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="30days">Last 30 Days</option>
+
+                        </select>
+
+                    </div>
+
+                    <button class="clear-btn" id="clearFilters">
+                        <i class='bx bx-reset'></i>
+                        Clear
+                    </button>
+
+                </div>
+
+            </section>
+
+            <!-- TRANSACTIONS -->
+            <section class="transactions-card">
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <h2 class="section-title">
+                            Transaction History
+                        </h2>
+
+                        <p class="section-description">
+                            Your complete financial activity.
+                        </p>
+
+                    </div>
+
+                    <div class="transaction-count" id="visibleCount">
+                        0 transactions
+                    </div>
+
+                </div>
+
+                <!-- LOADING -->
+                <div class="loading-state" id="loadingState">
+
+                    <div class="loading-spinner"></div>
+
+                    <p>
+                        Loading transactions...
+                    </p>
+
+                </div>
+
+                <!-- ERROR -->
+                <div class="error-state" id="errorState">
+
+                    <div class="error-icon">
+                        <i class='bx bx-error-circle'></i>
+                    </div>
+
+                    <h3>
+                        Unable to load transactions
+                    </h3>
+
+                    <p>
+                        Something went wrong while loading your transaction history.
+                    </p>
+
+                    <button class="retry-btn" id="retryBtn">
+                        <i class='bx bx-refresh'></i>
+                        Try Again
+                    </button>
+
+                </div>
+
+                <!-- DESKTOP TABLE -->
+                <div class="table-wrapper" id="desktopTransactions">
+
+                    <table class="transaction-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Transaction</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Reference</th>
+                                <th></th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="transactionTableBody"></tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- MOBILE LIST -->
+                <div class="mobile-transactions" id="mobileTransactions"></div>
+
+                <!-- EMPTY STATE -->
+                <div class="empty-state" id="emptyState">
+
+                    <div class="empty-icon">
+                        <i class='bx bx-receipt'></i>
+                    </div>
+
+                    <h3>
+                        No transactions yet
+                    </h3>
+
+                    <p>
+                        Your Optify earnings, payments and withdrawals will appear
+                        here once you start using the platform.
+                    </p>
+
+                    <a href="tasks.html" class="primary-btn">
+                        <i class='bx bx-task'></i>
+                        Explore Tasks
+                    </a>
+
+                </div>
+
+            </section>
+
+            <!-- BOTTOM INFORMATION -->
+            <section class="bottom-grid">
+
+                <!-- UNDERSTANDING -->
+                <div class="info-card">
+
+                    <h2 class="section-title">
+                        Understanding Your Transactions
+                    </h2>
+
+                    <p class="section-description">
+                        Every balance movement is recorded in your transaction history.
+                    </p>
+
+                    <div class="info-items">
+
+                        <div class="info-item">
+
+                            <div class="info-item-icon">
+                                <i class='bx bx-trending-up'></i>
+                            </div>
+
+                            <div>
+
+                                <h4>
+                                    Earnings
+                                </h4>
+
+                                <p>
+                                    Rewards from Streak, Mystery Box, Quiz and eligible referrals.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="info-item">
+
+                            <div class="info-item-icon">
+                                <i class='bx bx-credit-card'></i>
+                            </div>
+
+                            <div>
+
+                                <h4>
+                                    Payments
+                                </h4>
+
+                                <p>
+                                    Dashboard validation and Withdrawal E-pin payments.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="info-item">
+
+                            <div class="info-item-icon">
+                                <i class='bx bx-money-withdraw'></i>
+                            </div>
+
+                            <div>
+
+                                <h4>
+                                    Withdrawals
+                                </h4>
+
+                                <p>
+                                    Withdrawal requests and any corresponding reversals.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- RULES -->
+                <div class="rules-card">
+
+                    <h2 class="section-title">
+                        Transaction Rules
+                    </h2>
+
+                    <p class="section-description">
+                        Important information about your transaction history.
+                    </p>
+
+                    <ul class="rules-list">
+
+                        <li>
+                            <i class='bx bx-check-circle'></i>
+                            <span>
+                                Every balance-changing event has a corresponding transaction.
+                            </span>
+                        </li>
+
+                        <li>
+                            <i class='bx bx-check-circle'></i>
+                            <span>
+                                Completed rewards are recorded only after backend verification.
+                            </span>
+                        </li>
+
+                        <li>
+                            <i class='bx bx-check-circle'></i>
+                            <span>
+                                Withdrawals may remain pending while they are being processed.
+                            </span>
+                        </li>
+
+                        <li>
+                            <i class='bx bx-check-circle'></i>
+                            <span>
+                                Rejected withdrawals may create a reversal transaction.
+                            </span>
+                        </li>
+
+                        <li>
+                            <i class='bx bx-check-circle'></i>
+                            <span>
+                                Users cannot edit transaction records.
+                            </span>
+                        </li>
+
+                        <li>
+                            <i class='bx bx-check-circle'></i>
+                            <span>
+                                Duplicate requests must not create duplicate financial records.
+                            </span>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+                <!-- SECURITY -->
+                <div class="security-card">
+
+                    <h2 class="section-title">
+                        Your Transaction History Is Protected
+                    </h2>
+
+                    <p class="section-description">
+                        Keep your account information private.
+                    </p>
+
+                    <div class="security-content">
+
+                        <div class="security-icon">
+                            <i class='bx bx-shield-quarter'></i>
+                        </div>
+
+                        <p>
+                            Transaction ownership, amounts, references, statuses and
+                            balance changes are controlled by the backend. Never share
+                            passwords, payment references or sensitive account details
+                            with another person.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav class="mobile-bottom-nav">
+
+        <a href="dashboard.html" class="mobile-nav-link">
+            <i class='bx bx-home-alt'></i>
+            <span>Home</span>
+        </a>
+
+        <a href="tasks.html" class="mobile-nav-link">
+            <i class='bx bx-task'></i>
+            <span>Tasks</span>
+        </a>
+
+        <a href="wallet.html" class="mobile-nav-link">
+            <i class='bx bx-wallet'></i>
+            <span>Wallet</span>
+        </a>
+
+        <a href="epin.html" class="mobile-nav-link">
+            <i class='bx bx-key'></i>
+            <span>E-pin</span>
+        </a>
+
+        <a href="settings.html" class="mobile-nav-link">
+            <i class='bx bx-user'></i>
+            <span>Profile</span>
+        </a>
+
+    </nav>
+
+    <!-- TRANSACTION DETAILS MODAL -->
+    <div class="modal-overlay" id="transactionModal">
+
+        <div
+            class="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modalTitle">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2 class="modal-title" id="modalTitle">
+                        Transaction Details
+                    </h2>
+
+                    <p class="modal-subtitle">
+                        Complete information about this transaction.
+                    </p>
+
+                </div>
+
+                <button
+                    class="modal-close"
+                    id="modalClose"
+                    aria-label="Close">
+
+                    <i class='bx bx-x'></i>
+
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="detail-amount">
+
+                    <div class="detail-amount-label">
+                        Transaction Amount
+                    </div>
+
+                    <div
+                        class="detail-amount-value"
+                        id="detailAmount">
+
+                        $0.00
+
+                    </div>
+
+                </div>
+
+                <div class="detail-list">
+
+                    <div class="detail-row">
+                        <span class="detail-label">Type</span>
+                        <span class="detail-value" id="detailType">—</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Description</span>
+                        <span class="detail-value" id="detailDescription">—</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value" id="detailStatus">—</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Transaction ID</span>
+                        <span class="detail-value" id="detailId">—</span>
+                    </div>
+
+                    <div class="detail-row">
+
+                        <span class="detail-label">
+                            Payment Reference
+                        </span>
+
+                        <span class="detail-value">
+
+                            <span id="detailReference">—</span>
+
+                            <button
+                                class="copy-reference"
+                                id="copyReference">
+
+                                Copy
+
+                            </button>
+
+                        </span>
+
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Date Created</span>
+                        <span class="detail-value" id="detailCreatedAt">—</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Last Updated</span>
+                        <span class="detail-value" id="detailUpdatedAt">—</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+
+        /*
+        ============================================================
+        OPTIFY VALIDATED TRANSACTIONS
+        ============================================================
+
+        USER STATE:
+        - Dashboard validation is already completed.
+        - Transaction history is available.
+        - Earning features are unlocked.
+
+        FRONTEND DEMO ONLY
+
+        Production backend must control:
+        - Authentication
+        - Validation status
+        - Transaction ownership
+        - Transaction IDs
+        - Amounts
+        - Currency
+        - Status
+        - Payment references
+        - Rewards
+        - Withdrawals
+        - Reversals
+        - Pagination
+        - Authorization
+        - Duplicate/replay prevention
+
+        NEVER trust frontend balances or transaction data for
+        financial authorization.
+
+        Suggested API endpoints:
+
+        GET /api/user/transactions/summary
+        GET /api/user/transactions
+        GET /api/user/transactions/:id
+
+        The backend should return only transactions belonging
+        to the authenticated user.
+
+        ============================================================
+        */
+
+        const USD_TO_NGN = 1000;
+
+        /*
+        Production user information must come from the
+        authenticated backend/Firebase session.
+
+        No fake production identity is used here.
+        */
+
+        const user = {
+            uid: "",
+            name: ""
+        };
+
+        /*
+        Backend-driven summary.
+
+        These values intentionally remain zero until the backend
+        returns the user's real financial records.
+        */
+
+        const walletSummary = {
+            totalEarned: 0,
+            totalWithdrawn: 0,
+            pendingBalance: 0,
+            transactionCount: 0
+        };
+
+        /*
+        No fake transactions are included.
+
+        Production example:
+
+        {
+            id: "txn_001",
+            type: "STREAK_REWARD",
+            description: "Daily Streak — Morning",
+            amount: 1.50,
+            currency: "USD",
+            direction: "credit",
+            status: "completed",
+            reference: "REF123456",
+            createdAt: "2026-09-20T08:00:00Z",
+            updatedAt: "2026-09-20T08:00:03Z"
+        }
+        */
+
+        let transactions = [];
+
+        let filteredTransactions = [];
+
+        let currentTransaction = null;
+
+        /* =========================
+           DOM
+        ========================= */
+
+        const transactionTableBody =
+            document.getElementById("transactionTableBody");
+
+        const mobileTransactions =
+            document.getElementById("mobileTransactions");
+
+        const emptyState =
+            document.getElementById("emptyState");
+
+        const loadingState =
+            document.getElementById("loadingState");
+
+        const errorState =
+            document.getElementById("errorState");
+
+        const desktopTransactions =
+            document.getElementById("desktopTransactions");
+
+        const visibleCount =
+            document.getElementById("visibleCount");
+
+        const searchInput =
+            document.getElementById("searchInput");
+
+        const typeFilter =
+            document.getElementById("typeFilter");
+
+        const statusFilter =
+            document.getElementById("statusFilter");
+
+        const dateFilter =
+            document.getElementById("dateFilter");
+
+        const clearFilters =
+            document.getElementById("clearFilters");
+
+        const transactionModal =
+            document.getElementById("transactionModal");
+
+        const modalClose =
+            document.getElementById("modalClose");
+
+        const copyReference =
+            document.getElementById("copyReference");
+
+        /* =========================
+           USER
+        ========================= */
+
+        function renderUser() {
+
+            const name =
+                user.name || "Optify User";
+
+            const firstLetter =
+                name.charAt(0).toUpperCase();
+
+            document.getElementById("sidebarName").textContent =
+                name;
+
+            document.getElementById("topProfileName").textContent =
+                name;
+
+            document.getElementById("sidebarAvatar").textContent =
+                firstLetter;
+
+            document.getElementById("topAvatar").textContent =
+                firstLetter;
+        }
+
+        /* =========================
+           FORMATTERS
+        ========================= */
+
+        function formatUSD(amount) {
+
+            const number = Number(amount) || 0;
+
+            return "$" + number.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function formatNGN(amount) {
+
+            const number = Number(amount) || 0;
+
+            return "₦" + Math.round(number).toLocaleString("en-NG");
+        }
+
+        function formatDate(dateValue) {
+
+            if (!dateValue) {
+                return "—";
+            }
+
+            const date = new Date(dateValue);
+
+            if (Number.isNaN(date.getTime())) {
+                return "—";
+            }
+
+            return date.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric"
+            });
+        }
+
+        function formatDateTime(dateValue) {
+
+            if (!dateValue) {
+                return "—";
+            }
+
+            const date = new Date(dateValue);
+
+            if (Number.isNaN(date.getTime())) {
+                return "—";
+            }
+
+            return date.toLocaleString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+                hour: "numeric",
+                minute: "2-digit"
+            });
+        }
+
+        /* =========================
+           TRANSACTION LABELS
+        ========================= */
+
+        const transactionTypes = {
+
+            VALIDATION_PAYMENT: {
+                label: "Dashboard Validation",
+                category: "payments",
+                icon: "bx-shield-check",
+                style: "payment"
+            },
+
+            STREAK_REWARD: {
+                label: "Daily Streak Reward",
+                category: "earnings",
+                icon: "bx-calendar-check",
+                style: "earning"
+            },
+
+            MYSTERY_BOX_REWARD: {
+                label: "Mystery Box Reward",
+                category: "earnings",
+                icon: "bx-gift",
+                style: "earning"
+            },
+
+            QUIZ_REWARD: {
+                label: "Quiz Reward",
+                category: "earnings",
+                icon: "bx-help-circle",
+                style: "earning"
+            },
+
+            REFERRAL_REWARD: {
+                label: "Referral Reward",
+                category: "earnings",
+                icon: "bx-user-plus",
+                style: "earning"
+            },
+
+            EPIN_PURCHASE: {
+                label: "Withdrawal E-pin",
+                category: "payments",
+                icon: "bx-key",
+                style: "payment"
+            },
+
+            WITHDRAWAL: {
+                label: "Withdrawal",
+                category: "withdrawals",
+                icon: "bx-money-withdraw",
+                style: "withdrawal"
+            },
+
+            WITHDRAWAL_REVERSAL: {
+                label: "Withdrawal Reversal",
+                category: "other",
+                icon: "bx-revision",
+                style: "other"
+            }
+
+        };
+
+        function getTransactionType(type) {
+
+            return transactionTypes[type] || {
+                label: "Account Activity",
+                category: "other",
+                icon: "bx-transfer",
+                style: "other"
+            };
+        }
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        function getStatusMarkup(status) {
+
+            const safeStatus =
+                String(status || "pending").toLowerCase();
+
+            const labels = {
+                completed: "Completed",
+                pending: "Pending",
+                processing: "Processing",
+                rejected: "Rejected",
+                cancelled: "Cancelled",
+                reversed: "Reversed"
+            };
+
+            const icons = {
+                completed: "bx-check-circle",
+                pending: "bx-time-five",
+                processing: "bx-loader-circle",
+                rejected: "bx-x-circle",
+                cancelled: "bx-block",
+                reversed: "bx-revision"
+            };
+
+            const label =
+                labels[safeStatus] || "Pending";
+
+            const icon =
+                icons[safeStatus] || "bx-time-five";
+
+            return `
+                <span class="status-badge ${safeStatus}">
+                    <i class='bx ${icon}'></i>
+                    ${label}
+                </span>
+            `;
+        }
+
+        /* =========================
+           SUMMARY
+        ========================= */
+
+        function renderSummary() {
+
+            document.getElementById("totalEarned").textContent =
+                formatUSD(walletSummary.totalEarned);
+
+            document.getElementById("totalEarnedNgn").textContent =
+                "≈ " +
+                formatNGN(
+                    walletSummary.totalEarned *
+                    USD_TO_NGN
+                );
+
+            document.getElementById("totalWithdrawn").textContent =
+                formatUSD(walletSummary.totalWithdrawn);
+
+            document.getElementById("totalWithdrawnNgn").textContent =
+                "≈ " +
+                formatNGN(
+                    walletSummary.totalWithdrawn *
+                    USD_TO_NGN
+                );
+
+            document.getElementById("pendingBalance").textContent =
+                formatUSD(walletSummary.pendingBalance);
+
+            document.getElementById("pendingBalanceNgn").textContent =
+                "≈ " +
+                formatNGN(
+                    walletSummary.pendingBalance *
+                    USD_TO_NGN
+                );
+
+            document.getElementById("transactionCount").textContent =
+                Number(
+                    walletSummary.transactionCount || 0
+                ).toLocaleString();
+        }
+
+        /* =========================
+           FILTERS
+        ========================= */
+
+        function applyFilters() {
+
+            const search =
+                searchInput.value.trim().toLowerCase();
+
+            const type =
+                typeFilter.value;
+
+            const status =
+                statusFilter.value;
+
+            const date =
+                dateFilter.value;
+
+            filteredTransactions =
+                transactions.filter(transaction => {
+
+                    const typeInfo =
+                        getTransactionType(
+                            transaction.type
+                        );
+
+                    const searchable = [
+                        transaction.description,
+                        transaction.reference,
+                        transaction.id,
+                        typeInfo.label,
+                        transaction.type
+                    ]
+                        .filter(Boolean)
+                        .join(" ")
+                        .toLowerCase();
+
+                    if (
+                        search &&
+                        !searchable.includes(search)
+                    ) {
+                        return false;
+                    }
+
+                    if (
+                        type !== "all" &&
+                        typeInfo.category !== type
+                    ) {
+                        return false;
+                    }
+
+                    if (
+                        status !== "all" &&
+                        String(
+                            transaction.status
+                        ).toLowerCase() !== status
+                    ) {
+                        return false;
+                    }
+
+                    if (
+                        date !== "all" &&
+                        !matchesDateFilter(
+                            transaction.createdAt,
+                            date
+                        )
+                    ) {
+                        return false;
+                    }
+
+                    return true;
+                });
+
+            renderTransactions();
+        }
+
+        function matchesDateFilter(
+            dateValue,
+            filter
+        ) {
+
+            if (!dateValue) {
+                return false;
+            }
+
+            const transactionDate =
+                new Date(dateValue);
+
+            if (
+                Number.isNaN(
+                    transactionDate.getTime()
+                )
+            ) {
+                return false;
+            }
+
+            const now = new Date();
+
+            if (filter === "today") {
+
+                return (
+                    transactionDate.toDateString() ===
+                    now.toDateString()
+                );
+            }
+
+            if (filter === "week") {
+
+                const startOfWeek =
+                    new Date(now);
+
+                const day =
+                    startOfWeek.getDay();
+
+                startOfWeek.setDate(
+                    startOfWeek.getDate() - day
+                );
+
+                startOfWeek.setHours(
+                    0,
+                    0,
+                    0,
+                    0
+                );
+
+                return transactionDate >= startOfWeek;
+            }
+
+            if (filter === "month") {
+
+                return (
+                    transactionDate.getMonth() ===
+                        now.getMonth() &&
+                    transactionDate.getFullYear() ===
+                        now.getFullYear()
+                );
+            }
+
+            if (filter === "30days") {
+
+                const thirtyDaysAgo =
+                    new Date(now);
+
+                thirtyDaysAgo.setDate(
+                    thirtyDaysAgo.getDate() - 30
+                );
+
+                return transactionDate >=
+                    thirtyDaysAgo;
+            }
+
+            return true;
+        }
+
+        function clearAllFilters() {
+
+            searchInput.value = "";
+            typeFilter.value = "all";
+            statusFilter.value = "all";
+            dateFilter.value = "all";
+
+            applyFilters();
+        }
+
+        /* =========================
+           RENDER TRANSACTIONS
+        ========================= */
+
+        function renderTransactions() {
+
+            transactionTableBody.innerHTML = "";
+            mobileTransactions.innerHTML = "";
+
+            visibleCount.textContent =
+                `${filteredTransactions.length} transaction${filteredTransactions.length === 1 ? "" : "s"}`;
+
+            if (!filteredTransactions.length) {
+
+                desktopTransactions.style.display =
+                    "none";
+
+                mobileTransactions.style.display =
+                    "none";
+
+                emptyState.style.display =
+                    "block";
+
+                return;
+            }
+
+            emptyState.style.display =
+                "none";
+
+            if (window.innerWidth <= 700) {
+
+                desktopTransactions.style.display =
+                    "none";
+
+                mobileTransactions.style.display =
+                    "block";
+
+                renderMobileTransactions();
+
+            } else {
+
+                desktopTransactions.style.display =
+                    "block";
+
+                mobileTransactions.style.display =
+                    "none";
+
+                renderDesktopTransactions();
+            }
+        }
+
+        function renderDesktopTransactions() {
+
+            transactionTableBody.innerHTML =
+                filteredTransactions
+                    .map(transaction => {
+
+                        const info =
+                            getTransactionType(
+                                transaction.type
+                            );
+
+                        const isCredit =
+                            transaction.direction ===
+                            "credit";
+
+                        const sign =
+                            isCredit ? "+" : "-";
+
+                        const amountClass =
+                            isCredit
+                                ? "credit"
+                                : "debit";
+
+                        return `
+                            <tr class="table-row">
+
+                                <td>
+
+                                    <div class="transaction-main">
+
+                                        <div class="transaction-icon ${info.style}">
+                                            <i class='bx ${info.icon}'></i>
+                                        </div>
+
+                                        <div>
+
+                                            <div class="transaction-title">
+                                                ${escapeHTML(
+                                                    transaction.description ||
+                                                    info.label
+                                                )}
+                                            </div>
+
+                                            <div class="transaction-subtitle">
+                                                ${escapeHTML(info.label)}
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+                                    <span class="type-text">
+                                        ${escapeHTML(info.label)}
+                                    </span>
+                                </td>
+
+                                <td>
+
+                                    <span class="amount ${amountClass}">
+                                        ${sign}${formatUSD(
+                                            Math.abs(
+                                                transaction.amount
+                                            )
+                                        )}
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    ${getStatusMarkup(
+                                        transaction.status
+                                    )}
+                                </td>
+
+                                <td>
+
+                                    <span class="date-text">
+                                        ${formatDate(
+                                            transaction.createdAt
+                                        )}
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <span
+                                        class="reference"
+                                        title="${escapeHTML(
+                                            transaction.reference || ""
+                                        )}"
+                                    >
+                                        ${escapeHTML(
+                                            transaction.reference || "—"
+                                        )}
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <button
+                                        class="details-btn"
+                                        onclick="openTransactionDetails('${escapeAttribute(transaction.id)}')"
+                                        aria-label="View transaction details"
+                                    >
+                                        <i class='bx bx-chevron-right'></i>
+                                    </button>
+
+                                </td>
+
+                            </tr>
+                        `;
+
+                    })
+                    .join("");
+        }
+
+        function renderMobileTransactions() {
+
+            mobileTransactions.innerHTML =
+                filteredTransactions
+                    .map(transaction => {
+
+                        const info =
+                            getTransactionType(
+                                transaction.type
+                            );
+
+                        const isCredit =
+                            transaction.direction ===
+                            "credit";
+
+                        const sign =
+                            isCredit ? "+" : "-";
+
+                        const amountClass =
+                            isCredit
+                                ? "credit"
+                                : "debit";
+
+                        return `
+                            <div class="mobile-transaction">
+
+                                <div class="mobile-transaction-top">
+
+                                    <div class="mobile-transaction-left">
+
+                                        <div class="transaction-icon ${info.style}">
+                                            <i class='bx ${info.icon}'></i>
+                                        </div>
+
+                                        <div class="mobile-transaction-info">
+
+                                            <div class="mobile-transaction-title">
+                                                ${escapeHTML(
+                                                    transaction.description ||
+                                                    info.label
+                                                )}
+                                            </div>
+
+                                            <div class="mobile-transaction-type">
+                                                ${escapeHTML(info.label)}
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="mobile-amount">
+
+                                        <div class="amount ${amountClass}">
+                                            ${sign}${formatUSD(
+                                                Math.abs(
+                                                    transaction.amount
+                                                )
+                                            )}
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="mobile-transaction-bottom">
+
+                                    <div class="mobile-date">
+                                        ${formatDate(
+                                            transaction.createdAt
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        ${getStatusMarkup(
+                                            transaction.status
+                                        )}
+                                    </div>
+
+                                    <button
+                                        class="details-btn"
+                                        onclick="openTransactionDetails('${escapeAttribute(transaction.id)}')"
+                                        aria-label="View transaction details"
+                                    >
+                                        <i class='bx bx-chevron-right'></i>
+                                    </button>
+
+                                </div>
+
+                            </div>
+                        `;
+
+                    })
+                    .join("");
+        }
+
+        /* =========================
+           MODAL
+        ========================= */
+
+        function openTransactionDetails(id) {
+
+            const transaction =
+                transactions.find(
+                    item => item.id === id
+                );
+
+            if (!transaction) {
+
+                showToast(
+                    "Transaction details could not be found."
+                );
+
+                return;
+            }
+
+            currentTransaction =
+                transaction;
+
+            const info =
+                getTransactionType(
+                    transaction.type
+                );
+
+            const sign =
+                transaction.direction === "credit"
+                    ? "+"
+                    : "-";
+
+            document.getElementById(
+                "detailAmount"
+            ).textContent =
+                sign +
+                formatUSD(
+                    Math.abs(
+                        transaction.amount
+                    )
+                );
+
+            document.getElementById(
+                "detailType"
+            ).textContent =
+                info.label;
+
+            document.getElementById(
+                "detailDescription"
+            ).textContent =
+                transaction.description ||
+                "—";
+
+            document.getElementById(
+                "detailStatus"
+            ).innerHTML =
+                getStatusMarkup(
+                    transaction.status
+                );
+
+            document.getElementById(
+                "detailId"
+            ).textContent =
+                transaction.id ||
+                "—";
+
+            document.getElementById(
+                "detailReference"
+            ).textContent =
+                transaction.reference ||
+                "—";
+
+            document.getElementById(
+                "detailCreatedAt"
+            ).textContent =
+                formatDateTime(
+                    transaction.createdAt
+                );
+
+            document.getElementById(
+                "detailUpdatedAt"
+            ).textContent =
+                formatDateTime(
+                    transaction.updatedAt
+                );
+
+            transactionModal.classList.add(
+                "show"
+            );
+
+            setTimeout(() => {
+                modalClose.focus();
+            }, 50);
+        }
+
+        function closeTransactionModal() {
+
+            transactionModal.classList.remove(
+                "show"
+            );
+
+            currentTransaction = null;
+        }
+
+        /* =========================
+           COPY
+        ========================= */
+
+        async function copyTransactionReference() {
+
+            if (
+                !currentTransaction ||
+                !currentTransaction.reference
+            ) {
+                showToast(
+                    "No payment reference is available."
+                );
+
+                return;
+            }
+
+            const reference =
+                currentTransaction.reference;
+
+            try {
+
+                await navigator.clipboard.writeText(
+                    reference
+                );
+
+                showToast(
+                    "Reference copied successfully."
+                );
+
+            } catch (error) {
+
+                showToast(
+                    "Unable to copy reference."
+                );
+            }
+        }
+
+        /* =========================
+           TOAST
+        ========================= */
+
+        function showToast(message) {
+
+            const container =
+                document.getElementById(
+                    "toastContainer"
+                );
+
+            const toast =
+                document.createElement(
+                    "div"
+                );
+
+            toast.className =
+                "toast";
+
+            toast.innerHTML = `
+                <i class='bx bx-check-circle'></i>
+                <span>
+                    ${escapeHTML(message)}
+                </span>
+            `;
+
+            container.appendChild(
+                toast
+            );
+
+            setTimeout(() => {
+
+                toast.style.opacity =
+                    "0";
+
+                toast.style.transform =
+                    "translateY(8px)";
+
+                setTimeout(() => {
+                    toast.remove();
+                }, 250);
+
+            }, 2600);
+        }
+
+        /* =========================
+           ESCAPE HTML
+        ========================= */
+
+        function escapeHTML(value) {
+
+            return String(value ?? "")
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+        }
+
+        function escapeAttribute(value) {
+
+            return String(value ?? "")
+                .replace(
+                    /\\/g,
+                    "\\\\"
+                )
+                .replace(
+                    /'/g,
+                    "\\'"
+                );
+        }
+
+        /* =========================
+           BACKEND PLACEHOLDERS
+        ========================= */
+
+        async function loadTransactionSummary() {
+
+            /*
+            Production:
+
+            const response =
+                await fetch(
+                    "/api/user/transactions/summary",
+                    {
+                        credentials: "include"
+                    }
+                );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Unable to load transaction summary"
+                );
+            }
+
+            const data =
+                await response.json();
+
+            Object.assign(
+                walletSummary,
+                data
+            );
+
+            The backend should ensure:
+            - authenticated user
+            - validated account
+            - correct totals
+            - correct pending amount
+            - correct transaction count
+            */
+
+            return walletSummary;
+        }
+
+        async function loadTransactions() {
+
+            /*
+            Production:
+
+            const response =
+                await fetch(
+                    "/api/user/transactions",
+                    {
+                        credentials: "include"
+                    }
+                );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Unable to load transactions"
+                );
+            }
+
+            const data =
+                await response.json();
+
+            transactions =
+                data.transactions || [];
+
+            Backend should enforce:
+            - authenticated user ownership
+            - pagination
+            - transaction visibility
+            - server-side ordering
+            - no cross-user records
+            */
+
+            return transactions;
+        }
+
+        async function getTransactionDetails(id) {
+
+            /*
+            Production:
+
+            const response =
+                await fetch(
+                    `/api/user/transactions/${encodeURIComponent(id)}`,
+                    {
+                        credentials: "include"
+                    }
+                );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Unable to load transaction"
+                );
+            }
+
+            return await response.json();
+            */
+
+            return transactions.find(
+                transaction =>
+                    transaction.id === id
+            );
+        }
+
+        /* =========================
+           PAGE LOAD
+        ========================= */
+
+        async function initializeTransactions() {
+
+            try {
+
+                loadingState.style.display =
+                    "block";
+
+                errorState.style.display =
+                    "none";
+
+                emptyState.style.display =
+                    "none";
+
+                desktopTransactions.style.display =
+                    "none";
+
+                mobileTransactions.style.display =
+                    "none";
+
+                await loadTransactionSummary();
+
+                await loadTransactions();
+
+                renderSummary();
+
+                filteredTransactions =
+                    [...transactions];
+
+                renderTransactions();
+
+            } catch (error) {
+
+                console.error(error);
+
+                loadingState.style.display =
+                    "none";
+
+                errorState.style.display =
+                    "block";
+
+                emptyState.style.display =
+                    "none";
+
+                desktopTransactions.style.display =
+                    "none";
+
+                mobileTransactions.style.display =
+                    "none";
+
+            } finally {
+
+                loadingState.style.display =
+                    "none";
+            }
+        }
+
+        /* =========================
+           THEME
+        ========================= */
+
+        function initializeTheme() {
+
+            const savedTheme =
+                localStorage.getItem(
+                    "optify-theme"
+                );
+
+            if (
+                savedTheme === "dark"
+            ) {
+
+                document.body.classList.add(
+                    "dark-mode"
+                );
+
+                document.querySelector(
+                    "#themeToggle i"
+                ).className =
+                    "bx bx-sun";
+            }
+        }
+
+        function toggleTheme() {
+
+            document.body.classList.toggle(
+                "dark-mode"
+            );
+
+            const isDark =
+                document.body.classList.contains(
+                    "dark-mode"
+                );
+
+            localStorage.setItem(
+                "optify-theme",
+                isDark
+                    ? "dark"
+                    : "light"
+            );
+
+            document.querySelector(
+                "#themeToggle i"
+            ).className =
+                isDark
+                    ? "bx bx-sun"
+                    : "bx bx-moon";
+        }
+
+        /* =========================
+           MOBILE SIDEBAR
+        ========================= */
+
+        function openSidebar() {
+
+            document.getElementById(
+                "sidebar"
+            ).classList.add(
+                "open"
+            );
+
+            document.getElementById(
+                "sidebarOverlay"
+            ).classList.add(
+                "show"
+            );
+        }
+
+        function closeSidebar() {
+
+            document.getElementById(
+                "sidebar"
+            ).classList.remove(
+                "open"
+            );
+
+            document.getElementById(
+                "sidebarOverlay"
+            ).classList.remove(
+                "show"
+            );
+        }
+
+        /* =========================
+           EVENTS
+        ========================= */
+
+        searchInput.addEventListener(
+            "input",
+            applyFilters
+        );
+
+        typeFilter.addEventListener(
+            "change",
+            applyFilters
+        );
+
+        statusFilter.addEventListener(
+            "change",
+            applyFilters
+        );
+
+        dateFilter.addEventListener(
+            "change",
+            applyFilters
+        );
+
+        clearFilters.addEventListener(
+            "click",
+            clearAllFilters
+        );
+
+        document.getElementById(
+            "themeToggle"
+        ).addEventListener(
+            "click",
+            toggleTheme
+        );
+
+        document.getElementById(
+            "mobileMenuBtn"
+        ).addEventListener(
+            "click",
+            openSidebar
+        );
+
+        document.getElementById(
+            "sidebarOverlay"
+        ).addEventListener(
+            "click",
+            closeSidebar
+        );
+
+        modalClose.addEventListener(
+            "click",
+            closeTransactionModal
+        );
+
+        copyReference.addEventListener(
+            "click",
+            copyTransactionReference
+        );
+
+        document.getElementById(
+            "retryBtn"
+        ).addEventListener(
+            "click",
+            initializeTransactions
+        );
+
+        transactionModal.addEventListener(
+            "click",
+            function(event) {
+
+                if (
+                    event.target ===
+                    transactionModal
+                ) {
+                    closeTransactionModal();
+                }
+
+            }
+        );
+
+        document.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (
+                    event.key === "Escape" &&
+                    transactionModal.classList.contains(
+                        "show"
+                    )
+                ) {
+                    closeTransactionModal();
+                }
+
+            }
+        );
+
+        window.addEventListener(
+            "resize",
+            function() {
+
+                if (
+                    filteredTransactions.length
+                ) {
+                    renderTransactions();
+                }
+
+            }
+        );
+
+        document.querySelectorAll(
+            ".nav-link"
+        ).forEach(link => {
+
+            link.addEventListener(
+                "click",
+                closeSidebar
+            );
+
+        });
+
+        /* =========================
+           START
+        ========================= */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                initializeTheme();
+
+                renderUser();
+
+                initializeTransactions();
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

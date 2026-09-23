@@ -1,0 +1,3238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Optify Admin — E-pins</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
+
+    <style>
+        :root {
+            --navy: #071A2B;
+            --emerald: #12B76A;
+            --teal: #0EA5A4;
+            --soft-green: #E8F8F0;
+            --background: #F7F9FC;
+            --white: #FFFFFF;
+            --text: #101828;
+            --muted: #667085;
+            --border: #E4E7EC;
+            --warning: #F79009;
+            --danger: #D92D20;
+            --blue: #2E90FA;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            transition: background .25s ease, color .25s ease;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+        }
+
+        .sidebar {
+            width: 258px;
+            background: var(--navy);
+        }
+
+        .main-content {
+            margin-left: 258px;
+            min-height: 100vh;
+        }
+
+        .nav-item {
+            transition: .2s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, .05);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: rgba(18, 183, 106, .14);
+            color: #fff;
+        }
+
+        .nav-item.active i {
+            color: var(--emerald);
+        }
+
+        .topbar {
+            height: 76px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, .88);
+            backdrop-filter: blur(12px);
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(16, 24, 40, .025);
+        }
+
+        .stat-card {
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 24, 40, .06);
+        }
+
+        .table-row {
+            transition: background .15s ease;
+        }
+
+        .table-row:hover {
+            background: #F9FAFB;
+        }
+
+        .input-field,
+        .select-field {
+            width: 100%;
+            height: 44px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text);
+            padding: 0 13px;
+            outline: none;
+            transition: border .2s ease, box-shadow .2s ease;
+        }
+
+        .input-field:focus,
+        .select-field:focus {
+            border-color: var(--emerald);
+            box-shadow: 0 0 0 3px rgba(18, 183, 106, .1);
+        }
+
+        .modal-backdrop {
+            background: rgba(7, 26, 43, .56);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-panel {
+            animation: modalIn .2s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px) scale(.985);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .toast {
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: .25s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .skeleton {
+            position: relative;
+            overflow: hidden;
+            background: #EAECF0;
+        }
+
+        .skeleton::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,.55),
+                transparent
+            );
+            animation: skeleton 1.4s infinite;
+        }
+
+        @keyframes skeleton {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .mobile-card {
+            display: none;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #D0D5DD;
+            border-radius: 999px;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,.1);
+            border-radius: 999px;
+        }
+
+        body.dark {
+            background: #07111D;
+            color: #F2F4F7;
+        }
+
+        body.dark .topbar {
+            background: rgba(7, 17, 29, .9);
+            border-color: rgba(255,255,255,.08);
+        }
+
+        body.dark .card {
+            background: #0D1B2A;
+            border-color: rgba(255,255,255,.08);
+            box-shadow: none;
+        }
+
+        body.dark .table-row:hover {
+            background: rgba(255,255,255,.025);
+        }
+
+        body.dark .input-field,
+        body.dark .select-field {
+            background: #0A1622;
+            color: #F2F4F7;
+            border-color: rgba(255,255,255,.1);
+        }
+
+        body.dark .text-slate-900 {
+            color: #F2F4F7 !important;
+        }
+
+        body.dark .text-slate-800 {
+            color: #EAECF0 !important;
+        }
+
+        body.dark .text-slate-700 {
+            color: #D0D5DD !important;
+        }
+
+        body.dark .text-slate-600 {
+            color: #98A2B3 !important;
+        }
+
+        body.dark .text-slate-500 {
+            color: #667085 !important;
+        }
+
+        body.dark .border-slate-100,
+        body.dark .border-slate-200 {
+            border-color: rgba(255,255,255,.08) !important;
+        }
+
+        body.dark .bg-white {
+            background: #0D1B2A !important;
+        }
+
+        body.dark .bg-slate-50 {
+            background: #0A1622 !important;
+        }
+
+        body.dark .bg-slate-100 {
+            background: #122333 !important;
+        }
+
+        body.dark .skeleton {
+            background: #172838;
+        }
+
+        body.dark .modal-backdrop {
+            background: rgba(0,0,0,.7);
+        }
+
+        @media (max-width: 1023px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-overlay {
+                display: none;
+            }
+
+            .mobile-overlay.show {
+                display: block;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .desktop-table {
+                display: none;
+            }
+
+            .mobile-card {
+                display: block;
+            }
+
+            .topbar {
+                height: 68px;
+            }
+
+            .page-container {
+                padding: 18px 14px 30px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .page-container {
+                padding: 28px;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .page-container {
+                padding: 32px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- MOBILE OVERLAY -->
+<div
+    id="mobileOverlay"
+    class="mobile-overlay fixed inset-0 z-50 bg-slate-950/50 lg:hidden"
+    onclick="closeSidebar()">
+</div>
+
+
+<!-- SIDEBAR -->
+<aside id="sidebar" class="sidebar fixed left-0 top-0 bottom-0 z-[60] text-white overflow-y-auto">
+
+    <div class="px-5 py-6">
+
+        <!-- Logo -->
+        <div class="flex items-center gap-3 mb-8">
+
+            <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
+                <i class='bx bx-layer text-2xl'></i>
+            </div>
+
+            <div>
+                <div class="font-sora font-bold text-lg tracking-tight">
+                    OPTIFY
+                </div>
+
+                <div class="text-[10px] text-slate-400 uppercase tracking-[.18em]">
+                    Admin Portal
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Main Menu -->
+        <div class="mb-7">
+
+            <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                Main Menu
+            </p>
+
+            <nav class="space-y-1">
+
+                <a href="admin.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-grid-alt text-lg'></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="users.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-group text-lg'></i>
+                    <span>Users</span>
+                </a>
+
+                <a href="quizzes.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-help-circle text-lg'></i>
+                    <span>Quiz</span>
+                </a>
+
+                <a href="referrals.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-share-alt text-lg'></i>
+                    <span>Referrals</span>
+                </a>
+
+            </nav>
+        </div>
+
+        <!-- Finance -->
+        <div class="mb-7">
+
+            <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                Finance
+            </p>
+
+            <nav class="space-y-1">
+
+                <a href="epins.html"
+                   class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm">
+                    <i class='bx bx-key text-lg'></i>
+                    <span>E-pins</span>
+                </a>
+
+                <a href="withdrawals.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-money-withdraw text-lg'></i>
+                    <span>Withdrawals</span>
+                </a>
+
+                <a href="transactions.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-transfer-alt text-lg'></i>
+                    <span>Transactions</span>
+                </a>
+
+            </nav>
+        </div>
+
+        <!-- Platform -->
+        <div class="mb-7">
+
+            <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                Platform
+            </p>
+
+            <nav class="space-y-1">
+
+                <a href="community-settings.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-link text-lg'></i>
+                    <span>Community Settings</span>
+                </a>
+
+                <a href="platform-settings.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-cog text-lg'></i>
+                    <span>Platform Settings</span>
+                </a>
+
+            </nav>
+        </div>
+
+    </div>
+
+    <!-- Sidebar Bottom -->
+    <div class="absolute bottom-0 left-0 right-0 p-5 border-t border-white/10 bg-[#071A2B]">
+
+        <a href="admin-profile.html"
+           class="flex items-center gap-3 mb-4">
+
+            <div class="w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center">
+                <i class='bx bx-user text-emerald-400'></i>
+            </div>
+
+            <div class="min-w-0">
+                <p id="sidebarAdminName" class="text-sm font-medium truncate">
+                    Optify Admin
+                </p>
+
+                <p class="text-xs text-slate-500">
+                    Administrator
+                </p>
+            </div>
+
+        </a>
+
+        <button
+            id="logoutBtn"
+            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-400 hover:bg-white/5 hover:text-white transition">
+
+            <i class='bx bx-log-out text-lg'></i>
+            Logout
+
+        </button>
+
+    </div>
+
+</aside>
+
+
+<!-- MAIN -->
+<div class="main-content">
+
+    <!-- TOPBAR -->
+    <header class="topbar sticky top-0 z-40 flex items-center justify-between px-4 md:px-7">
+
+        <div class="flex items-center gap-3 min-w-0">
+
+            <button
+                id="menuBtn"
+                onclick="openSidebar()"
+                class="lg:hidden w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center text-slate-700">
+                <i class='bx bx-menu text-2xl'></i>
+            </button>
+
+            <div class="min-w-0">
+                <p class="text-xs text-slate-500 truncate">
+                    Finance
+                </p>
+
+                <p class="font-sora font-semibold text-sm md:text-base truncate">
+                    E-pin Management
+                </p>
+            </div>
+
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+
+            <!-- Theme -->
+            <button
+                id="themeBtn"
+                onclick="toggleTheme()"
+                aria-label="Toggle theme"
+                class="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 transition">
+
+                <i id="themeIcon" class='bx bx-moon text-lg'></i>
+
+            </button>
+
+            <!-- Notifications -->
+            <button
+                aria-label="Notifications"
+                class="relative w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 transition">
+
+                <i class='bx bx-bell text-lg'></i>
+
+                <span class="absolute top-2 right-2 w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+
+            </button>
+
+            <!-- Admin -->
+            <a
+                href="admin-profile.html"
+                class="hidden sm:flex items-center gap-2.5 ml-1">
+
+                <div class="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center">
+                    <i class='bx bx-user text-emerald-600'></i>
+                </div>
+
+                <div class="hidden md:block">
+                    <p class="text-xs font-semibold">
+                        Optify Admin
+                    </p>
+
+                    <p class="text-[11px] text-slate-500">
+                        Administrator
+                    </p>
+                </div>
+
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- PAGE -->
+    <main class="page-container">
+
+        <!-- PAGE INTRO -->
+        <section class="mb-7">
+
+            <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+
+                <div>
+
+                    <div class="flex items-center gap-2 mb-2">
+
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+
+                        <span class="text-[11px] font-semibold tracking-[.16em] text-emerald-600 uppercase">
+                            E-pin Management
+                        </span>
+
+                    </div>
+
+                    <h1 class="font-sora text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
+                        E-pins
+                    </h1>
+
+                    <p class="mt-2 text-sm text-slate-500 max-w-2xl">
+                        Manage withdrawal E-pin purchases, approvals, and usage across the Optify platform.
+                    </p>
+
+                </div>
+
+                <button
+                    id="refreshBtn"
+                    onclick="refreshPage()"
+                    class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#071A2B] text-white text-sm font-semibold hover:bg-[#0B3049] transition">
+
+                    <i id="refreshIcon" class='bx bx-refresh text-lg'></i>
+                    Refresh
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- STATS -->
+        <section class="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4 mb-6">
+
+            <!-- Total -->
+            <div class="card stat-card rounded-2xl p-4 md:p-5">
+
+                <div class="flex items-start justify-between">
+
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+                        <i class='bx bx-key text-xl text-slate-700'></i>
+                    </div>
+
+                    <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
+                        All
+                    </span>
+
+                </div>
+
+                <p class="mt-4 text-xs text-slate-500">
+                    Total E-pins
+                </p>
+
+                <h3 id="totalEpins" class="font-sora text-xl md:text-2xl font-bold mt-1">
+                    0
+                </h3>
+
+            </div>
+
+
+            <!-- Pending -->
+            <!-- <div class="card stat-card rounded-2xl p-4 md:p-5">
+
+                <div class="flex items-start justify-between">
+
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                        <i class='bx bx-time-five text-xl text-amber-600'></i>
+                    </div>
+
+                    <span class="text-[10px] uppercase tracking-wider text-amber-600 font-semibold">
+                        Review
+                    </span>
+
+                </div>
+
+                <p class="mt-4 text-xs text-slate-500">
+                    Pending Approval
+                </p>
+
+                <h3 id="pendingEpins" class="font-sora text-xl md:text-2xl font-bold mt-1">
+                    0
+                </h3>
+
+            </div> -->
+
+
+            <!-- Approved -->
+            <!-- <div class="card stat-card rounded-2xl p-4 md:p-5">
+
+                <div class="flex items-start justify-between">
+
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                        <i class='bx bx-check-circle text-xl text-emerald-600'></i>
+                    </div>
+
+                    <span class="text-[10px] uppercase tracking-wider text-emerald-600 font-semibold">
+                        Active
+                    </span>
+
+                </div>
+
+                <p class="mt-4 text-xs text-slate-500">
+                    Approved
+                </p>
+
+                <h3 id="approvedEpins" class="font-sora text-xl md:text-2xl font-bold mt-1">
+                    0
+                </h3>
+
+            </div> -->
+
+
+            <!-- Used -->
+            <!-- <div class="card stat-card rounded-2xl p-4 md:p-5">
+
+                <div class="flex items-start justify-between">
+
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+                        <i class='bx bx-check-shield text-xl text-blue-600'></i>
+                    </div>
+
+                    <span class="text-[10px] uppercase tracking-wider text-blue-600 font-semibold">
+                        Completed
+                    </span>
+
+                </div>
+
+                <p class="mt-4 text-xs text-slate-500">
+                    Used
+                </p>
+
+                <h3 id="usedEpins" class="font-sora text-xl md:text-2xl font-bold mt-1">
+                    0
+                </h3>
+
+            </div> -->
+
+
+            <!-- Revenue -->
+            <!-- <div class="card stat-card rounded-2xl p-4 md:p-5 col-span-2 lg:col-span-1">
+
+                <div class="flex items-start justify-between">
+
+                    <div class="w-10 h-10 rounded-xl bg-[#E8F8F0] flex items-center justify-center">
+                        <i class='bx bx-dollar-circle text-xl text-emerald-600'></i>
+                    </div>
+
+                    <span class="text-[10px] uppercase tracking-wider text-emerald-600 font-semibold">
+                        Revenue
+                    </span>
+
+                </div>
+
+                <p class="mt-4 text-xs text-slate-500">
+                    E-pin Revenue
+                </p>
+
+                <h3 id="epinRevenue" class="font-sora text-xl md:text-2xl font-bold mt-1">
+                    $0.00
+                </h3>
+
+                <p id="epinRevenueNgn" class="text-[11px] text-slate-400 mt-1">
+                    ₦0
+                </p>
+
+            </div> -->
+
+        </section>
+
+
+        <!-- CONFIGURATION -->
+        <section class="card rounded-2xl p-5 md:p-6 mb-6">
+
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+
+                <div>
+
+                    <div class="flex items-center gap-2">
+
+                        <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center">
+                            <i class='bx bx-cog text-emerald-600'></i>
+                        </div>
+
+                        <div>
+                            <h2 class="font-sora font-semibold text-base">
+                                E-pin Configuration
+                            </h2>
+
+                            <p class="text-xs text-slate-500 mt-0.5">
+                                Current withdrawal E-pin rules
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="flex flex-wrap items-center gap-x-7 gap-y-4">
+
+                    <div>
+                        <p class="text-[11px] text-slate-400 uppercase tracking-wide">
+                            E-pin Price
+                        </p>
+
+                        <p class="font-sora font-semibold text-sm mt-1">
+                            $2.00
+                            <span class="text-xs font-normal text-slate-400">
+                                / ₦2,000
+                            </span>
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-[11px] text-slate-400 uppercase tracking-wide">
+                            Minimum Withdrawal
+                        </p>
+
+                        <p class="font-sora font-semibold text-sm mt-1">
+                            $10.00
+                            <span class="text-xs font-normal text-slate-400">
+                                / ₦10,000
+                            </span>
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-[11px] text-slate-400 uppercase tracking-wide">
+                            Payment
+                        </p>
+
+                        <p class="font-semibold text-sm mt-1">
+                            Paystack
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-[11px] text-slate-400 uppercase tracking-wide">
+                            Status
+                        </p>
+
+                        <div class="flex items-center gap-1.5 mt-1">
+
+                            <span class="status-dot bg-emerald-500"></span>
+
+                            <span class="text-sm font-semibold text-emerald-600">
+                                Active
+                            </span>
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <a
+                    href="platform-settings.html"
+                    class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold hover:bg-slate-50 transition whitespace-nowrap">
+
+                    <i class='bx bx-cog'></i>
+                    Manage Settings
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- TOOLBAR -->
+        <section class="card rounded-2xl mb-5">
+
+            <div class="p-4 md:p-5">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3">
+
+                    <!-- Search -->
+                    <div class="relative xl:col-span-2">
+
+                        <i class='bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg'></i>
+
+                        <input
+                            id="searchInput"
+                            type="search"
+                            class="input-field pl-10"
+                            placeholder="Search E-pin, user, email or transaction ID..."
+                            autocomplete="off">
+
+                    </div>
+
+
+                    <!-- Status -->
+                    <select id="statusFilter" class="select-field">
+                        <option value="">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="used">Used</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="expired">Expired</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+
+
+                    <!-- Payment -->
+                    <select id="paymentFilter" class="select-field">
+                        <option value="">All Payments</option>
+                        <option value="paid">Paid</option>
+                        <option value="pending">Pending</option>
+                        <option value="failed">Failed</option>
+                        <option value="refunded">Refunded</option>
+                    </select>
+
+
+                    <!-- Date -->
+                    <select id="dateFilter" class="select-field">
+                        <option value="">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="30days">Last 30 Days</option>
+                    </select>
+
+                </div>
+
+
+                <div class="flex flex-wrap items-center justify-between gap-3 mt-4">
+
+                    <p id="filterSummary" class="text-xs text-slate-500">
+                        Showing all E-pins
+                    </p>
+
+                    <div class="flex items-center gap-2">
+
+                        <button
+                            onclick="applyFilters()"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#071A2B] text-white text-sm font-semibold hover:bg-[#0B3049] transition">
+
+                            <i class='bx bx-filter-alt'></i>
+                            Apply Filters
+
+                        </button>
+
+                        <button
+                            onclick="clearFilters()"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+
+                            <i class='bx bx-reset'></i>
+                            Clear
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- DESKTOP TABLE -->
+        <section class="card rounded-2xl overflow-hidden desktop-table">
+
+            <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+
+                <div>
+                    <h2 class="font-sora font-semibold text-sm">
+                        E-pin Records
+                    </h2>
+
+                    <p class="text-xs text-slate-500 mt-1">
+                        Withdrawal E-pin purchase and approval history.
+                    </p>
+                </div>
+
+                <span
+                    id="recordCount"
+                    class="text-xs font-medium text-slate-500">
+                    0 records
+                </span>
+
+            </div>
+
+
+            <div id="tableLoading" class="hidden p-5 space-y-4">
+
+                <div class="skeleton h-12 rounded-xl"></div>
+                <div class="skeleton h-12 rounded-xl"></div>
+                <div class="skeleton h-12 rounded-xl"></div>
+                <div class="skeleton h-12 rounded-xl"></div>
+
+            </div>
+
+
+            <div id="tableError" class="hidden py-16 px-5 text-center">
+
+                <div class="w-12 h-12 mx-auto rounded-2xl bg-red-50 flex items-center justify-center">
+                    <i class='bx bx-error-circle text-2xl text-red-600'></i>
+                </div>
+
+                <h3 class="font-sora font-semibold mt-4">
+                    Unable to load E-pins
+                </h3>
+
+                <p class="text-sm text-slate-500 mt-1">
+                    Something went wrong while loading the records.
+                </p>
+
+                <button
+                    onclick="loadEpins()"
+                    class="mt-4 px-4 py-2.5 rounded-xl bg-[#071A2B] text-white text-sm font-semibold">
+                    Try Again
+                </button>
+
+            </div>
+
+
+            <div id="desktopTableContainer">
+
+                <div id="emptyState" class="py-20 px-5 text-center">
+
+                    <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center">
+                        <i class='bx bx-key text-2xl text-slate-400'></i>
+                    </div>
+
+                    <h3 class="font-sora font-semibold mt-4">
+                        No E-pins found
+                    </h3>
+
+                    <p class="text-sm text-slate-500 mt-1 max-w-md mx-auto">
+                        E-pin purchases and approval records will appear here when users purchase withdrawal E-pins.
+                    </p>
+
+                </div>
+
+                <div id="desktopTableWrapper" class="hidden overflow-x-auto custom-scroll">
+
+                    <table class="w-full min-w-[1100px]">
+
+                        <thead class="bg-slate-50 border-b border-slate-100">
+
+                            <tr class="text-left">
+
+                                <th class="px-5 py-3 text-[11px] uppercase tracking-wide text-slate-500 font-semibold">
+                                    E-pin
+                                </th>
+
+                                <th class="px-5 py-3 text-[11px] uppercase tracking-wide text-slate-500 font-semibold">
+                                    User
+                                </th>
+
+                                <th class="px-5 py-3 text-[11px] uppercase tracking-wide text-slate-500 font-semibold">
+                                    Purchase
+                                </th>
+
+                                <th class="px-5 py-3 text-[11px] uppercase tracking-wide text-slate-500 font-semibold">
+                                    Payment
+                                </th>
+
+                                <th class="px-5 py-3 text-[11px] uppercase tracking-wide text-slate-500 font-semibold">
+                                    Status
+                                </th>
+
+                                <th class="px-5 py-3 text-[11px] uppercase tracking-wide text-slate-500 font-semibold">
+                                    Purchased
+                                </th>
+
+                                <th class="px-5 py-3 text-[11px] uppercase tracking-wide text-slate-500 font-semibold">
+                                    Approved
+                                </th>
+
+                                <th class="px-5 py-3 text-[11px] uppercase tracking-wide text-slate-500 font-semibold">
+                                    Used
+                                </th>
+
+                                <th class="px-5 py-3 text-[11px] uppercase tracking-wide text-slate-500 font-semibold text-right">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="epinTableBody"></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- PAGINATION -->
+            <div
+                id="pagination"
+                class="hidden px-5 py-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+                <div class="flex items-center gap-2">
+
+                    <span class="text-xs text-slate-500">
+                        Rows
+                    </span>
+
+                    <select
+                        id="pageSize"
+                        onchange="changePageSize()"
+                        class="h-9 px-2 border border-slate-200 rounded-lg text-xs bg-white">
+
+                        <option value="10">10</option>
+                        <option value="25" selected>25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+
+                    </select>
+
+                </div>
+
+                <div class="flex items-center gap-1">
+
+                    <button
+                        id="prevPage"
+                        onclick="previousPage()"
+                        class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 disabled:opacity-40"
+                        disabled>
+
+                        <i class='bx bx-chevron-left'></i>
+
+                    </button>
+
+                    <span
+                        id="pageNumber"
+                        class="min-w-9 h-9 rounded-lg bg-[#071A2B] text-white flex items-center justify-center text-xs font-semibold px-2">
+                        1
+                    </span>
+
+                    <button
+                        id="nextPage"
+                        onclick="nextPage()"
+                        class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 disabled:opacity-40"
+                        disabled>
+
+                        <i class='bx bx-chevron-right'></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- MOBILE RECORDS -->
+        <section class="mobile-card">
+
+            <div class="card rounded-2xl overflow-hidden">
+
+                <div class="p-4 border-b border-slate-100">
+
+                    <div class="flex items-center justify-between">
+
+                        <div>
+                            <h2 class="font-sora font-semibold text-sm">
+                                E-pin Records
+                            </h2>
+
+                            <p class="text-xs text-slate-500 mt-1">
+                                Purchase and approval history
+                            </p>
+                        </div>
+
+                        <span id="mobileRecordCount" class="text-xs text-slate-500">
+                            0 records
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div id="mobileEmptyState" class="py-16 px-5 text-center">
+
+                    <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-100 flex items-center justify-center">
+                        <i class='bx bx-key text-2xl text-slate-400'></i>
+                    </div>
+
+                    <h3 class="font-sora font-semibold mt-4">
+                        No E-pins found
+                    </h3>
+
+                    <p class="text-sm text-slate-500 mt-1">
+                        E-pin records will appear here when purchases are made.
+                    </p>
+
+                </div>
+
+
+                <div id="mobileCards" class="hidden p-3 space-y-3"></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RULES -->
+        <section class="card rounded-2xl p-5 md:p-6 mt-6">
+
+            <div class="flex items-start gap-3">
+
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
+                    <i class='bx bx-shield-check text-xl text-emerald-600'></i>
+                </div>
+
+                <div>
+
+                    <h2 class="font-sora font-semibold text-sm">
+                        E-pin Rules & Security
+                    </h2>
+
+                    <p class="text-xs text-slate-500 mt-1">
+                        Financial and security-sensitive operations must always be verified by the backend.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mt-6">
+
+                <div class="bg-slate-50 rounded-xl p-4">
+
+                    <i class='bx bx-dollar text-emerald-600 text-xl'></i>
+
+                    <p class="font-semibold text-sm mt-3">
+                        $2 E-pin Price
+                    </p>
+
+                    <p class="text-xs text-slate-500 mt-1">
+                        Each withdrawal E-pin costs ₦2,000.
+                    </p>
+
+                </div>
+
+
+                <div class="bg-slate-50 rounded-xl p-4">
+
+                    <i class='bx bx-wallet text-emerald-600 text-xl'></i>
+
+                    <p class="font-semibold text-sm mt-3">
+                        $10 Minimum
+                    </p>
+
+                    <p class="text-xs text-slate-500 mt-1">
+                        Minimum withdrawal is $10 / ₦10,000.
+                    </p>
+
+                </div>
+
+
+                <div class="bg-slate-50 rounded-xl p-4">
+
+                    <i class='bx bx-lock-alt text-emerald-600 text-xl'></i>
+
+                    <p class="font-semibold text-sm mt-3">
+                        One-time Use
+                    </p>
+
+                    <p class="text-xs text-slate-500 mt-1">
+                        An approved E-pin can only be consumed once.
+                    </p>
+
+                </div>
+
+
+                <div class="bg-slate-50 rounded-xl p-4">
+
+                    <i class='bx bx-history text-emerald-600 text-xl'></i>
+
+                    <p class="font-semibold text-sm mt-3">
+                        Audit Required
+                    </p>
+
+                    <p class="text-xs text-slate-500 mt-1">
+                        Approvals, rejections and usage should be logged.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- DETAILS MODAL -->
+<div
+    id="detailsModal"
+    class="hidden fixed inset-0 z-[100] modal-backdrop items-center justify-center p-3 md:p-6">
+
+    <div class="modal-panel card w-full max-w-3xl max-h-[92vh] overflow-hidden rounded-2xl">
+
+        <!-- Modal Header -->
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+
+            <div>
+
+                <p class="text-[10px] uppercase tracking-[.15em] text-emerald-600 font-semibold">
+                    E-pin Details
+                </p>
+
+                <h2 id="detailsTitle" class="font-sora font-semibold text-lg mt-1">
+                    E-pin
+                </h2>
+
+            </div>
+
+            <button
+                onclick="closeModal('detailsModal')"
+                aria-label="Close"
+                class="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50">
+
+                <i class='bx bx-x text-xl'></i>
+
+            </button>
+
+        </div>
+
+
+        <!-- Modal Body -->
+        <div id="detailsContent" class="p-5 overflow-y-auto max-h-[calc(92vh-150px)]">
+        </div>
+
+
+        <!-- Modal Footer -->
+        <div class="px-5 py-4 border-t border-slate-100 flex flex-wrap justify-end gap-2">
+
+            <button
+                onclick="closeModal('detailsModal')"
+                class="px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold">
+                Close
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- CONFIRM MODAL -->
+<div
+    id="confirmModal"
+    class="hidden fixed inset-0 z-[110] modal-backdrop items-center justify-center p-4">
+
+    <div class="modal-panel card w-full max-w-md rounded-2xl p-6">
+
+        <div
+            id="confirmIcon"
+            class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center">
+            <i class='bx bx-check-circle text-2xl text-emerald-600'></i>
+        </div>
+
+        <h2 id="confirmTitle" class="font-sora font-semibold text-lg mt-5">
+            Confirm Action
+        </h2>
+
+        <p id="confirmMessage" class="text-sm text-slate-500 mt-2 leading-6">
+            Please confirm this action.
+        </p>
+
+        <div class="flex justify-end gap-2 mt-6">
+
+            <button
+                onclick="closeModal('confirmModal')"
+                class="px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold">
+                Cancel
+            </button>
+
+            <button
+                id="confirmActionBtn"
+                class="px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition">
+                Confirm
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- REJECTION MODAL -->
+<div
+    id="rejectModal"
+    class="hidden fixed inset-0 z-[110] modal-backdrop items-center justify-center p-4">
+
+    <div class="modal-panel card w-full max-w-md rounded-2xl">
+
+        <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+
+            <div>
+                <h2 class="font-sora font-semibold">
+                    Reject E-pin
+                </h2>
+
+                <p class="text-xs text-slate-500 mt-1">
+                    Provide a reason for rejecting this request.
+                </p>
+            </div>
+
+            <button
+                onclick="closeModal('rejectModal')"
+                class="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-500">
+
+                <i class='bx bx-x text-xl'></i>
+
+            </button>
+
+        </div>
+
+        <div class="p-5">
+
+            <label class="block text-xs font-semibold text-slate-700 mb-2">
+                Rejection Reason
+            </label>
+
+            <select
+                id="rejectReasonSelect"
+                class="select-field mb-3">
+
+                <option value="">Select reason</option>
+                <option value="Payment not verified">Payment not verified</option>
+                <option value="Invalid payment reference">Invalid payment reference</option>
+                <option value="Duplicate payment">Duplicate payment</option>
+                <option value="Payment amount mismatch">Payment amount mismatch</option>
+                <option value="Suspicious transaction">Suspicious transaction</option>
+                <option value="Other">Other</option>
+
+            </select>
+
+            <textarea
+                id="rejectReasonText"
+                rows="4"
+                class="w-full border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10"
+                placeholder="Additional details..."></textarea>
+
+        </div>
+
+        <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2">
+
+            <button
+                onclick="closeModal('rejectModal')"
+                class="px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold">
+                Cancel
+            </button>
+
+            <button
+                onclick="submitRejection()"
+                class="px-4 py-2.5 rounded-xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition">
+                Reject E-pin
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- TOAST -->
+<div
+    id="toast"
+    class="toast fixed bottom-5 right-5 z-[200] w-[calc(100%-32px)] sm:w-auto sm:min-w-[320px]">
+
+    <div class="card rounded-2xl p-4 flex items-start gap-3 shadow-xl">
+
+        <div
+            id="toastIcon"
+            class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
+
+            <i id="toastIconElement" class='bx bx-check text-lg text-emerald-600'></i>
+
+        </div>
+
+        <div class="min-w-0">
+
+            <p id="toastTitle" class="text-sm font-semibold">
+                Done
+            </p>
+
+            <p id="toastMessage" class="text-xs text-slate-500 mt-0.5">
+                Action completed.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+    /* =========================================================
+       OPTIFY E-PIN MANAGEMENT
+       Backend integration points are intentionally separated.
+       ========================================================= */
+
+    const USD_TO_NGN = 1000;
+
+    const epinStats = {
+        total: 0,
+        pending: 0,
+        approved: 0,
+        used: 0,
+        revenue: 0
+    };
+
+    const epins = [];
+
+    let filteredEpins = [];
+    let currentPage = 1;
+    let pageSize = 25;
+    let currentEpinId = null;
+    let pendingConfirmAction = null;
+
+
+    /* =========================================================
+       DOM
+       ========================================================= */
+
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const paymentFilter = document.getElementById('paymentFilter');
+    const dateFilter = document.getElementById('dateFilter');
+
+
+    /* =========================================================
+       INITIALIZATION
+       ========================================================= */
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        initializeTheme();
+        updateStats();
+        loadEpins();
+
+        searchInput.addEventListener('input', () => {
+            applyFilters(false);
+        });
+
+        document.addEventListener('keydown', handleKeyboard);
+
+    });
+
+
+    /* =========================================================
+       BACKEND INTEGRATION
+       ========================================================= */
+
+    async function loadEpinStats() {
+
+        /*
+         Production example:
+
+         const response = await fetch('/api/admin/epins/stats', {
+             credentials: 'include'
+         });
+
+         if (!response.ok) {
+             throw new Error('Failed to load E-pin statistics');
+         }
+
+         const data = await response.json();
+
+         Object.assign(epinStats, data);
+
+         Never allow the frontend to invent financial values.
+        */
+
+        return epinStats;
+    }
+
+
+    async function loadEpins() {
+
+        setLoading(true);
+        hideError();
+
+        try {
+
+            /*
+             Production:
+
+             const response = await fetch(
+                 `/api/admin/epins?page=${currentPage}&limit=${pageSize}`,
+                 {
+                     credentials: 'include'
+                 }
+             );
+
+             if (!response.ok) {
+                 throw new Error('Unable to load E-pins');
+             }
+
+             const data = await response.json();
+
+             epins.length = 0;
+             epins.push(...data.items);
+
+             Object.assign(epinStats, data.stats);
+
+             renderEpins();
+            */
+
+            await new Promise(resolve => setTimeout(resolve, 250));
+
+            filteredEpins = [...epins];
+
+            updateStats();
+            renderEpins();
+
+        } catch (error) {
+
+            console.error(error);
+
+            showError();
+
+        } finally {
+
+            setLoading(false);
+
+        }
+    }
+
+
+    async function loadEpinDetails(id) {
+
+        /*
+         Production:
+
+         const response = await fetch(
+             `/api/admin/epins/${encodeURIComponent(id)}`,
+             {
+                 credentials: 'include'
+             }
+         );
+
+         const data = await response.json();
+         return data;
+        */
+
+        return epins.find(item => item.id === id) || null;
+    }
+
+
+    async function approveEpin(id) {
+
+        /*
+         Production:
+
+         POST /api/admin/epins/:id/approve
+
+         Backend MUST verify:
+         - authenticated admin
+         - admin role
+         - payment status
+         - payment reference
+         - payment amount
+         - E-pin state
+         - duplicate approval prevention
+         */
+
+        showToast(
+            'Backend action required',
+            'Approval is not connected until the backend endpoint is implemented.',
+            'info'
+        );
+
+        return false;
+    }
+
+
+    async function rejectEpin(id, reason) {
+
+        /*
+         Production:
+
+         POST /api/admin/epins/:id/reject
+
+         Backend validates the request and creates an audit log.
+        */
+
+        showToast(
+            'Backend action required',
+            'Rejection is not connected until the backend endpoint is implemented.',
+            'info'
+        );
+
+        return false;
+    }
+
+
+    async function revokeEpin(id) {
+
+        /*
+         Production:
+
+         POST /api/admin/epins/:id/revoke
+        */
+
+        showToast(
+            'Backend action required',
+            'Revocation is not connected until the backend endpoint is implemented.',
+            'info'
+        );
+
+        return false;
+    }
+
+
+    async function loadEpinActivity(id) {
+
+        /*
+         Production:
+
+         GET /api/admin/epins/:id/activity
+        */
+
+        return [];
+
+    }
+
+
+    /* =========================================================
+       STATS
+       ========================================================= */
+
+    function updateStats() {
+
+        document.getElementById('totalEpins').textContent =
+            formatNumber(epinStats.total);
+
+        document.getElementById('pendingEpins').textContent =
+            formatNumber(epinStats.pending);
+
+        document.getElementById('approvedEpins').textContent =
+            formatNumber(epinStats.approved);
+
+        document.getElementById('usedEpins').textContent =
+            formatNumber(epinStats.used);
+
+        document.getElementById('epinRevenue').textContent =
+            formatUSD(epinStats.revenue);
+
+        document.getElementById('epinRevenueNgn').textContent =
+            formatNGN(epinStats.revenue * USD_TO_NGN);
+
+    }
+
+
+    /* =========================================================
+       FILTERING
+       ========================================================= */
+
+    function applyFilters(showToastMessage = true) {
+
+        const search = searchInput.value.trim().toLowerCase();
+        const status = statusFilter.value;
+        const payment = paymentFilter.value;
+        const date = dateFilter.value;
+
+        filteredEpins = epins.filter(epin => {
+
+            const searchable = [
+                epin.id,
+                epin.epin,
+                epin.userName,
+                epin.username,
+                epin.email,
+                epin.transactionId,
+                epin.paymentReference
+            ]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase();
+
+            const matchesSearch =
+                !search || searchable.includes(search);
+
+            const matchesStatus =
+                !status || epin.status === status;
+
+            const matchesPayment =
+                !payment || epin.paymentStatus === payment;
+
+            const matchesDate =
+                !date || matchesDateFilter(epin.createdAt, date);
+
+            return (
+                matchesSearch &&
+                matchesStatus &&
+                matchesPayment &&
+                matchesDate
+            );
+
+        });
+
+        currentPage = 1;
+
+        renderEpins();
+
+        if (showToastMessage) {
+
+            showToast(
+                'Filters applied',
+                `${filteredEpins.length} matching E-pin record${filteredEpins.length === 1 ? '' : 's'}.`,
+                'info'
+            );
+
+        }
+
+    }
+
+
+    function clearFilters() {
+
+        searchInput.value = '';
+        statusFilter.value = '';
+        paymentFilter.value = '';
+        dateFilter.value = '';
+
+        filteredEpins = [...epins];
+        currentPage = 1;
+
+        renderEpins();
+
+    }
+
+
+    function matchesDateFilter(dateValue, filter) {
+
+        if (!dateValue) {
+            return false;
+        }
+
+        const date = new Date(dateValue);
+
+        if (Number.isNaN(date.getTime())) {
+            return false;
+        }
+
+        const now = new Date();
+
+        if (filter === 'today') {
+
+            return date.toDateString() === now.toDateString();
+
+        }
+
+        if (filter === 'week') {
+
+            const start = new Date(now);
+            start.setDate(now.getDate() - 7);
+
+            return date >= start;
+
+        }
+
+        if (filter === 'month') {
+
+            return (
+                date.getMonth() === now.getMonth() &&
+                date.getFullYear() === now.getFullYear()
+            );
+
+        }
+
+        if (filter === '30days') {
+
+            const start = new Date(now);
+            start.setDate(now.getDate() - 30);
+
+            return date >= start;
+
+        }
+
+        return true;
+
+    }
+
+
+    /* =========================================================
+       RENDER
+       ========================================================= */
+
+    function renderEpins() {
+
+        const tableBody = document.getElementById('epinTableBody');
+        const desktopWrapper = document.getElementById('desktopTableWrapper');
+        const emptyState = document.getElementById('emptyState');
+        const mobileEmpty = document.getElementById('mobileEmptyState');
+        const mobileCards = document.getElementById('mobileCards');
+        const pagination = document.getElementById('pagination');
+
+        const total = filteredEpins.length;
+
+        document.getElementById('recordCount').textContent =
+            `${total} record${total === 1 ? '' : 's'}`;
+
+        document.getElementById('mobileRecordCount').textContent =
+            `${total} record${total === 1 ? '' : 's'}`;
+
+        document.getElementById('filterSummary').textContent =
+            total === epins.length
+                ? `Showing all E-pins`
+                : `Showing ${total} filtered E-pin${total === 1 ? '' : 's'}`;
+
+        tableBody.innerHTML = '';
+        mobileCards.innerHTML = '';
+
+        if (!total) {
+
+            desktopWrapper.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+
+            mobileCards.classList.add('hidden');
+            mobileEmpty.classList.remove('hidden');
+
+            pagination.classList.add('hidden');
+
+            return;
+        }
+
+        desktopWrapper.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+
+        mobileCards.classList.remove('hidden');
+        mobileEmpty.classList.add('hidden');
+
+        const start = (currentPage - 1) * pageSize;
+        const pageItems = filteredEpins.slice(start, start + pageSize);
+
+        pageItems.forEach(epin => {
+
+            tableBody.insertAdjacentHTML(
+                'beforeend',
+                createDesktopRow(epin)
+            );
+
+            mobileCards.insertAdjacentHTML(
+                'beforeend',
+                createMobileCard(epin)
+            );
+
+        });
+
+        renderPagination(total);
+
+    }
+
+
+    function createDesktopRow(epin) {
+
+        const status = getStatusMeta(epin.status);
+        const payment = getPaymentMeta(epin.paymentStatus);
+
+        return `
+            <tr class="table-row border-b border-slate-100">
+
+                <td class="px-5 py-4">
+
+                    <button
+                        onclick="openDetails('${escapeAttribute(epin.id)}')"
+                        class="text-left">
+
+                        <p class="font-mono text-xs font-semibold text-slate-800">
+                            ${escapeHTML(maskEpin(epin.epin || epin.id))}
+                        </p>
+
+                        <p class="text-[11px] text-slate-400 mt-1">
+                            ${escapeHTML(epin.id || '—')}
+                        </p>
+
+                    </button>
+
+                </td>
+
+
+                <td class="px-5 py-4">
+
+                    <div class="flex items-center gap-2.5">
+
+                        <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center">
+                            <i class='bx bx-user text-emerald-600'></i>
+                        </div>
+
+                        <div class="min-w-0">
+
+                            <p class="text-sm font-semibold truncate max-w-[150px]">
+                                ${escapeHTML(epin.userName || '—')}
+                            </p>
+
+                            <p class="text-[11px] text-slate-400 truncate max-w-[150px]">
+                                ${escapeHTML(epin.email || epin.username || '—')}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </td>
+
+
+                <td class="px-5 py-4">
+
+                    <p class="text-sm font-semibold">
+                        ${formatUSD(epin.amount ?? 2)}
+                    </p>
+
+                    <p class="text-[11px] text-slate-400">
+                        ${formatNGN((epin.amount ?? 2) * USD_TO_NGN)}
+                    </p>
+
+                </td>
+
+
+                <td class="px-5 py-4">
+
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${payment.className}">
+                        <span class="status-dot ${payment.dot}"></span>
+                        ${payment.label}
+                    </span>
+
+                </td>
+
+
+                <td class="px-5 py-4">
+
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${status.className}">
+                        <span class="status-dot ${status.dot}"></span>
+                        ${status.label}
+                    </span>
+
+                </td>
+
+
+                <td class="px-5 py-4">
+
+                    <p class="text-xs font-medium">
+                        ${formatDate(epin.createdAt)}
+                    </p>
+
+                </td>
+
+
+                <td class="px-5 py-4">
+
+                    <p class="text-xs text-slate-500">
+                        ${formatDate(epin.approvedAt)}
+                    </p>
+
+                </td>
+
+
+                <td class="px-5 py-4">
+
+                    <p class="text-xs text-slate-500">
+                        ${formatDate(epin.usedAt)}
+                    </p>
+
+                </td>
+
+
+                <td class="px-5 py-4">
+
+                    <div class="flex items-center justify-end gap-1">
+
+                        <button
+                            onclick="openDetails('${escapeAttribute(epin.id)}')"
+                            title="View details"
+                            class="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50">
+
+                            <i class='bx bx-show'></i>
+
+                        </button>
+
+                        ${getActionButtons(epin)}
+
+                    </div>
+
+                </td>
+
+            </tr>
+        `;
+
+    }
+
+
+    function createMobileCard(epin) {
+
+        const status = getStatusMeta(epin.status);
+        const payment = getPaymentMeta(epin.paymentStatus);
+
+        return `
+            <div class="border border-slate-200 rounded-2xl p-4">
+
+                <div class="flex items-start justify-between gap-3">
+
+                    <div class="flex items-center gap-3">
+
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+                            <i class='bx bx-key text-lg text-slate-600'></i>
+                        </div>
+
+                        <div>
+
+                            <p class="font-mono text-xs font-semibold">
+                                ${escapeHTML(maskEpin(epin.epin || epin.id))}
+                            </p>
+
+                            <p class="text-[11px] text-slate-400 mt-1">
+                                ${escapeHTML(epin.id || '—')}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        onclick="openDetails('${escapeAttribute(epin.id)}')"
+                        class="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500">
+
+                        <i class='bx bx-show'></i>
+
+                    </button>
+
+                </div>
+
+
+                <div class="grid grid-cols-2 gap-3 mt-4">
+
+                    <div>
+                        <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                            User
+                        </p>
+
+                        <p class="text-xs font-semibold mt-1 truncate">
+                            ${escapeHTML(epin.userName || '—')}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                            Purchase
+                        </p>
+
+                        <p class="text-xs font-semibold mt-1">
+                            ${formatUSD(epin.amount ?? 2)}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                            Payment
+                        </p>
+
+                        <span class="inline-flex items-center gap-1.5 mt-1 text-[11px] font-semibold ${payment.textClass}">
+                            <span class="status-dot ${payment.dot}"></span>
+                            ${payment.label}
+                        </span>
+                    </div>
+
+                    <div>
+                        <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                            Status
+                        </p>
+
+                        <span class="inline-flex items-center gap-1.5 mt-1 text-[11px] font-semibold ${status.textClass}">
+                            <span class="status-dot ${status.dot}"></span>
+                            ${status.label}
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
+
+                    <div>
+                        <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                            Purchased
+                        </p>
+
+                        <p class="text-xs mt-1">
+                            ${formatDate(epin.createdAt)}
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-1">
+
+                        ${getActionButtons(epin)}
+
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
+    }
+
+
+    function getActionButtons(epin) {
+
+        let html = '';
+
+        if (epin.status === 'pending') {
+
+            html += `
+                <button
+                    onclick="confirmApproval('${escapeAttribute(epin.id)}')"
+                    title="Approve E-pin"
+                    class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-100">
+
+                    <i class='bx bx-check'></i>
+
+                </button>
+
+                <button
+                    onclick="openReject('${escapeAttribute(epin.id)}')"
+                    title="Reject E-pin"
+                    class="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-100">
+
+                    <i class='bx bx-x'></i>
+
+                </button>
+            `;
+
+        }
+
+        if (epin.status === 'approved') {
+
+            html += `
+                <button
+                    onclick="confirmRevoke('${escapeAttribute(epin.id)}')"
+                    title="Revoke E-pin"
+                    class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center hover:bg-amber-100">
+
+                    <i class='bx bx-block'></i>
+
+                </button>
+            `;
+
+        }
+
+        return html;
+
+    }
+
+
+    /* =========================================================
+       DETAILS
+       ========================================================= */
+
+    async function openDetails(id) {
+
+        const epin = await loadEpinDetails(id);
+
+        if (!epin) {
+
+            showToast(
+                'Record unavailable',
+                'The requested E-pin could not be found.',
+                'error'
+            );
+
+            return;
+        }
+
+        currentEpinId = id;
+
+        document.getElementById('detailsTitle').textContent =
+            maskEpin(epin.epin || epin.id);
+
+        const status = getStatusMeta(epin.status);
+        const payment = getPaymentMeta(epin.paymentStatus);
+
+        document.getElementById('detailsContent').innerHTML = `
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <!-- E-PIN -->
+                <div class="border border-slate-200 rounded-2xl p-4">
+
+                    <div class="flex items-center gap-2 mb-4">
+
+                        <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+                            <i class='bx bx-key text-slate-600'></i>
+                        </div>
+
+                        <h3 class="font-sora text-sm font-semibold">
+                            E-pin Information
+                        </h3>
+
+                    </div>
+
+                    ${detailItem('E-pin ID', epin.id)}
+                    ${detailItem('Masked E-pin', maskEpin(epin.epin || epin.id))}
+                    ${detailStatusItem('Status', status)}
+                    ${detailItem('Purchase Amount', `${formatUSD(epin.amount ?? 2)} / ${formatNGN((epin.amount ?? 2) * USD_TO_NGN)}`)}
+                    ${detailItem('Created', formatDate(epin.createdAt))}
+                    ${detailItem('Approved', formatDate(epin.approvedAt))}
+                    ${detailItem('Used', formatDate(epin.usedAt))}
+
+                </div>
+
+
+                <!-- USER -->
+                <div class="border border-slate-200 rounded-2xl p-4">
+
+                    <div class="flex items-center gap-2 mb-4">
+
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
+                            <i class='bx bx-user text-emerald-600'></i>
+                        </div>
+
+                        <h3 class="font-sora text-sm font-semibold">
+                            User Information
+                        </h3>
+
+                    </div>
+
+                    ${detailItem('Full Name', epin.userName)}
+                    ${detailItem('Username', epin.username)}
+                    ${detailItem('Email', epin.email)}
+                    ${detailItem('User ID', epin.userId)}
+                    ${detailItem('Validation', epin.validationStatus || '—')}
+
+                </div>
+
+
+                <!-- PAYMENT -->
+                <div class="border border-slate-200 rounded-2xl p-4">
+
+                    <div class="flex items-center gap-2 mb-4">
+
+                        <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                            <i class='bx bx-credit-card text-blue-600'></i>
+                        </div>
+
+                        <h3 class="font-sora text-sm font-semibold">
+                            Payment Information
+                        </h3>
+
+                    </div>
+
+                    ${detailItem('Provider', epin.provider || 'Paystack')}
+                    ${detailItem('Payment Reference', epin.paymentReference)}
+                    ${detailItem('Amount', `${formatUSD(epin.amount ?? 2)} / ${formatNGN((epin.amount ?? 2) * USD_TO_NGN)}`)}
+                    ${detailStatusItem('Payment Status', payment)}
+                    ${detailItem('Payment Date', formatDate(epin.paymentDate || epin.createdAt))}
+
+                </div>
+
+
+                <!-- WITHDRAWAL -->
+                <div class="border border-slate-200 rounded-2xl p-4">
+
+                    <div class="flex items-center gap-2 mb-4">
+
+                        <div class="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+                            <i class='bx bx-money-withdraw text-purple-600'></i>
+                        </div>
+
+                        <h3 class="font-sora text-sm font-semibold">
+                            Withdrawal Information
+                        </h3>
+
+                    </div>
+
+                    ${
+                        epin.usedAt
+                            ? `
+                                ${detailItem('Withdrawal ID', epin.withdrawalId)}
+                                ${detailItem('Withdrawal Amount', formatUSD(epin.withdrawalAmount))}
+                                ${detailItem('Used Date', formatDate(epin.usedAt))}
+                                ${detailItem('Withdrawal Status', epin.withdrawalStatus)}
+                            `
+                            : `
+                                <div class="py-5 text-center">
+
+                                    <div class="w-10 h-10 mx-auto rounded-xl bg-slate-100 flex items-center justify-center">
+                                        <i class='bx bx-info-circle text-slate-400'></i>
+                                    </div>
+
+                                    <p class="text-sm font-medium mt-3">
+                                        E-pin not used
+                                    </p>
+
+                                    <p class="text-xs text-slate-500 mt-1">
+                                        This E-pin has not been consumed during a withdrawal.
+                                    </p>
+
+                                </div>
+                            `
+                    }
+
+                </div>
+
+            </div>
+
+
+            <!-- SECURITY NOTICE -->
+            <div class="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+
+                <div class="flex items-start gap-3">
+
+                    <i class='bx bx-shield-check text-emerald-600 text-xl mt-0.5'></i>
+
+                    <div>
+
+                        <p class="text-sm font-semibold">
+                            Sensitive record
+                        </p>
+
+                        <p class="text-xs text-slate-500 mt-1 leading-5">
+                            Complete E-pin values are intentionally hidden. Approval, rejection, revocation,
+                            and usage must be validated and recorded by the backend.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="mt-5">
+
+                <div class="flex items-center justify-between mb-3">
+
+                    <div>
+
+                        <h3 class="font-sora text-sm font-semibold">
+                            Activity Log
+                        </h3>
+
+                        <p class="text-xs text-slate-500 mt-1">
+                            Backend audit history for this E-pin.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="border border-slate-200 rounded-2xl p-4">
+
+                    <div class="flex items-center gap-3">
+
+                        <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                            <i class='bx bx-history text-slate-500'></i>
+                        </div>
+
+                        <div>
+
+                            <p class="text-xs font-medium">
+                                Activity log will load from the backend
+                            </p>
+
+                            <p class="text-[11px] text-slate-400 mt-0.5">
+                                GET /api/admin/epins/${escapeHTML(id)}/activity
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
+        openModal('detailsModal');
+
+    }
+
+
+    function detailItem(label, value) {
+
+        return `
+            <div class="flex items-start justify-between gap-4 py-2 border-b border-slate-100 last:border-0">
+
+                <span class="text-xs text-slate-500">
+                    ${escapeHTML(label)}
+                </span>
+
+                <span class="text-xs font-medium text-right max-w-[60%] break-words">
+                    ${escapeHTML(value || '—')}
+                </span>
+
+            </div>
+        `;
+
+    }
+
+
+    function detailStatusItem(label, status) {
+
+        return `
+            <div class="flex items-center justify-between gap-4 py-2 border-b border-slate-100">
+
+                <span class="text-xs text-slate-500">
+                    ${escapeHTML(label)}
+                </span>
+
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${status.className}">
+                    <span class="status-dot ${status.dot}"></span>
+                    ${status.label}
+                </span>
+
+            </div>
+        `;
+
+    }
+
+
+    /* =========================================================
+       APPROVAL
+       ========================================================= */
+
+    function confirmApproval(id) {
+
+        currentEpinId = id;
+
+        document.getElementById('confirmTitle').textContent =
+            'Approve this E-pin?';
+
+        document.getElementById('confirmMessage').textContent =
+            'Confirm that the payment has been successfully verified before approving this E-pin.';
+
+        document.getElementById('confirmActionBtn').textContent =
+            'Approve E-pin';
+
+        document.getElementById('confirmActionBtn').className =
+            'px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition';
+
+        document.getElementById('confirmIcon').className =
+            'w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center';
+
+        document.getElementById('confirmIcon').innerHTML =
+            `<i class='bx bx-check-circle text-2xl text-emerald-600'></i>`;
+
+        pendingConfirmAction = async () => {
+
+            await approveEpin(currentEpinId);
+
+            closeModal('confirmModal');
+
+        };
+
+        document.getElementById('confirmActionBtn').onclick =
+            pendingConfirmAction;
+
+        openModal('confirmModal');
+
+    }
+
+
+    /* =========================================================
+       REVOKE
+       ========================================================= */
+
+    function confirmRevoke(id) {
+
+        currentEpinId = id;
+
+        document.getElementById('confirmTitle').textContent =
+            'Revoke this E-pin?';
+
+        document.getElementById('confirmMessage').textContent =
+            'Only revoke an approved E-pin when it has not been consumed and the backend confirms it can be revoked.';
+
+        document.getElementById('confirmActionBtn').textContent =
+            'Revoke E-pin';
+
+        document.getElementById('confirmActionBtn').className =
+            'px-4 py-2.5 rounded-xl bg-amber-600 text-white text-sm font-semibold hover:bg-amber-700 transition';
+
+        document.getElementById('confirmIcon').className =
+            'w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center';
+
+        document.getElementById('confirmIcon').innerHTML =
+            `<i class='bx bx-block text-2xl text-amber-600'></i>`;
+
+        pendingConfirmAction = async () => {
+
+            await revokeEpin(currentEpinId);
+
+            closeModal('confirmModal');
+
+        };
+
+        document.getElementById('confirmActionBtn').onclick =
+            pendingConfirmAction;
+
+        openModal('confirmModal');
+
+    }
+
+
+    /* =========================================================
+       REJECTION
+       ========================================================= */
+
+    function openReject(id) {
+
+        currentEpinId = id;
+
+        document.getElementById('rejectReasonSelect').value = '';
+        document.getElementById('rejectReasonText').value = '';
+
+        openModal('rejectModal');
+
+    }
+
+
+    async function submitRejection() {
+
+        const selected =
+            document.getElementById('rejectReasonSelect').value;
+
+        const additional =
+            document.getElementById('rejectReasonText').value.trim();
+
+        if (!selected) {
+
+            showToast(
+                'Reason required',
+                'Select a rejection reason before continuing.',
+                'error'
+            );
+
+            return;
+        }
+
+        const reason =
+            additional
+                ? `${selected}: ${additional}`
+                : selected;
+
+        await rejectEpin(currentEpinId, reason);
+
+        closeModal('rejectModal');
+
+    }
+
+
+    /* =========================================================
+       PAGINATION
+       ========================================================= */
+
+    function renderPagination(total) {
+
+        const pagination =
+            document.getElementById('pagination');
+
+        const totalPages =
+            Math.max(1, Math.ceil(total / pageSize));
+
+        if (total <= pageSize) {
+
+            pagination.classList.add('hidden');
+            return;
+
+        }
+
+        pagination.classList.remove('hidden');
+
+        document.getElementById('pageNumber').textContent =
+            currentPage;
+
+        document.getElementById('prevPage').disabled =
+            currentPage <= 1;
+
+        document.getElementById('nextPage').disabled =
+            currentPage >= totalPages;
+
+    }
+
+
+    function previousPage() {
+
+        if (currentPage > 1) {
+
+            currentPage--;
+            renderEpins();
+
+        }
+
+    }
+
+
+    function nextPage() {
+
+        const totalPages =
+            Math.ceil(filteredEpins.length / pageSize);
+
+        if (currentPage < totalPages) {
+
+            currentPage++;
+            renderEpins();
+
+        }
+
+    }
+
+
+    function changePageSize() {
+
+        pageSize =
+            Number(document.getElementById('pageSize').value);
+
+        currentPage = 1;
+
+        renderEpins();
+
+    }
+
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+
+    function openSidebar() {
+
+        document.getElementById('sidebar').classList.add('open');
+        document.getElementById('mobileOverlay').classList.add('show');
+
+    }
+
+
+    function closeSidebar() {
+
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('mobileOverlay').classList.remove('show');
+
+    }
+
+
+    /* =========================================================
+       THEME
+       ========================================================= */
+
+    function initializeTheme() {
+
+        const savedTheme =
+            localStorage.getItem('optify-theme');
+
+        if (savedTheme === 'dark') {
+
+            document.body.classList.add('dark');
+
+            document.getElementById('themeIcon').className =
+                'bx bx-sun text-lg';
+
+        }
+
+    }
+
+
+    function toggleTheme() {
+
+        const dark =
+            document.body.classList.toggle('dark');
+
+        localStorage.setItem(
+            'optify-theme',
+            dark ? 'dark' : 'light'
+        );
+
+        document.getElementById('themeIcon').className =
+            dark
+                ? 'bx bx-sun text-lg'
+                : 'bx bx-moon text-lg';
+
+    }
+
+
+    /* =========================================================
+       REFRESH
+       ========================================================= */
+
+    async function refreshPage() {
+
+        const button =
+            document.getElementById('refreshBtn');
+
+        const icon =
+            document.getElementById('refreshIcon');
+
+        button.disabled = true;
+        icon.classList.add('bx-spin');
+
+        await loadEpins();
+
+        button.disabled = false;
+        icon.classList.remove('bx-spin');
+
+    }
+
+
+    /* =========================================================
+       LOADING / ERROR
+       ========================================================= */
+
+    function setLoading(loading) {
+
+        const tableLoading =
+            document.getElementById('tableLoading');
+
+        const tableWrapper =
+            document.getElementById('desktopTableWrapper');
+
+        const emptyState =
+            document.getElementById('emptyState');
+
+        if (loading) {
+
+            tableLoading.classList.remove('hidden');
+            tableWrapper.classList.add('hidden');
+            emptyState.classList.add('hidden');
+
+        } else {
+
+            tableLoading.classList.add('hidden');
+
+        }
+
+    }
+
+
+    function showError() {
+
+        document.getElementById('tableError')
+            .classList.remove('hidden');
+
+        document.getElementById('desktopTableContainer')
+            .classList.add('hidden');
+
+    }
+
+
+    function hideError() {
+
+        document.getElementById('tableError')
+            .classList.add('hidden');
+
+        document.getElementById('desktopTableContainer')
+            .classList.remove('hidden');
+
+    }
+
+
+    /* =========================================================
+       MODALS
+       ========================================================= */
+
+    function openModal(id) {
+
+        const modal =
+            document.getElementById(id);
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        document.body.style.overflow = 'hidden';
+
+    }
+
+
+    function closeModal(id) {
+
+        const modal =
+            document.getElementById(id);
+
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+
+        const openModals =
+            document.querySelectorAll(
+                '[id$="Modal"]:not(.hidden)'
+            );
+
+        if (!openModals.length) {
+            document.body.style.overflow = '';
+        }
+
+    }
+
+
+    function handleKeyboard(event) {
+
+        if (event.key !== 'Escape') {
+            return;
+        }
+
+        document
+            .querySelectorAll('[id$="Modal"]:not(.hidden)')
+            .forEach(modal => closeModal(modal.id));
+
+        closeSidebar();
+
+    }
+
+
+    /* =========================================================
+       TOAST
+       ========================================================= */
+
+    let toastTimer;
+
+    function showToast(title, message, type = 'success') {
+
+        const toast =
+            document.getElementById('toast');
+
+        const icon =
+            document.getElementById('toastIcon');
+
+        const iconElement =
+            document.getElementById('toastIconElement');
+
+        document.getElementById('toastTitle').textContent =
+            title;
+
+        document.getElementById('toastMessage').textContent =
+            message;
+
+        if (type === 'error') {
+
+            icon.className =
+                'w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center shrink-0';
+
+            iconElement.className =
+                'bx bx-error-circle text-lg text-red-600';
+
+        } else if (type === 'info') {
+
+            icon.className =
+                'w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center shrink-0';
+
+            iconElement.className =
+                'bx bx-info-circle text-lg text-blue-600';
+
+        } else {
+
+            icon.className =
+                'w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0';
+
+            iconElement.className =
+                'bx bx-check text-lg text-emerald-600';
+
+        }
+
+        toast.classList.add('show');
+
+        clearTimeout(toastTimer);
+
+        toastTimer = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3500);
+
+    }
+
+
+    /* =========================================================
+       STATUS HELPERS
+       ========================================================= */
+
+    function getStatusMeta(status) {
+
+        switch (status) {
+
+            case 'pending':
+                return {
+                    label: 'Pending',
+                    className: 'bg-amber-50 text-amber-700',
+                    textClass: 'text-amber-700',
+                    dot: 'bg-amber-500'
+                };
+
+            case 'approved':
+                return {
+                    label: 'Approved',
+                    className: 'bg-emerald-50 text-emerald-700',
+                    textClass: 'text-emerald-700',
+                    dot: 'bg-emerald-500'
+                };
+
+            case 'used':
+                return {
+                    label: 'Used',
+                    className: 'bg-blue-50 text-blue-700',
+                    textClass: 'text-blue-700',
+                    dot: 'bg-blue-500'
+                };
+
+            case 'rejected':
+                return {
+                    label: 'Rejected',
+                    className: 'bg-red-50 text-red-700',
+                    textClass: 'text-red-700',
+                    dot: 'bg-red-500'
+                };
+
+            case 'expired':
+                return {
+                    label: 'Expired',
+                    className: 'bg-slate-100 text-slate-600',
+                    textClass: 'text-slate-600',
+                    dot: 'bg-slate-400'
+                };
+
+            case 'cancelled':
+                return {
+                    label: 'Cancelled',
+                    className: 'bg-slate-100 text-slate-600',
+                    textClass: 'text-slate-600',
+                    dot: 'bg-slate-400'
+                };
+
+            default:
+                return {
+                    label: 'Unknown',
+                    className: 'bg-slate-100 text-slate-600',
+                    textClass: 'text-slate-600',
+                    dot: 'bg-slate-400'
+                };
+
+        }
+
+    }
+
+
+    function getPaymentMeta(status) {
+
+        switch (status) {
+
+            case 'paid':
+                return {
+                    label: 'Paid',
+                    className: 'bg-emerald-50 text-emerald-700',
+                    textClass: 'text-emerald-700',
+                    dot: 'bg-emerald-500'
+                };
+
+            case 'pending':
+                return {
+                    label: 'Pending',
+                    className: 'bg-amber-50 text-amber-700',
+                    textClass: 'text-amber-700',
+                    dot: 'bg-amber-500'
+                };
+
+            case 'failed':
+                return {
+                    label: 'Failed',
+                    className: 'bg-red-50 text-red-700',
+                    textClass: 'text-red-700',
+                    dot: 'bg-red-500'
+                };
+
+            case 'refunded':
+                return {
+                    label: 'Refunded',
+                    className: 'bg-slate-100 text-slate-600',
+                    textClass: 'text-slate-600',
+                    dot: 'bg-slate-400'
+                };
+
+            default:
+                return {
+                    label: 'Unknown',
+                    className: 'bg-slate-100 text-slate-600',
+                    textClass: 'text-slate-600',
+                    dot: 'bg-slate-400'
+                };
+
+        }
+
+    }
+
+
+    /* =========================================================
+       FORMATTERS
+       ========================================================= */
+
+    function formatNumber(value) {
+
+        return Number(value || 0)
+            .toLocaleString('en-US');
+
+    }
+
+
+    function formatUSD(value) {
+
+        return '$' +
+            Number(value || 0).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+    }
+
+
+    function formatNGN(value) {
+
+        return '₦' +
+            Number(value || 0).toLocaleString('en-NG', {
+                maximumFractionDigits: 0
+            });
+
+    }
+
+
+    function formatDate(value) {
+
+        if (!value) {
+            return '—';
+        }
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return '—';
+        }
+
+        return date.toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+        });
+
+    }
+
+
+    function maskEpin(value) {
+
+        if (!value) {
+            return 'OPT-••••';
+        }
+
+        const clean =
+            String(value);
+
+        if (clean.length <= 4) {
+            return 'OPT-••••';
+        }
+
+        return 'OPT-••••-' +
+            clean.slice(-4);
+
+    }
+
+
+    /* =========================================================
+       SECURITY HELPERS
+       ========================================================= */
+
+    function escapeHTML(value) {
+
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+
+    }
+
+
+    function escapeAttribute(value) {
+
+        return String(value ?? '')
+            .replace(/\\/g, '\\\\')
+            .replace(/'/g, "\\'");
+
+    }
+
+
+    /* =========================================================
+       LOGOUT
+       ========================================================= */
+
+    document.getElementById('logoutBtn')
+        .addEventListener('click', () => {
+
+            /*
+             Production:
+
+             Firebase Authentication signOut()
+
+             Do not implement frontend-only logout using localStorage.
+            */
+
+            showToast(
+                'Authentication required',
+                'Connect the logout button to Firebase Authentication signOut().',
+                'info'
+            );
+
+        });
+</script>
+
+</body>
+</html>

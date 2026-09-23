@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Optify</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Boxicons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sora: ['Sora', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif']
+                    },
+                    colors: {
+                        optify: {
+                            navy: '#071A2B',
+                            emerald: '#12B76A',
+                            teal: '#0EA5A4',
+                            soft: '#E8F8F0',
+                            bg: '#F7F9FC',
+                            text: '#101828',
+                            muted: '#667085',
+                            border: '#E4E7EC'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F7F9FC;
+            color: #101828;
+        }
+
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        .brand-panel {
+            background:
+                radial-gradient(circle at 15% 20%, rgba(18, 183, 106, 0.15), transparent 30%),
+                radial-gradient(circle at 85% 80%, rgba(14, 165, 164, 0.16), transparent 32%),
+                #071A2B;
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 999px;
+            pointer-events: none;
+        }
+
+        .benefit-item {
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .benefit-item:hover {
+            transform: translateX(4px);
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .input-wrap {
+            transition: all 0.2s ease;
+        }
+
+        .input-wrap:focus-within {
+            border-color: #12B76A;
+            box-shadow: 0 0 0 4px rgba(18, 183, 106, 0.09);
+        }
+
+        .input-wrap.input-error {
+            border-color: #F04438;
+        }
+
+        .input-wrap.input-error:focus-within {
+            border-color: #F04438;
+            box-shadow: 0 0 0 4px rgba(240, 68, 56, 0.08);
+        }
+
+        .form-input {
+            width: 100%;
+            outline: none;
+            background: transparent;
+        }
+
+        .form-input::placeholder {
+            color: #98A2B3;
+        }
+
+        .password-toggle {
+            transition: color 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: #12B76A;
+        }
+
+        .login-btn {
+            background: #12B76A;
+            transition: all 0.2s ease;
+        }
+
+        .login-btn:hover {
+            background: #0E9F5B;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(18, 183, 106, 0.18);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .message-box {
+            display: none;
+        }
+
+        .message-box.show {
+            display: flex;
+        }
+
+        .field-error {
+            display: none;
+        }
+
+        .field-error.show {
+            display: block;
+        }
+
+        .success-state {
+            display: none;
+        }
+
+        .success-state.show {
+            display: flex;
+        }
+
+        @media (max-width: 1023px) {
+            .mobile-form-container {
+                min-height: calc(100vh - 73px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="min-h-screen lg:flex">
+
+        <!-- =========================================
+             LEFT BRANDING PANEL
+        ========================================== -->
+        <section
+            class="brand-panel relative hidden overflow-hidden lg:flex lg:w-[44%] xl:w-[46%] min-h-screen text-white">
+
+            <!-- Decorative Elements -->
+            <div class="floating-shape w-72 h-72 border border-white/5 -top-24 -left-24"></div>
+            <div class="floating-shape w-96 h-96 border border-emerald-400/10 -bottom-48 -right-32"></div>
+
+            <div
+                class="floating-shape w-32 h-32 bg-emerald-400/5 top-[28%] right-[18%]">
+            </div>
+
+            <div
+                class="floating-shape w-20 h-20 border border-teal-300/10 bottom-[25%] left-[12%]">
+            </div>
+
+            <div class="relative z-10 flex flex-col justify-between w-full p-10 xl:p-14">
+
+                <!-- Logo -->
+                <a href="index.html" class="inline-flex items-center gap-3 w-fit">
+
+                    <div
+                        class="w-11 h-11 rounded-xl bg-white flex items-center justify-center shadow-lg shadow-black/10">
+                        <span class="font-sora font-bold text-xl text-optify-navy">
+                            O
+                        </span>
+                    </div>
+
+                    <span class="font-sora text-2xl font-bold tracking-tight">
+                        OPTIFY
+                    </span>
+
+                </a>
+
+
+                <!-- Main Branding Content -->
+                <div class="max-w-lg">
+
+                    <div
+                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-emerald-300 mb-6">
+
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+
+                        Welcome back
+
+                    </div>
+
+
+                    <h1 class="font-sora text-4xl xl:text-5xl font-bold leading-tight">
+                        Welcome back to
+                        <span class="text-emerald-400">
+                            Optify.
+                        </span>
+                    </h1>
+
+
+                    <p class="mt-5 text-white/65 text-base xl:text-lg leading-8 max-w-md">
+                        Log in to continue managing your activities,
+                        rewards and account from one simple dashboard.
+                    </p>
+
+
+                    <!-- Benefits -->
+                    <div class="mt-9 space-y-3">
+
+                        <!-- Benefit -->
+                        <div class="benefit-item flex items-center gap-4 p-3 rounded-xl">
+
+                            <div
+                                class="w-10 h-10 rounded-xl bg-emerald-400/10 border border-emerald-400/10 flex items-center justify-center">
+
+                                <i class='bx bx-wallet text-xl text-emerald-400'></i>
+
+                            </div>
+
+                            <div>
+                                <h3 class="font-semibold text-sm">
+                                    Track Your Rewards
+                                </h3>
+
+                                <p class="text-xs text-white/50 mt-0.5">
+                                    Keep an eye on your available balance and activity.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <!-- Benefit -->
+                        <div class="benefit-item flex items-center gap-4 p-3 rounded-xl">
+
+                            <div
+                                class="w-10 h-10 rounded-xl bg-teal-400/10 border border-teal-400/10 flex items-center justify-center">
+
+                                <i class='bx bx-grid-alt text-xl text-teal-300'></i>
+
+                            </div>
+
+                            <div>
+                                <h3 class="font-semibold text-sm">
+                                    Complete Activities
+                                </h3>
+
+                                <p class="text-xs text-white/50 mt-0.5">
+                                    Explore available activities from your dashboard.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <!-- Benefit -->
+                        <div class="benefit-item flex items-center gap-4 p-3 rounded-xl">
+
+                            <div
+                                class="w-10 h-10 rounded-xl bg-emerald-400/10 border border-emerald-400/10 flex items-center justify-center">
+
+                                <i class='bx bx-user-circle text-xl text-emerald-400'></i>
+
+                            </div>
+
+                            <div>
+                                <h3 class="font-semibold text-sm">
+                                    Manage Your Account
+                                </h3>
+
+                                <p class="text-xs text-white/50 mt-0.5">
+                                    Keep your profile and account information up to date.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Bottom -->
+                <div class="flex items-center justify-between text-xs text-white/35">
+
+                    <span>
+                        © 2026 Optify
+                    </span>
+
+                    <span class="flex items-center gap-1.5">
+                        <i class='bx bx-lock-alt text-emerald-400'></i>
+                        Secure platform
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             RIGHT LOGIN AREA
+        ========================================== -->
+        <section class="flex-1 min-h-screen bg-[#F7F9FC]">
+
+            <!-- Mobile Header -->
+            <header
+                class="lg:hidden px-5 sm:px-8 py-5 flex items-center justify-between bg-white border-b border-[#E4E7EC]">
+
+                <a href="index.html" class="flex items-center gap-2.5">
+
+                    <div
+                        class="w-9 h-9 rounded-lg bg-[#071A2B] flex items-center justify-center">
+
+                        <span class="font-sora font-bold text-white">
+                            O
+                        </span>
+
+                    </div>
+
+                    <span class="font-sora font-bold text-lg text-[#071A2B]">
+                        OPTIFY
+                    </span>
+
+                </a>
+
+
+                <a href="register.html"
+                    class="text-sm font-semibold text-[#12B76A] hover:text-[#0E9F5B] transition">
+
+                    Create account
+
+                </a>
+
+            </header>
+
+
+            <!-- Form Container -->
+            <div
+                class="mobile-form-container w-full max-w-xl mx-auto px-5 sm:px-8 lg:px-12 xl:px-16 py-10 lg:py-14 flex flex-col justify-center">
+
+                <!-- Desktop Top Link -->
+                <div class="hidden lg:flex justify-end mb-12">
+
+                    <p class="text-sm text-[#667085]">
+
+                        Don't have an account?
+
+                        <a href="register.html"
+                            class="font-semibold text-[#12B76A] hover:text-[#0E9F5B] transition">
+
+                            Create account
+
+                        </a>
+
+                    </p>
+
+                </div>
+
+
+                <!-- Heading -->
+                <div class="mb-8">
+
+                    <div
+                        class="lg:hidden inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E8F8F0] text-[#087443] text-xs font-semibold mb-5">
+
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#12B76A]"></span>
+
+                        Welcome back
+
+                    </div>
+
+
+                    <h2
+                        class="font-sora text-3xl sm:text-4xl font-bold text-[#101828] tracking-tight">
+
+                        Welcome back
+
+                    </h2>
+
+
+                    <p class="mt-2.5 text-[#667085] text-sm sm:text-base">
+
+                        Enter your details to access your Optify account.
+
+                    </p>
+
+                </div>
+
+
+                <!-- Error Message -->
+                <div id="errorMessage"
+                    class="message-box items-start gap-3 p-4 mb-6 rounded-xl bg-red-50 border border-red-100 text-red-700">
+
+                    <i class='bx bx-error-circle text-xl shrink-0 mt-0.5'></i>
+
+                    <div>
+
+                        <p class="font-semibold text-sm">
+                            Unable to sign in
+                        </p>
+
+                        <p id="errorText" class="text-xs mt-1 text-red-600"></p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Success Message -->
+                <div id="successMessage"
+                    class="success-state items-start gap-3 p-4 mb-6 rounded-xl bg-[#E8F8F0] border border-[#B7E7CF] text-[#087443]">
+
+                    <i class='bx bx-check-circle text-xl shrink-0 mt-0.5'></i>
+
+                    <div>
+
+                        <p class="font-semibold text-sm">
+                            Login successful
+                        </p>
+
+                        <p class="text-xs mt-1">
+                            Taking you to your dashboard...
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Login Form -->
+                <form id="loginForm" novalidate>
+
+                    <!-- Email / Username -->
+                    <div>
+
+                        <label
+                            for="loginIdentifier"
+                            class="block text-sm font-semibold text-[#344054] mb-2">
+
+                            Email or Username
+
+                        </label>
+
+
+                        <div
+                            id="identifierWrap"
+                            class="input-wrap flex items-center gap-3 h-12 px-4 bg-white border border-[#E4E7EC] rounded-xl">
+
+                            <i class='bx bx-user text-lg text-[#98A2B3]'></i>
+
+                            <input
+                                type="text"
+                                id="loginIdentifier"
+                                name="loginIdentifier"
+                                class="form-input text-sm text-[#101828]"
+                                placeholder="Enter your email or username"
+                                autocomplete="username">
+
+                        </div>
+
+
+                        <p
+                            id="identifierError"
+                            class="field-error text-xs text-red-500 mt-1.5">
+                        </p>
+
+                    </div>
+
+
+                    <!-- Password -->
+                    <div class="mt-5">
+
+                        <label
+                            for="password"
+                            class="block text-sm font-semibold text-[#344054] mb-2">
+
+                            Password
+
+                        </label>
+
+
+                        <div
+                            id="passwordWrap"
+                            class="input-wrap flex items-center gap-3 h-12 px-4 bg-white border border-[#E4E7EC] rounded-xl">
+
+                            <i class='bx bx-lock-alt text-lg text-[#98A2B3]'></i>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="form-input text-sm text-[#101828]"
+                                placeholder="Enter your password"
+                                autocomplete="current-password">
+
+
+                            <button
+                                type="button"
+                                id="togglePassword"
+                                class="password-toggle text-[#98A2B3] text-xl shrink-0"
+                                aria-label="Show password">
+
+                                <i class='bx bx-hide'></i>
+
+                            </button>
+
+                        </div>
+
+
+                        <p
+                            id="passwordError"
+                            class="field-error text-xs text-red-500 mt-1.5">
+                        </p>
+
+                    </div>
+
+
+                    <!-- Remember + Forgot -->
+                    <div class="flex items-center justify-between gap-4 mt-5">
+
+                        <label class="flex items-center gap-2 cursor-pointer">
+
+                            <input
+                                type="checkbox"
+                                id="rememberMe"
+                                name="rememberMe"
+                                class="w-4 h-4 accent-[#12B76A] cursor-pointer">
+
+                            <span class="text-sm text-[#667085]">
+                                Remember me
+                            </span>
+
+                        </label>
+
+
+                        <a
+                            href="forgot-password.html"
+                            class="text-sm font-semibold text-[#12B76A] hover:text-[#0E9F5B] transition whitespace-nowrap">
+
+                            Forgot password?
+
+                        </a>
+
+                    </div>
+
+
+                    <!-- Login Button -->
+                    <button
+                        type="submit"
+                        id="loginButton"
+                        class="login-btn w-full min-h-[52px] mt-7 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2">
+
+                        <span id="buttonText">
+                            Log In
+                        </span>
+
+                        <span
+                            id="buttonSpinner"
+                            class="spinner hidden">
+                        </span>
+
+                        <i
+                            id="buttonIcon"
+                            class='bx bx-right-arrow-alt text-xl'>
+                        </i>
+
+                    </button>
+
+                </form>
+
+
+                <!-- Mobile Register -->
+                <div class="text-center mt-7 lg:hidden">
+
+                    <p class="text-sm text-[#667085]">
+
+                        Don't have an account?
+
+                        <a
+                            href="register.html"
+                            class="font-semibold text-[#12B76A] hover:text-[#0E9F5B] transition">
+
+                            Create account
+
+                        </a>
+
+                    </p>
+
+                </div>
+
+
+                <!-- Security Note -->
+                <div
+                    class="flex items-center justify-center gap-2 mt-9 text-xs text-[#98A2B3]">
+
+                    <i class='bx bx-lock-alt text-sm'></i>
+
+                    <span>
+                        Your account information is securely handled.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================== -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const loginForm = document.getElementById("loginForm");
+
+            const identifier = document.getElementById("loginIdentifier");
+            const password = document.getElementById("password");
+
+            const identifierWrap = document.getElementById("identifierWrap");
+            const passwordWrap = document.getElementById("passwordWrap");
+
+            const identifierError = document.getElementById("identifierError");
+            const passwordError = document.getElementById("passwordError");
+
+            const togglePassword = document.getElementById("togglePassword");
+
+            const errorMessage = document.getElementById("errorMessage");
+            const errorText = document.getElementById("errorText");
+
+            const successMessage = document.getElementById("successMessage");
+
+            const loginButton = document.getElementById("loginButton");
+            const buttonText = document.getElementById("buttonText");
+            const buttonSpinner = document.getElementById("buttonSpinner");
+            const buttonIcon = document.getElementById("buttonIcon");
+
+
+            /* =========================================
+               PASSWORD VISIBILITY
+            ========================================== */
+
+            togglePassword.addEventListener("click", function () {
+
+                const icon = togglePassword.querySelector("i");
+
+                if (password.type === "password") {
+
+                    password.type = "text";
+
+                    icon.classList.remove("bx-hide");
+                    icon.classList.add("bx-show");
+
+                    togglePassword.setAttribute(
+                        "aria-label",
+                        "Hide password"
+                    );
+
+                } else {
+
+                    password.type = "password";
+
+                    icon.classList.remove("bx-show");
+                    icon.classList.add("bx-hide");
+
+                    togglePassword.setAttribute(
+                        "aria-label",
+                        "Show password"
+                    );
+
+                }
+
+            });
+
+
+            /* =========================================
+               ERROR HELPERS
+            ========================================== */
+
+            function clearFieldError(field) {
+
+                if (field === identifier) {
+
+                    identifierWrap.classList.remove("input-error");
+                    identifierError.textContent = "";
+                    identifierError.classList.remove("show");
+
+                }
+
+                if (field === password) {
+
+                    passwordWrap.classList.remove("input-error");
+                    passwordError.textContent = "";
+                    passwordError.classList.remove("show");
+
+                }
+
+            }
+
+
+            function showFieldError(field, message) {
+
+                if (field === identifier) {
+
+                    identifierWrap.classList.add("input-error");
+
+                    identifierError.textContent = message;
+                    identifierError.classList.add("show");
+
+                }
+
+                if (field === password) {
+
+                    passwordWrap.classList.add("input-error");
+
+                    passwordError.textContent = message;
+                    passwordError.classList.add("show");
+
+                }
+
+            }
+
+
+            function clearMessages() {
+
+                errorMessage.classList.remove("show");
+                successMessage.classList.remove("show");
+
+            }
+
+
+            /* =========================================
+               LIVE VALIDATION CLEARING
+            ========================================== */
+
+            identifier.addEventListener("input", function () {
+                clearFieldError(identifier);
+                errorMessage.classList.remove("show");
+            });
+
+            password.addEventListener("input", function () {
+                clearFieldError(password);
+                errorMessage.classList.remove("show");
+            });
+
+
+            /* =========================================
+               LOGIN SUBMISSION
+            ========================================== */
+
+            loginForm.addEventListener("submit", function (event) {
+
+                event.preventDefault();
+
+                clearMessages();
+
+                clearFieldError(identifier);
+                clearFieldError(password);
+
+
+                const identifierValue = identifier.value.trim();
+                const passwordValue = password.value;
+
+                let valid = true;
+
+
+                /* Identifier validation */
+                if (!identifierValue) {
+
+                    showFieldError(
+                        identifier,
+                        "Please enter your email or username."
+                    );
+
+                    valid = false;
+
+                }
+
+
+                /* Password validation */
+                if (!passwordValue) {
+
+                    showFieldError(
+                        password,
+                        "Please enter your password."
+                    );
+
+                    valid = false;
+
+                }
+
+
+                /* Stop if invalid */
+                if (!valid) {
+
+                    errorText.textContent =
+                        "Please correct the highlighted fields and try again.";
+
+                    errorMessage.classList.add("show");
+
+                    return;
+
+                }
+
+
+                /* =========================================
+                   LOADING STATE
+                ========================================== */
+
+                loginButton.disabled = true;
+
+                buttonText.textContent = "Signing in...";
+
+                buttonSpinner.classList.remove("hidden");
+
+                buttonIcon.classList.add("hidden");
+
+
+                /*
+                 * BACKEND / FIREBASE AUTHENTICATION
+                 * ----------------------------------
+                 *
+                 * Connect the login request here.
+                 *
+                 * Example future flow:
+                 *
+                 * 1. Send identifier + password to backend.
+                 * 2. Backend authenticates the user.
+                 * 3. Backend returns authenticated session/token.
+                 * 4. Redirect to dashboard.html.
+                 *
+                 * Never store passwords in localStorage.
+                 * Never hard-code login credentials.
+                 */
+
+
+                /*
+                 * TEMPORARY DEMO RESPONSE
+                 *
+                 * Remove this timeout when backend authentication
+                 * is connected.
+                 */
+
+                setTimeout(function () {
+
+                    loginButton.disabled = false;
+
+                    buttonText.textContent = "Log In";
+
+                    buttonSpinner.classList.add("hidden");
+
+                    buttonIcon.classList.remove("hidden");
+
+
+                    /*
+                     * This demo intentionally does not pretend
+                     * authentication succeeded.
+                     *
+                     * Replace this section with the real backend
+                     * authentication response.
+                     */
+
+                    errorText.textContent =
+                        "Authentication is not connected yet. Connect the login form to your backend authentication service.";
+
+                    errorMessage.classList.add("show");
+
+                }, 900);
+
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>

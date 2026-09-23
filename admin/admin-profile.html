@@ -1,0 +1,2475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Profile — Optify</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #071A2B;
+            --emerald: #12B76A;
+            --teal: #0EA5A4;
+            --soft-green: #E8F8F0;
+            --background: #F7F9FC;
+            --white: #FFFFFF;
+            --text: #101828;
+            --muted: #667085;
+            --border: #E4E7EC;
+            --warning: #F79009;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: "Inter", sans-serif;
+            transition: background .25s ease, color .25s ease;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-sora {
+            font-family: "Sora", sans-serif;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--navy);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        .nav-item {
+            transition: .2s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,.05);
+            color: #fff;
+        }
+
+        .profile-card {
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 18px rgba(16,24,40,.035);
+        }
+
+        .form-input {
+            width: 100%;
+            height: 46px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            color: var(--text);
+            outline: none;
+            padding: 0 14px;
+            font-size: 14px;
+            transition: .2s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--emerald);
+            box-shadow: 0 0 0 3px rgba(18,183,106,.10);
+        }
+
+        .form-input:disabled,
+        .form-input[readonly] {
+            background: #f8fafc;
+            color: #667085;
+            cursor: not-allowed;
+        }
+
+        textarea.form-input {
+            height: auto;
+            padding-top: 12px;
+            padding-bottom: 12px;
+            resize: vertical;
+        }
+
+        .primary-btn {
+            background: var(--emerald);
+            color: white;
+            transition: .2s ease;
+        }
+
+        .primary-btn:hover {
+            background: #0fa760;
+        }
+
+        .primary-btn:disabled {
+            opacity: .65;
+            cursor: not-allowed;
+        }
+
+        .secondary-btn {
+            border: 1px solid var(--border);
+            background: #fff;
+            color: #344054;
+            transition: .2s ease;
+        }
+
+        .secondary-btn:hover {
+            background: #f8fafc;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--emerald);
+        }
+
+        .modal-backdrop {
+            background: rgba(7,26,43,.62);
+            backdrop-filter: blur(5px);
+        }
+
+        .toast {
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: .25s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .skeleton {
+            position: relative;
+            overflow: hidden;
+            background: #eef2f6;
+            border-radius: 8px;
+        }
+
+        .skeleton::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,.65),
+                transparent
+            );
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap .password-input {
+            padding-right: 46px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #98A2B3;
+            cursor: pointer;
+        }
+
+        .password-toggle:hover {
+            color: #344054;
+        }
+
+        .copy-button {
+            transition: .2s ease;
+        }
+
+        .copy-button:hover {
+            background: #f2f4f7;
+        }
+
+        .activity-line {
+            position: relative;
+        }
+
+        .activity-line:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            top: 31px;
+            left: 8px;
+            width: 1px;
+            height: calc(100% - 8px);
+            background: #e4e7ec;
+        }
+
+        .mobile-overlay {
+            display: none;
+        }
+
+        body.dark {
+            background: #07111d;
+            color: #f2f4f7;
+        }
+
+        body.dark .bg-white {
+            background: #0d1b29 !important;
+        }
+
+        body.dark .profile-card {
+            border-color: rgba(255,255,255,.09);
+            box-shadow: none;
+        }
+
+        body.dark .border-slate-200,
+        body.dark .border-gray-200 {
+            border-color: rgba(255,255,255,.09) !important;
+        }
+
+        body.dark .text-slate-900,
+        body.dark .text-gray-900 {
+            color: #f2f4f7 !important;
+        }
+
+        body.dark .text-slate-700,
+        body.dark .text-gray-700 {
+            color: #d0d5dd !important;
+        }
+
+        body.dark .text-slate-600,
+        body.dark .text-gray-600 {
+            color: #98a2b3 !important;
+        }
+
+        body.dark .text-slate-500,
+        body.dark .text-gray-500 {
+            color: #98a2b3 !important;
+        }
+
+        body.dark .form-input {
+            background: #101f2d;
+            border-color: rgba(255,255,255,.10);
+            color: #f2f4f7;
+        }
+
+        body.dark .form-input:disabled,
+        body.dark .form-input[readonly] {
+            background: #0a1622;
+            color: #98a2b3;
+        }
+
+        body.dark .secondary-btn {
+            background: #101f2d;
+            border-color: rgba(255,255,255,.10);
+            color: #e4e7ec;
+        }
+
+        body.dark .secondary-btn:hover {
+            background: #142535;
+        }
+
+        body.dark .bg-slate-50 {
+            background: #0a1622 !important;
+        }
+
+        body.dark .bg-slate-100 {
+            background: #101f2d !important;
+        }
+
+        body.dark .skeleton {
+            background: #162636;
+        }
+
+        body.dark .skeleton::after {
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,.06),
+                transparent
+            );
+        }
+
+        body.dark .activity-line:not(:last-child)::after {
+            background: rgba(255,255,255,.10);
+        }
+
+        @media (max-width: 1023px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-overlay.show {
+                display: block;
+                position: fixed;
+                inset: 0;
+                z-index: 50;
+                background: rgba(0,0,0,.45);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .main-content {
+                padding-bottom: 30px;
+            }
+
+            .page-header-title {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- MOBILE OVERLAY -->
+    <div id="mobileOverlay" class="mobile-overlay"></div>
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar fixed left-0 top-0 bottom-0 z-[60] text-white overflow-y-auto">
+
+        <div class="px-5 py-6">
+
+            <!-- Logo -->
+            <div class="flex items-center gap-3 mb-8">
+
+                <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
+                    <i class='bx bx-layer text-2xl'></i>
+                </div>
+
+                <div>
+                    <div class="font-sora font-bold text-lg tracking-tight">
+                        OPTIFY
+                    </div>
+
+                    <div class="text-[10px] text-slate-400 uppercase tracking-[.18em]">
+                        Admin Portal
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Main Menu -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Main Menu
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="admin.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-grid-alt text-lg'></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a href="users.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-group text-lg'></i>
+                        <span>Users</span>
+                    </a>
+
+                    <a href="quizzes.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-help-circle text-lg'></i>
+                        <span>Quiz</span>
+                    </a>
+
+                    <a href="referrals.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-share-alt text-lg'></i>
+                        <span>Referrals</span>
+                    </a>
+
+                </nav>
+            </div>
+
+            <!-- Finance -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Finance
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="epins.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-key text-lg'></i>
+                        <span>E-pins</span>
+                    </a>
+
+                    <a href="withdrawals.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-money-withdraw text-lg'></i>
+                        <span>Withdrawals</span>
+                    </a>
+
+                    <a href="transactions.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-transfer-alt text-lg'></i>
+                        <span>Transactions</span>
+                    </a>
+
+                </nav>
+            </div>
+
+            <!-- Platform -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Platform
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="community-settings.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-link text-lg'></i>
+                        <span>Community Settings</span>
+                    </a>
+
+                    <a href="platform-settings.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-cog text-lg'></i>
+                        <span>Platform Settings</span>
+                    </a>
+
+                </nav>
+            </div>
+
+        </div>
+
+        <!-- Sidebar Bottom -->
+        <div class="absolute bottom-0 left-0 right-0 p-5 border-t border-white/10 bg-[#071A2B]">
+
+            <a href="admin-profile.html"
+               class="flex items-center gap-3 mb-4">
+
+                <div class="w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center">
+                    <i class='bx bx-user text-emerald-400'></i>
+                </div>
+
+                <div class="min-w-0">
+                    <p id="sidebarAdminName" class="text-sm font-medium truncate">
+                        Optify Admin
+                    </p>
+
+                    <p class="text-xs text-slate-500">
+                        Administrator
+                    </p>
+                </div>
+
+            </a>
+
+            <button
+                id="logoutBtn"
+                type="button"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-400 hover:bg-white/5 hover:text-white transition">
+
+                <i class='bx bx-log-out text-lg'></i>
+                Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- HEADER -->
+        <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 dark:border-white/10">
+
+            <div class="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
+
+                <div class="flex items-center gap-3">
+
+                    <button
+                        id="menuBtn"
+                        type="button"
+                        aria-label="Open navigation"
+                        class="lg:hidden w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50">
+
+                        <i class='bx bx-menu text-xl'></i>
+
+                    </button>
+
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-[.18em] text-emerald-600 mb-1">
+                            ADMIN PROFILE
+                        </p>
+
+                        <h1 class="page-header-title font-sora text-2xl font-bold text-slate-900">
+                            Admin Profile
+                        </h1>
+                    </div>
+
+                </div>
+
+                <button
+                    id="themeToggle"
+                    type="button"
+                    aria-label="Toggle theme"
+                    class="w-10 h-10 rounded-xl border border-slate-200 bg-white flex items-center justify-center text-slate-600 hover:bg-slate-50 transition">
+
+                    <i id="themeIcon" class='bx bx-moon text-lg'></i>
+
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE -->
+        <div class="px-4 sm:px-6 lg:px-8 py-6 max-w-[1500px] mx-auto">
+
+            <!-- PAGE DESCRIPTION -->
+            <div class="mb-6">
+                <p class="text-sm text-slate-500">
+                    Manage your administrator account, security preferences, and session settings.
+                </p>
+            </div>
+
+
+            <!-- PROFILE OVERVIEW -->
+            <section class="profile-card bg-white rounded-2xl p-5 sm:p-6 mb-6">
+
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+
+                    <div class="flex items-center gap-4">
+
+                        <div class="relative">
+
+                            <div class="w-20 h-20 rounded-2xl bg-emerald-50 flex items-center justify-center">
+                                <i class='bx bx-user text-4xl text-emerald-600'></i>
+                            </div>
+
+                            <span
+                                id="profileOnlineDot"
+                                class="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-500 border-[3px] border-white">
+                            </span>
+
+                        </div>
+
+                        <div class="min-w-0">
+
+                            <div class="flex flex-wrap items-center gap-2 mb-1">
+
+                                <h2
+                                    id="profileName"
+                                    class="font-sora text-xl font-bold text-slate-900">
+                                    Not available
+                                </h2>
+
+                                <span
+                                    id="verifiedBadge"
+                                    class="hidden inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-semibold">
+
+                                    <i class='bx bx-check-circle'></i>
+                                    Verified Admin
+
+                                </span>
+
+                            </div>
+
+                            <p
+                                id="profileEmail"
+                                class="text-sm text-slate-500 break-all">
+                                Not available
+                            </p>
+
+                            <div class="flex flex-wrap items-center gap-3 mt-3">
+
+                                <span class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                                    <span class="status-dot"></span>
+                                    <span id="profileStatus">Not available</span>
+                                </span>
+
+                                <span class="text-slate-300">•</span>
+
+                                <span class="text-xs text-slate-500">
+                                    Administrator
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="sm:text-right">
+
+                        <p class="text-xs text-slate-500 mb-1">
+                            Admin since
+                        </p>
+
+                        <p id="adminSince" class="font-sora text-sm font-semibold text-slate-900">
+                            Not available
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- TOP GRID -->
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+
+                <!-- PERSONAL INFORMATION -->
+                <section class="profile-card bg-white rounded-2xl p-5 sm:p-6">
+
+                    <div class="flex items-start justify-between gap-4 mb-6">
+
+                        <div>
+                            <h2 class="font-sora text-base font-semibold text-slate-900">
+                                Personal Information
+                            </h2>
+
+                            <p class="text-xs text-slate-500 mt-1">
+                                Update the information associated with your administrator account.
+                            </p>
+                        </div>
+
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
+                            <i class='bx bx-user-circle text-xl text-emerald-600'></i>
+                        </div>
+
+                    </div>
+
+                    <form id="profileForm">
+
+                        <div class="space-y-5">
+
+                            <div>
+                                <label for="fullName" class="block text-sm font-medium text-slate-700 mb-2">
+                                    Full Name
+                                </label>
+
+                                <input
+                                    id="fullName"
+                                    name="fullName"
+                                    type="text"
+                                    maxlength="80"
+                                    class="form-input"
+                                    placeholder="Enter your full name"
+                                    autocomplete="name">
+                            </div>
+
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-slate-700 mb-2">
+                                    Email Address
+                                </label>
+
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    class="form-input"
+                                    placeholder="admin@example.com"
+                                    readonly>
+
+                                <p class="text-[11px] text-slate-500 mt-2">
+                                    Email is managed through Firebase Authentication.
+                                </p>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">
+                                        Role
+                                    </label>
+
+                                    <input
+                                        value="Administrator"
+                                        type="text"
+                                        class="form-input"
+                                        readonly>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">
+                                        Account Status
+                                    </label>
+
+                                    <div class="h-[46px] rounded-xl border border-slate-200 bg-slate-50 flex items-center px-3">
+                                        <span class="inline-flex items-center gap-2 text-sm font-medium text-emerald-700">
+                                            <span class="status-dot"></span>
+                                            <span id="accountStatusField">Not available</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="border-t border-slate-100 mt-6 pt-5 flex justify-end">
+
+                            <button
+                                id="saveProfileBtn"
+                                type="submit"
+                                class="primary-btn px-5 py-2.5 rounded-xl text-sm font-semibold inline-flex items-center gap-2">
+
+                                <i class='bx bx-save'></i>
+                                <span id="saveProfileText">Save Changes</span>
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+
+                <!-- SECURITY -->
+                <section class="profile-card bg-white rounded-2xl p-5 sm:p-6">
+
+                    <div class="flex items-start justify-between gap-4 mb-6">
+
+                        <div>
+                            <h2 class="font-sora text-base font-semibold text-slate-900">
+                                Security & Authentication
+                            </h2>
+
+                            <p class="text-xs text-slate-500 mt-1">
+                                Manage the security of your administrator account.
+                            </p>
+                        </div>
+
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
+                            <i class='bx bx-shield-quarter text-xl text-emerald-600'></i>
+                        </div>
+
+                    </div>
+
+                    <div class="space-y-4">
+
+                        <div class="rounded-xl border border-slate-200 p-4">
+
+                            <div class="flex items-start justify-between gap-4">
+
+                                <div class="flex items-start gap-3">
+
+                                    <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center shrink-0">
+                                        <i class='bx bx-lock-alt text-lg text-slate-600'></i>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-900">
+                                            Authentication Method
+                                        </p>
+
+                                        <p class="text-xs text-slate-500 mt-1">
+                                            Your administrator account is authenticated through Firebase Authentication.
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                                <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-[11px] font-semibold whitespace-nowrap">
+                                    Email & Password
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="rounded-xl border border-slate-200 p-4">
+
+                            <div class="flex items-center justify-between gap-4">
+
+                                <div class="flex items-center gap-3">
+
+                                    <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center">
+                                        <i class='bx bx-key text-lg text-slate-600'></i>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-900">
+                                            Password
+                                        </p>
+
+                                        <p class="text-xs text-slate-500 mt-1">
+                                            Keep your administrator password secure.
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                                <button
+                                    id="changePasswordBtn"
+                                    type="button"
+                                    class="secondary-btn px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap">
+
+                                    Change Password
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- ACCESS + SESSION -->
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+
+
+                <!-- ACCESS INFORMATION -->
+                <section class="profile-card bg-white rounded-2xl p-5 sm:p-6">
+
+                    <div class="flex items-start justify-between gap-4 mb-6">
+
+                        <div>
+                            <h2 class="font-sora text-base font-semibold text-slate-900">
+                                Access Information
+                            </h2>
+
+                            <p class="text-xs text-slate-500 mt-1">
+                                Authentication and administrator access details.
+                            </p>
+                        </div>
+
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                            <i class='bx bx-fingerprint text-xl text-emerald-600'></i>
+                        </div>
+
+                    </div>
+
+                    <div class="space-y-4">
+
+                        <div>
+                            <p class="text-xs text-slate-500 mb-2">
+                                Admin UID
+                            </p>
+
+                            <div class="flex gap-2">
+
+                                <input
+                                    id="adminUid"
+                                    type="text"
+                                    class="form-input font-mono text-xs"
+                                    value=""
+                                    placeholder="Not available"
+                                    readonly>
+
+                                <button
+                                    id="copyUidBtn"
+                                    type="button"
+                                    class="copy-button w-[46px] shrink-0 rounded-xl border border-slate-200 flex items-center justify-center text-slate-500"
+                                    aria-label="Copy admin UID">
+
+                                    <i class='bx bx-copy text-lg'></i>
+
+                                </button>
+
+                            </div>
+                        </div>
+
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                            <div class="rounded-xl bg-slate-50 p-4">
+
+                                <p class="text-xs text-slate-500 mb-1">
+                                    Provider
+                                </p>
+
+                                <p id="providerValue" class="text-sm font-semibold text-slate-900">
+                                    Not available
+                                </p>
+
+                            </div>
+
+                            <div class="rounded-xl bg-slate-50 p-4">
+
+                                <p class="text-xs text-slate-500 mb-1">
+                                    Role
+                                </p>
+
+                                <p id="roleValue" class="text-sm font-semibold text-slate-900">
+                                    Administrator
+                                </p>
+
+                            </div>
+
+                            <div class="rounded-xl bg-slate-50 p-4">
+
+                                <p class="text-xs text-slate-500 mb-1">
+                                    Last Sign-in
+                                </p>
+
+                                <p id="lastSignInValue" class="text-sm font-semibold text-slate-900">
+                                    Not available
+                                </p>
+
+                            </div>
+
+                            <div class="rounded-xl bg-slate-50 p-4">
+
+                                <p class="text-xs text-slate-500 mb-1">
+                                    Account Created
+                                </p>
+
+                                <p id="createdValue" class="text-sm font-semibold text-slate-900">
+                                    Not available
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- SESSION MANAGEMENT -->
+                <section class="profile-card bg-white rounded-2xl p-5 sm:p-6">
+
+                    <div class="flex items-start justify-between gap-4 mb-6">
+
+                        <div>
+                            <h2 class="font-sora text-base font-semibold text-slate-900">
+                                Session Management
+                            </h2>
+
+                            <p class="text-xs text-slate-500 mt-1">
+                                Manage your current administrator session.
+                            </p>
+                        </div>
+
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                            <i class='bx bx-devices text-xl text-emerald-600'></i>
+                        </div>
+
+                    </div>
+
+                    <div class="rounded-xl border border-slate-200 p-4 mb-5">
+
+                        <div class="flex items-start gap-3">
+
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
+                                <i class='bx bx-check-circle text-lg text-emerald-600'></i>
+                            </div>
+
+                            <div class="min-w-0">
+
+                                <div class="flex items-center gap-2">
+
+                                    <p class="text-sm font-semibold text-slate-900">
+                                        Current Session
+                                    </p>
+
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        Active
+                                    </span>
+
+                                </div>
+
+                                <p class="text-xs text-slate-500 mt-1 leading-5">
+                                    This browser session is currently authenticated as an Optify administrator.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        id="sessionLogoutBtn"
+                        type="button"
+                        class="w-full h-11 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 transition text-sm font-semibold flex items-center justify-center gap-2">
+
+                        <i class='bx bx-log-out'></i>
+                        Sign Out
+
+                    </button>
+
+                </section>
+
+            </div>
+
+
+            <!-- ACTIVITY -->
+            <section class="profile-card bg-white rounded-2xl p-5 sm:p-6 mt-6">
+
+                <div class="flex items-start justify-between gap-4 mb-6">
+
+                    <div>
+                        <h2 class="font-sora text-base font-semibold text-slate-900">
+                            Recent Admin Activity
+                        </h2>
+
+                        <p class="text-xs text-slate-500 mt-1">
+                            Security and account activity recorded by the backend.
+                        </p>
+                    </div>
+
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                        <i class='bx bx-history text-xl text-emerald-600'></i>
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIVITY LOADING -->
+                <div id="activityLoading" class="space-y-4">
+
+                    <div class="flex gap-3">
+                        <div class="skeleton w-4 h-4 rounded-full"></div>
+                        <div class="flex-1">
+                            <div class="skeleton h-4 w-40 mb-2"></div>
+                            <div class="skeleton h-3 w-64"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <div class="skeleton w-4 h-4 rounded-full"></div>
+                        <div class="flex-1">
+                            <div class="skeleton h-4 w-32 mb-2"></div>
+                            <div class="skeleton h-3 w-52"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <!-- ACTIVITY EMPTY -->
+                <div id="activityEmpty" class="hidden py-10 text-center">
+
+                    <div class="w-12 h-12 rounded-2xl bg-slate-50 mx-auto flex items-center justify-center mb-3">
+                        <i class='bx bx-history text-2xl text-slate-400'></i>
+                    </div>
+
+                    <p class="text-sm font-semibold text-slate-700">
+                        No recent activity
+                    </p>
+
+                    <p class="text-xs text-slate-500 mt-1">
+                        Administrator activity will appear here when available.
+                    </p>
+
+                </div>
+
+
+                <!-- ACTIVITY ERROR -->
+                <div id="activityError" class="hidden py-10 text-center">
+
+                    <div class="w-12 h-12 rounded-2xl bg-red-50 mx-auto flex items-center justify-center mb-3">
+                        <i class='bx bx-error-circle text-2xl text-red-500'></i>
+                    </div>
+
+                    <p class="text-sm font-semibold text-slate-700">
+                        Unable to load activity
+                    </p>
+
+                    <p class="text-xs text-slate-500 mt-1">
+                        Please try again.
+                    </p>
+
+                    <button
+                        id="retryActivityBtn"
+                        type="button"
+                        class="mt-4 px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+
+                        Retry
+
+                    </button>
+
+                </div>
+
+
+                <!-- ACTIVITY LIST -->
+                <div id="activityList" class="hidden space-y-1"></div>
+
+            </section>
+
+
+            <!-- ACCOUNT ACTIONS -->
+            <section class="profile-card bg-white rounded-2xl p-5 sm:p-6 mt-6">
+
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+
+                    <div class="flex items-start gap-3">
+
+                        <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+                            <i class='bx bx-log-out text-xl text-red-500'></i>
+                        </div>
+
+                        <div>
+
+                            <h2 class="font-sora text-base font-semibold text-slate-900">
+                                Account Actions
+                            </h2>
+
+                            <p class="text-xs text-slate-500 mt-1 max-w-xl">
+                                Sign out of your administrator account on this device.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        id="accountLogoutBtn"
+                        type="button"
+                        class="px-5 py-2.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 transition text-sm font-semibold whitespace-nowrap">
+
+                        Sign Out
+
+                    </button>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- CHANGE PASSWORD MODAL -->
+    <div
+        id="passwordModal"
+        class="hidden fixed inset-0 z-[100] modal-backdrop items-center justify-center p-4">
+
+        <div
+            id="passwordModalPanel"
+            class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+            <div class="p-5 sm:p-6 border-b border-slate-100">
+
+                <div class="flex items-start justify-between gap-4">
+
+                    <div class="flex items-start gap-3">
+
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
+                            <i class='bx bx-lock-alt text-xl text-emerald-600'></i>
+                        </div>
+
+                        <div>
+
+                            <h3 class="font-sora text-base font-semibold text-slate-900">
+                                Change Password
+                            </h3>
+
+                            <p class="text-xs text-slate-500 mt-1">
+                                Update your administrator account password securely.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        id="closePasswordModal"
+                        type="button"
+                        aria-label="Close modal"
+                        class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:bg-slate-50 hover:text-slate-700">
+
+                        <i class='bx bx-x text-xl'></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <form id="passwordForm">
+
+                <div class="p-5 sm:p-6 space-y-4">
+
+                    <div>
+
+                        <label for="currentPassword" class="block text-sm font-medium text-slate-700 mb-2">
+                            Current Password
+                        </label>
+
+                        <div class="password-wrap">
+
+                            <input
+                                id="currentPassword"
+                                type="password"
+                                class="form-input password-input"
+                                autocomplete="current-password"
+                                required>
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-password-target="currentPassword"
+                                aria-label="Show current password">
+
+                                <i class='bx bx-show'></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="newPassword" class="block text-sm font-medium text-slate-700 mb-2">
+                            New Password
+                        </label>
+
+                        <div class="password-wrap">
+
+                            <input
+                                id="newPassword"
+                                type="password"
+                                class="form-input password-input"
+                                autocomplete="new-password"
+                                minlength="8"
+                                required>
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-password-target="newPassword"
+                                aria-label="Show new password">
+
+                                <i class='bx bx-show'></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="confirmPassword" class="block text-sm font-medium text-slate-700 mb-2">
+                            Confirm New Password
+                        </label>
+
+                        <div class="password-wrap">
+
+                            <input
+                                id="confirmPassword"
+                                type="password"
+                                class="form-input password-input"
+                                autocomplete="new-password"
+                                minlength="8"
+                                required>
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-password-target="confirmPassword"
+                                aria-label="Show confirm password">
+
+                                <i class='bx bx-show'></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="rounded-xl bg-slate-50 p-4">
+
+                        <p class="text-xs font-semibold text-slate-700 mb-2">
+                            Password requirements
+                        </p>
+
+                        <ul class="space-y-1.5 text-xs text-slate-500">
+
+                            <li class="flex items-center gap-2">
+                                <i class='bx bx-check text-emerald-500'></i>
+                                Minimum 8 characters
+                            </li>
+
+                            <li class="flex items-center gap-2">
+                                <i class='bx bx-check text-emerald-500'></i>
+                                New passwords must match
+                            </li>
+
+                            <li class="flex items-center gap-2">
+                                <i class='bx bx-check text-emerald-500'></i>
+                                Password must not be empty
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+
+                <div class="p-5 sm:p-6 pt-0 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+
+                    <button
+                        id="cancelPasswordBtn"
+                        type="button"
+                        class="secondary-btn px-5 py-2.5 rounded-xl text-sm font-semibold">
+
+                        Cancel
+
+                    </button>
+
+                    <button
+                        id="updatePasswordBtn"
+                        type="submit"
+                        class="primary-btn px-5 py-2.5 rounded-xl text-sm font-semibold inline-flex items-center justify-center gap-2">
+
+                        <i class='bx bx-lock-open-alt'></i>
+                        <span id="updatePasswordText">Update Password</span>
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOAST -->
+    <div
+        id="toast"
+        class="toast fixed right-4 bottom-4 z-[150] w-[calc(100%-2rem)] sm:w-auto sm:min-w-[320px]">
+
+        <div
+            id="toastInner"
+            class="bg-[#071A2B] text-white rounded-2xl px-4 py-3.5 shadow-2xl flex items-start gap-3">
+
+            <div
+                id="toastIcon"
+                class="w-9 h-9 rounded-xl bg-emerald-500/15 flex items-center justify-center shrink-0">
+
+                <i id="toastIconElement" class='bx bx-check text-emerald-400 text-lg'></i>
+
+            </div>
+
+            <div class="min-w-0">
+
+                <p id="toastTitle" class="text-sm font-semibold">
+                    Success
+                </p>
+
+                <p id="toastMessage" class="text-xs text-slate-400 mt-0.5">
+                    Action completed successfully.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script type="module">
+
+        /*
+         * ============================================================
+         * OPTIFY ADMIN PROFILE
+         * ============================================================
+         *
+         * Backend integration placeholders:
+         *
+         * GET  /api/admin/profile
+         * PUT  /api/admin/profile
+         * GET  /api/admin/profile/activity
+         * POST /api/admin/profile/change-password
+         * POST /api/admin/logout
+         *
+         * Firebase Authentication should remain the authoritative
+         * authentication layer.
+         *
+         * Never use localStorage as proof of admin authorization.
+         * Never store passwords in localStorage.
+         * Never trust frontend role/status values.
+         * ============================================================
+         */
+
+
+        // ------------------------------------------------------------
+        // STATE
+        // ------------------------------------------------------------
+
+        let adminProfile = null;
+        let adminActivity = [];
+
+        let isSavingProfile = false;
+        let isChangingPassword = false;
+
+
+        // ------------------------------------------------------------
+        // DOM
+        // ------------------------------------------------------------
+
+        const sidebar = document.getElementById("sidebar");
+        const menuBtn = document.getElementById("menuBtn");
+        const mobileOverlay = document.getElementById("mobileOverlay");
+
+        const themeToggle = document.getElementById("themeToggle");
+        const themeIcon = document.getElementById("themeIcon");
+
+        const profileForm = document.getElementById("profileForm");
+        const fullNameInput = document.getElementById("fullName");
+
+        const saveProfileBtn = document.getElementById("saveProfileBtn");
+        const saveProfileText = document.getElementById("saveProfileText");
+
+        const passwordModal = document.getElementById("passwordModal");
+        const passwordModalPanel = document.getElementById("passwordModalPanel");
+
+        const changePasswordBtn = document.getElementById("changePasswordBtn");
+        const closePasswordModal = document.getElementById("closePasswordModal");
+        const cancelPasswordBtn = document.getElementById("cancelPasswordBtn");
+
+        const passwordForm = document.getElementById("passwordForm");
+        const updatePasswordBtn = document.getElementById("updatePasswordBtn");
+        const updatePasswordText = document.getElementById("updatePasswordText");
+
+        const activityLoading = document.getElementById("activityLoading");
+        const activityEmpty = document.getElementById("activityEmpty");
+        const activityError = document.getElementById("activityError");
+        const activityList = document.getElementById("activityList");
+        const retryActivityBtn = document.getElementById("retryActivityBtn");
+
+        const copyUidBtn = document.getElementById("copyUidBtn");
+        const adminUidInput = document.getElementById("adminUid");
+
+        const logoutBtn = document.getElementById("logoutBtn");
+        const sessionLogoutBtn = document.getElementById("sessionLogoutBtn");
+        const accountLogoutBtn = document.getElementById("accountLogoutBtn");
+
+        const toast = document.getElementById("toast");
+        const toastTitle = document.getElementById("toastTitle");
+        const toastMessage = document.getElementById("toastMessage");
+        const toastIconElement = document.getElementById("toastIconElement");
+
+
+        // ------------------------------------------------------------
+        // MOBILE SIDEBAR
+        // ------------------------------------------------------------
+
+        function openSidebar() {
+            sidebar.classList.add("open");
+            mobileOverlay.classList.add("show");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove("open");
+            mobileOverlay.classList.remove("show");
+            document.body.style.overflow = "";
+        }
+
+        menuBtn?.addEventListener("click", openSidebar);
+        mobileOverlay?.addEventListener("click", closeSidebar);
+
+
+        // ------------------------------------------------------------
+        // THEME
+        // ------------------------------------------------------------
+
+        function applyTheme(theme) {
+
+            if (theme === "dark") {
+                document.body.classList.add("dark");
+
+                themeIcon.className = "bx bx-sun text-lg";
+                themeToggle.setAttribute("aria-label", "Switch to light mode");
+
+            } else {
+                document.body.classList.remove("dark");
+
+                themeIcon.className = "bx bx-moon text-lg";
+                themeToggle.setAttribute("aria-label", "Switch to dark mode");
+            }
+        }
+
+
+        const savedTheme = localStorage.getItem("optify_admin_theme");
+
+        if (savedTheme === "dark") {
+            applyTheme("dark");
+        } else {
+            applyTheme("light");
+        }
+
+
+        themeToggle.addEventListener("click", () => {
+
+            const nextTheme = document.body.classList.contains("dark")
+                ? "light"
+                : "dark";
+
+            applyTheme(nextTheme);
+
+            localStorage.setItem("optify_admin_theme", nextTheme);
+
+        });
+
+
+        // ------------------------------------------------------------
+        // TOAST
+        // ------------------------------------------------------------
+
+        let toastTimer = null;
+
+        function showToast(
+            title,
+            message,
+            type = "success"
+        ) {
+
+            clearTimeout(toastTimer);
+
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+
+            if (type === "error") {
+
+                toastIconElement.className = "bx bx-error-circle text-red-400 text-lg";
+
+            } else if (type === "warning") {
+
+                toastIconElement.className = "bx bx-error text-amber-400 text-lg";
+
+            } else {
+
+                toastIconElement.className = "bx bx-check text-emerald-400 text-lg";
+
+            }
+
+            toast.classList.add("show");
+
+            toastTimer = setTimeout(() => {
+                toast.classList.remove("show");
+            }, 4000);
+
+        }
+
+
+        // ------------------------------------------------------------
+        // FORMATTERS
+        // ------------------------------------------------------------
+
+        function formatDate(value) {
+
+            if (!value) {
+                return "Not available";
+            }
+
+            const date = value instanceof Date
+                ? value
+                : new Date(value);
+
+            if (Number.isNaN(date.getTime())) {
+                return "Not available";
+            }
+
+            return new Intl.DateTimeFormat("en-NG", {
+                dateStyle: "medium"
+            }).format(date);
+
+        }
+
+
+        function formatDateTime(value) {
+
+            if (!value) {
+                return "Not available";
+            }
+
+            const date = value instanceof Date
+                ? value
+                : new Date(value);
+
+            if (Number.isNaN(date.getTime())) {
+                return "Not available";
+            }
+
+            return new Intl.DateTimeFormat("en-NG", {
+                dateStyle: "medium",
+                timeStyle: "short"
+            }).format(date);
+
+        }
+
+
+        function safeText(value) {
+
+            if (
+                value === null ||
+                value === undefined ||
+                String(value).trim() === ""
+            ) {
+                return "Not available";
+            }
+
+            return String(value);
+
+        }
+
+
+        // ------------------------------------------------------------
+        // PROFILE RENDER
+        // ------------------------------------------------------------
+
+        function renderProfile(profile) {
+
+            if (!profile) {
+                return;
+            }
+
+            document.getElementById("profileName").textContent =
+                safeText(profile.fullName);
+
+            document.getElementById("profileEmail").textContent =
+                safeText(profile.email);
+
+            document.getElementById("sidebarAdminName").textContent =
+                safeText(profile.fullName);
+
+            document.getElementById("profileStatus").textContent =
+                profile.active === true ? "Active" : "Inactive";
+
+            document.getElementById("accountStatusField").textContent =
+                profile.active === true ? "Active" : "Inactive";
+
+            document.getElementById("adminSince").textContent =
+                formatDate(profile.createdAt);
+
+            document.getElementById("providerValue").textContent =
+                safeText(profile.provider);
+
+            document.getElementById("roleValue").textContent =
+                profile.role === "admin"
+                    ? "Administrator"
+                    : safeText(profile.role);
+
+            document.getElementById("lastSignInValue").textContent =
+                formatDateTime(profile.lastSignInAt);
+
+            document.getElementById("createdValue").textContent =
+                formatDate(profile.createdAt);
+
+            adminUidInput.value =
+                profile.uid || "";
+
+            fullNameInput.value =
+                profile.fullName || "";
+
+            const verifiedBadge =
+                document.getElementById("verifiedBadge");
+
+            if (
+                profile.role === "admin" &&
+                profile.active === true
+            ) {
+                verifiedBadge.classList.remove("hidden");
+                verifiedBadge.classList.add("inline-flex");
+            } else {
+                verifiedBadge.classList.add("hidden");
+                verifiedBadge.classList.remove("inline-flex");
+            }
+
+        }
+
+
+        // ------------------------------------------------------------
+        // LOADING PROFILE
+        // ------------------------------------------------------------
+
+        function setProfileLoading(isLoading) {
+
+            if (isLoading) {
+
+                fullNameInput.disabled = true;
+                saveProfileBtn.disabled = true;
+
+                document.getElementById("profileName").textContent =
+                    "Loading...";
+
+                document.getElementById("profileEmail").textContent =
+                    "Loading...";
+
+            } else {
+
+                fullNameInput.disabled = false;
+                saveProfileBtn.disabled = false;
+
+            }
+
+        }
+
+
+        // ------------------------------------------------------------
+        // API REQUEST HELPER
+        // ------------------------------------------------------------
+
+        async function apiRequest(
+            url,
+            options = {}
+        ) {
+
+            const response = await fetch(url, {
+                credentials: "include",
+                ...options,
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(options.headers || {})
+                }
+            });
+
+            let data = null;
+
+            try {
+                data = await response.json();
+            } catch {
+                data = null;
+            }
+
+            if (!response.ok) {
+
+                const message =
+                    data?.message ||
+                    "The server could not complete this request.";
+
+                throw new Error(message);
+
+            }
+
+            return data;
+
+        }
+
+
+        // ------------------------------------------------------------
+        // LOAD PROFILE
+        // ------------------------------------------------------------
+
+        async function loadAdminProfile() {
+
+            setProfileLoading(true);
+
+            try {
+
+                /*
+                 * Replace this request with the actual backend.
+                 *
+                 * Example:
+                 *
+                 * const result = await apiRequest(
+                 *     "/api/admin/profile"
+                 * );
+                 *
+                 * adminProfile = result.profile;
+                 *
+                 * renderProfile(adminProfile);
+                 */
+
+                /*
+                 * Firebase Authentication should also be checked
+                 * here using onAuthStateChanged() in the real build.
+                 */
+
+                console.info(
+                    "Admin profile backend is not connected yet."
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+                showToast(
+                    "Unable to load profile",
+                    "Administrator profile data could not be loaded.",
+                    "error"
+                );
+
+            } finally {
+
+                setProfileLoading(false);
+
+            }
+
+        }
+
+
+        // ------------------------------------------------------------
+        // SAVE PROFILE
+        // ------------------------------------------------------------
+
+        profileForm.addEventListener("submit", async (event) => {
+
+            event.preventDefault();
+
+            if (isSavingProfile) {
+                return;
+            }
+
+            const fullName =
+                fullNameInput.value.trim();
+
+            if (!fullName) {
+
+                showToast(
+                    "Name required",
+                    "Please enter your full name.",
+                    "warning"
+                );
+
+                fullNameInput.focus();
+
+                return;
+            }
+
+            if (fullName.length > 80) {
+
+                showToast(
+                    "Invalid name",
+                    "Your name is too long.",
+                    "warning"
+                );
+
+                return;
+            }
+
+
+            isSavingProfile = true;
+
+            saveProfileBtn.disabled = true;
+
+            saveProfileText.textContent =
+                "Saving...";
+
+
+            try {
+
+                /*
+                 * Production:
+                 *
+                 * const result = await apiRequest(
+                 *     "/api/admin/profile",
+                 *     {
+                 *         method: "PUT",
+                 *         body: JSON.stringify({
+                 *             fullName
+                 *         })
+                 *     }
+                 * );
+                 *
+                 * adminProfile = result.profile;
+                 * renderProfile(adminProfile);
+                 */
+
+                throw new Error(
+                    "Backend profile update is not connected yet."
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+                showToast(
+                    "Unable to save changes",
+                    "The profile backend is not connected yet.",
+                    "error"
+                );
+
+            } finally {
+
+                isSavingProfile = false;
+
+                saveProfileBtn.disabled = false;
+
+                saveProfileText.textContent =
+                    "Save Changes";
+
+            }
+
+        });
+
+
+        // ------------------------------------------------------------
+        // PASSWORD MODAL
+        // ------------------------------------------------------------
+
+        function openPasswordModal() {
+
+            passwordModal.classList.remove("hidden");
+            passwordModal.classList.add("flex");
+
+            document.body.style.overflow = "hidden";
+
+            setTimeout(() => {
+
+                document.getElementById("currentPassword")?.focus();
+
+            }, 50);
+
+        }
+
+
+        function closePasswordModalFn() {
+
+            passwordModal.classList.add("hidden");
+            passwordModal.classList.remove("flex");
+
+            document.body.style.overflow = "";
+
+            passwordForm.reset();
+
+        }
+
+
+        changePasswordBtn.addEventListener(
+            "click",
+            openPasswordModal
+        );
+
+        closePasswordModal.addEventListener(
+            "click",
+            closePasswordModalFn
+        );
+
+        cancelPasswordBtn.addEventListener(
+            "click",
+            closePasswordModalFn
+        );
+
+
+        passwordModal.addEventListener("click", (event) => {
+
+            if (event.target === passwordModal) {
+                closePasswordModalFn();
+            }
+
+        });
+
+
+        document.addEventListener("keydown", (event) => {
+
+            if (
+                event.key === "Escape" &&
+                !passwordModal.classList.contains("hidden")
+            ) {
+                closePasswordModalFn();
+            }
+
+        });
+
+
+        // ------------------------------------------------------------
+        // PASSWORD VISIBILITY
+        // ------------------------------------------------------------
+
+        document.querySelectorAll(
+            ".password-toggle"
+        ).forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                const targetId =
+                    button.dataset.passwordTarget;
+
+                const input =
+                    document.getElementById(targetId);
+
+                const icon =
+                    button.querySelector("i");
+
+                if (!input) {
+                    return;
+                }
+
+                if (input.type === "password") {
+
+                    input.type = "text";
+
+                    icon.className =
+                        "bx bx-hide";
+
+                    button.setAttribute(
+                        "aria-label",
+                        "Hide password"
+                    );
+
+                } else {
+
+                    input.type = "password";
+
+                    icon.className =
+                        "bx bx-show";
+
+                    button.setAttribute(
+                        "aria-label",
+                        "Show password"
+                    );
+
+                }
+
+            });
+
+        });
+
+
+        // ------------------------------------------------------------
+        // CHANGE PASSWORD
+        // ------------------------------------------------------------
+
+        passwordForm.addEventListener("submit", async (event) => {
+
+            event.preventDefault();
+
+            if (isChangingPassword) {
+                return;
+            }
+
+            const currentPassword =
+                document.getElementById("currentPassword").value;
+
+            const newPassword =
+                document.getElementById("newPassword").value;
+
+            const confirmPassword =
+                document.getElementById("confirmPassword").value;
+
+
+            if (!currentPassword) {
+
+                showToast(
+                    "Current password required",
+                    "Enter your current password.",
+                    "warning"
+                );
+
+                return;
+            }
+
+
+            if (newPassword.length < 8) {
+
+                showToast(
+                    "Password too short",
+                    "Your new password must contain at least 8 characters.",
+                    "warning"
+                );
+
+                return;
+            }
+
+
+            if (newPassword !== confirmPassword) {
+
+                showToast(
+                    "Passwords do not match",
+                    "Make sure both new password fields match.",
+                    "warning"
+                );
+
+                return;
+            }
+
+
+            isChangingPassword = true;
+
+            updatePasswordBtn.disabled = true;
+
+            updatePasswordText.textContent =
+                "Updating...";
+
+
+            try {
+
+                /*
+                 * Production:
+                 *
+                 * const result = await apiRequest(
+                 *     "/api/admin/profile/change-password",
+                 *     {
+                 *         method: "POST",
+                 *         body: JSON.stringify({
+                 *             currentPassword,
+                 *             newPassword
+                 *         })
+                 *     }
+                 * );
+                 *
+                 * The backend/Firebase Authentication layer
+                 * should perform the actual password update.
+                 */
+
+                throw new Error(
+                    "Password update backend is not connected yet."
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+                showToast(
+                    "Unable to update password",
+                    "The password backend is not connected yet.",
+                    "error"
+                );
+
+            } finally {
+
+                isChangingPassword = false;
+
+                updatePasswordBtn.disabled = false;
+
+                updatePasswordText.textContent =
+                    "Update Password";
+
+            }
+
+        });
+
+
+        // ------------------------------------------------------------
+        // LOAD ACTIVITY
+        // ------------------------------------------------------------
+
+        function setActivityState(state) {
+
+            activityLoading.classList.add("hidden");
+            activityEmpty.classList.add("hidden");
+            activityError.classList.add("hidden");
+            activityList.classList.add("hidden");
+
+            if (state === "loading") {
+                activityLoading.classList.remove("hidden");
+            }
+
+            if (state === "empty") {
+                activityEmpty.classList.remove("hidden");
+            }
+
+            if (state === "error") {
+                activityError.classList.remove("hidden");
+            }
+
+            if (state === "list") {
+                activityList.classList.remove("hidden");
+            }
+
+        }
+
+
+        function renderActivity(activity) {
+
+            activityList.innerHTML = "";
+
+            if (!Array.isArray(activity) || activity.length === 0) {
+
+                setActivityState("empty");
+
+                return;
+
+            }
+
+
+            activity.forEach(item => {
+
+                const wrapper =
+                    document.createElement("div");
+
+                wrapper.className =
+                    "activity-line flex gap-3 pb-5";
+
+
+                const icon =
+                    document.createElement("div");
+
+                icon.className =
+                    "relative z-10 w-4 h-4 mt-1 rounded-full bg-emerald-500 ring-4 ring-emerald-50 shrink-0";
+
+
+                const content =
+                    document.createElement("div");
+
+                content.className =
+                    "min-w-0";
+
+
+                const title =
+                    document.createElement("p");
+
+                title.className =
+                    "text-sm font-semibold text-slate-900";
+
+                title.textContent =
+                    safeText(item.action);
+
+
+                const description =
+                    document.createElement("p");
+
+                description.className =
+                    "text-xs text-slate-500 mt-1";
+
+                description.textContent =
+                    safeText(item.description);
+
+
+                const date =
+                    document.createElement("p");
+
+                date.className =
+                    "text-[11px] text-slate-400 mt-2";
+
+                date.textContent =
+                    formatDateTime(item.createdAt);
+
+
+                content.appendChild(title);
+                content.appendChild(description);
+                content.appendChild(date);
+
+                wrapper.appendChild(icon);
+                wrapper.appendChild(content);
+
+                activityList.appendChild(wrapper);
+
+            });
+
+            setActivityState("list");
+
+        }
+
+
+        async function loadAdminActivity() {
+
+            setActivityState("loading");
+
+            try {
+
+                /*
+                 * Production:
+                 *
+                 * const result = await apiRequest(
+                 *     "/api/admin/profile/activity"
+                 * );
+                 *
+                 * adminActivity = result.activity || [];
+                 */
+
+                adminActivity = [];
+
+                renderActivity(adminActivity);
+
+            } catch (error) {
+
+                console.error(error);
+
+                setActivityState("error");
+
+            }
+
+        }
+
+
+        retryActivityBtn.addEventListener(
+            "click",
+            loadAdminActivity
+        );
+
+
+        // ------------------------------------------------------------
+        // COPY ADMIN UID
+        // ------------------------------------------------------------
+
+        copyUidBtn.addEventListener("click", async () => {
+
+            const uid = adminUidInput.value.trim();
+
+            if (!uid) {
+
+                showToast(
+                    "UID unavailable",
+                    "The administrator UID is not available.",
+                    "warning"
+                );
+
+                return;
+            }
+
+            try {
+
+                await navigator.clipboard.writeText(uid);
+
+                showToast(
+                    "Admin UID copied",
+                    "The administrator UID has been copied."
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+                showToast(
+                    "Unable to copy",
+                    "Your browser did not allow clipboard access.",
+                    "error"
+                );
+
+            }
+
+        });
+
+
+        // ------------------------------------------------------------
+        // LOGOUT
+        // ------------------------------------------------------------
+
+        async function logoutAdmin() {
+
+            /*
+             * Production:
+             *
+             * await apiRequest(
+             *     "/api/admin/logout",
+             *     {
+             *         method: "POST"
+             *     }
+             * );
+             *
+             * Or sign out directly with Firebase:
+             *
+             * await signOut(auth);
+             */
+
+            try {
+
+                /*
+                 * Real Firebase signOut(auth) should be connected here.
+                 */
+
+                window.location.href =
+                    "admin-login.html";
+
+            } catch (error) {
+
+                console.error(error);
+
+                showToast(
+                    "Unable to sign out",
+                    "Please try again.",
+                    "error"
+                );
+
+            }
+
+        }
+
+
+        logoutBtn.addEventListener(
+            "click",
+            logoutAdmin
+        );
+
+        sessionLogoutBtn.addEventListener(
+            "click",
+            logoutAdmin
+        );
+
+        accountLogoutBtn.addEventListener(
+            "click",
+            logoutAdmin
+        );
+
+
+        // ------------------------------------------------------------
+        // INITIALIZE
+        // ------------------------------------------------------------
+
+        async function initializePage() {
+
+            /*
+             * In production, initialize Firebase here and use:
+             *
+             * onAuthStateChanged(auth, async (user) => {
+             *
+             *     if (!user) {
+             *         window.location.href = "admin-login.html";
+             *         return;
+             *     }
+             *
+             *     // Read admins/{user.uid}
+             *     // Verify role === "admin"
+             *     // Verify active === true
+             *     // Then load profile/activity.
+             *
+             * });
+             */
+
+            await loadAdminProfile();
+            await loadAdminActivity();
+
+        }
+
+
+        initializePage();
+
+    </script>
+
+</body>
+</html>

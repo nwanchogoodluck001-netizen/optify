@@ -1,0 +1,2976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mystery Box | Optify</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Boxicons -->
+    <link
+        href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
+
+    <style>
+
+        :root {
+            --navy: #071A2B;
+            --navy-2: #0B3041;
+            --green: #12B76A;
+            --teal: #0EA5A4;
+            --soft-green: #E8F8F0;
+            --background: #F7F9FC;
+            --white: #FFFFFF;
+            --text: #101828;
+            --muted: #667085;
+            --border: #E4E7EC;
+            --warning: #F79009;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            transition: background .25s ease, color .25s ease;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        button,
+        a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 250px;
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 60;
+            background: var(--navy);
+            transition: transform .25s ease;
+        }
+
+        .main-wrapper {
+            min-height: 100vh;
+            margin-left: 250px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            margin-bottom: 4px;
+            border-radius: 10px;
+            color: #B7C4D1;
+            font-size: 14px;
+            font-weight: 500;
+            transition: .2s ease;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,.07);
+        }
+
+        .nav-link.active {
+            color: #fff;
+            background: rgba(18,183,106,.15);
+        }
+
+        .nav-link i {
+            color: #8EA1B3;
+            font-size: 20px;
+        }
+
+        .nav-link.active i {
+            color: var(--green);
+        }
+
+        /* ================= TOPBAR ================= */
+
+        .topbar {
+            height: 76px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255,255,255,.88);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* ================= SURFACES ================= */
+
+        .surface {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            transition: background .25s ease, border-color .25s ease;
+        }
+
+        /* ================= DARK MODE ================= */
+
+        .dark body {
+            background: #08131E;
+            color: #F2F4F7;
+        }
+
+        .dark .topbar {
+            background: rgba(8,19,30,.9);
+            border-color: #1E3445;
+        }
+
+        .dark .surface {
+            background: #0D1D2A;
+            border-color: #1E3445;
+        }
+
+        .dark .border-soft {
+            border-color: #1E3445 !important;
+        }
+
+        .dark .muted {
+            color: #98A7B5 !important;
+        }
+
+        .dark .soft-bg {
+            background: #102A25 !important;
+        }
+
+        .dark .light-bg {
+            background: #162A38 !important;
+        }
+
+        .dark .box-card {
+            background: #0E2432 !important;
+            border-color: #244254 !important;
+        }
+
+        .dark .rules-item {
+            background: #102331 !important;
+        }
+
+        .dark .reward-box {
+            background: #102A25 !important;
+            border-color: #24533F !important;
+        }
+
+        /* ================= BUTTONS ================= */
+
+        .green-button {
+            background: var(--green);
+            color: #fff;
+            transition: all .2s ease;
+        }
+
+        .green-button:hover {
+            background: #0FA760;
+            transform: translateY(-1px);
+        }
+
+        .outline-button {
+            border: 1px solid var(--border);
+            transition: all .2s ease;
+        }
+
+        .outline-button:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        /* ================= BOX CARD ================= */
+
+        .box-card {
+            position: relative;
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            transition:
+                transform .25s ease,
+                border-color .25s ease,
+                box-shadow .25s ease;
+        }
+
+        .box-card.available {
+            cursor: pointer;
+        }
+
+        .box-card.available:hover {
+            transform: translateY(-7px);
+            border-color: #A9DFC6;
+            box-shadow: 0 18px 40px rgba(16,24,40,.10);
+        }
+
+        .box-card.claimed {
+            cursor: default;
+            border-color: #A9DFC6;
+        }
+
+        .box-card.claimed:hover {
+            transform: none;
+        }
+
+        /* ================= GIFT BOX ================= */
+
+        .gift-stage {
+            height: 230px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .gift-box {
+            width: 145px;
+            height: 135px;
+            position: relative;
+            transition: transform .25s ease;
+        }
+
+        .box-card.available:hover .gift-box {
+            transform: translateY(-6px) scale(1.04);
+        }
+
+        .gift-body {
+            position: absolute;
+            width: 116px;
+            height: 88px;
+            left: 14px;
+            bottom: 4px;
+            border-radius: 10px 10px 16px 16px;
+            background: linear-gradient(
+                135deg,
+                #071A2B,
+                #0B3041
+            );
+            border: 2px solid #17455A;
+            box-shadow:
+                0 18px 30px rgba(7,26,43,.20);
+        }
+
+        .gift-body::before {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--green);
+        }
+
+        .gift-lid {
+            position: absolute;
+            width: 132px;
+            height: 28px;
+            left: 6px;
+            top: 27px;
+            border-radius: 9px;
+            background: #0B3B4A;
+            border: 2px solid #17455A;
+            z-index: 5;
+            box-shadow: 0 8px 14px rgba(7,26,43,.15);
+        }
+
+        .gift-lid::before {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--green);
+        }
+
+        .gift-ribbon-left,
+        .gift-ribbon-right {
+            position: absolute;
+            width: 44px;
+            height: 22px;
+            top: 2px;
+            border: 7px solid var(--green);
+            z-index: 7;
+        }
+
+        .gift-ribbon-left {
+            right: 72px;
+            border-radius: 50% 50% 10px 50%;
+            transform: rotate(-28deg);
+        }
+
+        .gift-ribbon-right {
+            left: 72px;
+            border-radius: 50% 50% 50% 10px;
+            transform: rotate(28deg);
+        }
+
+        .gift-question {
+            position: absolute;
+            left: 50%;
+            top: 77px;
+            transform: translateX(-50%);
+            z-index: 10;
+            color: #fff;
+            font-family: 'Sora', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .gift-spark {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        .spark-one {
+            top: 32px;
+            left: 8px;
+        }
+
+        .spark-two {
+            top: 64px;
+            right: 2px;
+            width: 5px;
+            height: 5px;
+        }
+
+        .spark-three {
+            bottom: 24px;
+            left: 0;
+            width: 5px;
+            height: 5px;
+        }
+
+        /* ================= BOX OPEN ANIMATION ================= */
+
+        .gift-box.opening {
+            animation: giftShake .65s ease;
+        }
+
+        .gift-box.opening .gift-lid {
+            animation: lidOpen .6s ease forwards;
+        }
+
+        .gift-box.opening .gift-ribbon-left,
+        .gift-box.opening .gift-ribbon-right {
+            animation: ribbonOpen .6s ease forwards;
+        }
+
+        @keyframes giftShake {
+
+            0% {
+                transform: rotate(0);
+            }
+
+            20% {
+                transform: rotate(-5deg) scale(1.02);
+            }
+
+            40% {
+                transform: rotate(5deg) scale(1.04);
+            }
+
+            60% {
+                transform: rotate(-4deg) scale(1.06);
+            }
+
+            80% {
+                transform: rotate(3deg) scale(1.05);
+            }
+
+            100% {
+                transform: rotate(0) scale(1);
+            }
+
+        }
+
+        @keyframes lidOpen {
+
+            0% {
+                transform: translateY(0) rotate(0);
+            }
+
+            100% {
+                transform: translateY(-35px) rotate(-8deg);
+            }
+
+        }
+
+        @keyframes ribbonOpen {
+
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: .15;
+            }
+
+        }
+
+        /* ================= CLAIMED BOX ================= */
+
+        .claimed-box {
+            filter: grayscale(.15);
+            opacity: .78;
+        }
+
+        .claimed-box .gift-question {
+            color: var(--green);
+        }
+
+        .claimed-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,.82);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s ease;
+        }
+
+        .claimed .claimed-overlay {
+            opacity: 1;
+        }
+
+        .dark .claimed-overlay {
+            background: rgba(13,29,42,.84);
+        }
+
+        /* ================= PROGRESS ================= */
+
+        .progress-track {
+            height: 8px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: #EAECF0;
+        }
+
+        .progress-value {
+            height: 100%;
+            width: 0;
+            background: var(--green);
+            border-radius: inherit;
+            transition: width .35s ease;
+        }
+
+        /* ================= REWARD ================= */
+
+        .reward-box {
+            background: var(--soft-green);
+            border: 1px solid #C9EEDB;
+            border-radius: 16px;
+        }
+
+        .reward-number {
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            letter-spacing: -.04em;
+        }
+
+        .reward-reveal {
+            animation: rewardReveal .45s ease;
+        }
+
+        @keyframes rewardReveal {
+
+            from {
+                opacity: 0;
+                transform: scale(.85) translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+
+        }
+
+        /* ================= STATS ================= */
+
+        .stat-card {
+            transition:
+                transform .2s ease,
+                border-color .2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: #B9E8D1;
+        }
+
+        /* ================= MOBILE ================= */
+
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 55;
+            background: rgba(0,0,0,.45);
+        }
+
+        .mobile-overlay.show {
+            display: block;
+        }
+
+        .bottom-nav {
+            display: none;
+        }
+
+        /* ================= MODALS ================= */
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(2,12,20,.68);
+            backdrop-filter: blur(6px);
+        }
+
+        .modal-backdrop.show {
+            display: flex;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 430px;
+            border-radius: 22px;
+            padding: 25px;
+            animation: modalIn .2s ease;
+        }
+
+        @keyframes modalIn {
+
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 1024px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+            }
+
+        }
+
+        @media (max-width: 768px) {
+
+            .topbar {
+                height: 68px;
+            }
+
+            .bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 70px;
+                z-index: 70;
+                align-items: center;
+                justify-content: space-around;
+                background: rgba(255,255,255,.96);
+                backdrop-filter: blur(15px);
+                border-top: 1px solid var(--border);
+            }
+
+            .dark .bottom-nav {
+                background: rgba(9,24,35,.97);
+                border-color: #1E3445;
+            }
+
+            .bottom-nav a {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 3px;
+                color: #98A2B3;
+                font-size: 10px;
+            }
+
+            .bottom-nav a i {
+                font-size: 21px;
+            }
+
+            .bottom-nav a.active {
+                color: var(--green);
+            }
+
+            .main-content {
+                padding-bottom: 92px !important;
+            }
+
+            .gift-stage {
+                height: 205px;
+            }
+
+        }
+
+        @media (max-width: 500px) {
+
+            .main-content {
+                padding: 18px !important;
+            }
+
+            .gift-stage {
+                height: 190px;
+            }
+
+            .gift-box {
+                transform: scale(.92);
+            }
+
+            .box-card.available:hover .gift-box {
+                transform: translateY(-4px) scale(.96);
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <!-- MOBILE OVERLAY -->
+    <div id="mobileOverlay" class="mobile-overlay"></div>
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside id="sidebar" class="sidebar px-4 py-5">
+
+        <div class="flex items-center gap-3 px-2 mb-8">
+
+            <div
+                class="w-10 h-10 rounded-xl flex items-center justify-center"
+                style="background: var(--green);">
+
+                <i class='bx bx-shape-triangle text-white text-2xl'></i>
+
+            </div>
+
+            <div>
+
+                <h1 class="text-white font-sora text-lg font-bold">
+                    OPTIFY
+                </h1>
+
+                <p class="text-[10px] text-slate-400 tracking-widest">
+                    REWARDS PLATFORM
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <p class="text-[10px] uppercase tracking-widest text-slate-500 px-3 mb-3">
+            Main Menu
+        </p>
+
+
+        <nav>
+
+            <a href="dashboard.html" class="nav-link">
+                <i class='bx bx-grid-alt'></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="tasks.html" class="nav-link">
+                <i class='bx bx-task'></i>
+                <span>Tasks</span>
+            </a>
+
+            <a href="streak.html" class="nav-link">
+                <i class='bx bx-calendar-check'></i>
+                <span>Streak</span>
+            </a>
+
+            <a href="mystery-box.html" class="nav-link active">
+                <i class='bx bx-gift'></i>
+                <span>Mystery Box</span>
+            </a>
+
+            <a href="quiz.html" class="nav-link">
+                <i class='bx bx-help-circle'></i>
+                <span>Quiz</span>
+            </a>
+
+            <a href="referral.html" class="nav-link">
+                <i class='bx bx-group'></i>
+                <span>Referral</span>
+            </a>
+               <a href="epin.html" class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-white/65 hover:text-white hover:bg-white/5">
+                    <i class='bx bx-key'></i>
+                    <span>Withdrawal E-pin</span>
+                </a>
+
+            <a href="withdrawal.html" class="nav-link">
+                <i class='bx bx-wallet'></i>
+                <span>Withdrawal</span>
+            </a>
+
+            <a href="transactions.html" class="nav-link">
+                <i class='bx bx-transfer-alt'></i>
+                <span>Transactions</span>
+            </a>
+
+            <a href="settings.html" class="nav-link">
+                <i class='bx bx-cog'></i>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+
+        <div class="absolute bottom-5 left-4 right-4">
+
+            <div class="rounded-xl p-3 bg-white/5 border border-white/10 mb-3">
+
+                <div class="flex items-center gap-2">
+
+                    <i class='bx bx-shield-check text-emerald-400 text-xl'></i>
+
+                    <div>
+
+                        <p class="text-xs font-semibold text-white">
+                            Optify Secure
+                        </p>
+
+                        <p class="text-[10px] text-slate-400">
+                            Your account is protected
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="logoutBtn"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-white/5 transition">
+
+                <i class='bx bx-log-out text-lg'></i>
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <div class="main-wrapper">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar flex items-center justify-between px-5 md:px-7">
+
+            <div class="flex items-center gap-3">
+
+                <button
+                    id="menuBtn"
+                    class="lg:hidden w-10 h-10 rounded-xl border border-soft flex items-center justify-center">
+
+                    <i class='bx bx-menu text-xl'></i>
+
+                </button>
+
+
+                <div>
+
+                    <p class="text-xs muted text-slate-500">
+                        Rewards
+                    </p>
+
+                    <h2 class="font-sora font-semibold text-sm md:text-base">
+                        Mystery Box
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="flex items-center gap-2 md:gap-4">
+
+                <button
+                    id="themeBtn"
+                    class="w-10 h-10 rounded-xl border border-soft flex items-center justify-center">
+
+                    <i id="themeIcon" class='bx bx-moon text-lg'></i>
+
+                </button>
+
+
+                <button
+                    class="w-10 h-10 rounded-xl border border-soft flex items-center justify-center relative">
+
+                    <i class='bx bx-bell text-lg'></i>
+
+                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500"></span>
+
+                </button>
+
+
+                <div class="hidden sm:flex items-center gap-2">
+
+                    <div
+                        class="w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold"
+                        style="background: var(--navy);">
+
+                        D
+
+                    </div>
+
+                    <div class="hidden md:block">
+
+                        <p class="text-xs font-semibold">
+                            David
+                        </p>
+
+                        <p class="text-[10px] muted text-slate-500">
+                            Member
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================= PAGE ================= -->
+
+        <main class="main-content p-5 md:p-7">
+
+
+            <!-- PAGE HEADER -->
+
+            <section class="mb-6">
+
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+
+                    <div>
+
+                        <div class="flex items-center gap-2 mb-2">
+
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+
+                            <span class="text-xs font-medium text-emerald-600">
+                                Daily rewards
+                            </span>
+
+                        </div>
+
+
+                        <h1 class="font-sora text-2xl md:text-3xl font-bold mb-2">
+                            Mystery Box
+                        </h1>
+
+
+                        <p class="text-sm muted text-slate-500">
+                            Pick a box and discover the reward hidden inside.
+                        </p>
+
+                    </div>
+
+
+                    <div class="surface px-4 py-3 flex items-center gap-3">
+
+                        <div
+                            class="w-10 h-10 rounded-xl flex items-center justify-center"
+                            style="background: var(--soft-green);">
+
+                            <i
+                                class='bx bx-gift text-xl'
+                                style="color: var(--green);">
+                            </i>
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="text-xs muted text-slate-500">
+                                Boxes Opened Today
+                            </p>
+
+                            <p class="font-sora font-bold">
+
+                                <span id="headerBoxCount">
+                                    0
+                                </span>
+
+                                <span class="text-xs font-medium text-slate-400">
+                                    / 3
+                                </span>
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= VALIDATED STATUS ================= -->
+
+            <section class="mb-6">
+
+                <div
+                    class="rounded-2xl p-5 md:p-6"
+                    style="background: linear-gradient(135deg, #071A2B, #0B3B4A);">
+
+                    <div class="flex flex-col md:flex-row md:items-center gap-4">
+
+                        <div
+                            class="w-12 h-12 shrink-0 rounded-xl bg-emerald-500/15 flex items-center justify-center">
+
+                            <i class='bx bx-check-shield text-2xl text-emerald-400'></i>
+
+                        </div>
+
+
+                        <div class="flex-1">
+
+                            <div class="flex items-center gap-2 mb-1">
+
+                                <h2 class="font-sora text-white font-semibold">
+                                    Dashboard Validated
+                                </h2>
+
+                                <span class="px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-[10px] font-semibold">
+                                    ACTIVE
+                                </span>
+
+                            </div>
+
+                            <p class="text-sm text-slate-300 leading-6">
+                                Your Mystery Box is unlocked. Choose any box below
+                                to discover your hidden reward.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= DAILY SUMMARY ================= -->
+
+            <section class="surface p-5 md:p-6 mb-7">
+
+                <div class="flex flex-col lg:flex-row lg:items-center gap-6">
+
+                    <div class="flex-1">
+
+                        <div class="flex items-center justify-between mb-3">
+
+                            <div>
+
+                                <p class="text-xs muted text-slate-500 mb-1">
+                                    Today's Mystery Boxes
+                                </p>
+
+                                <h2 class="font-sora text-3xl font-bold">
+
+                                    <span id="boxProgressText">
+                                        0 / 3
+                                    </span>
+
+                                </h2>
+
+                                <p class="text-xs muted text-slate-500 mt-1">
+                                    boxes opened today
+                                </p>
+
+                            </div>
+
+
+                            <div
+                                class="w-12 h-12 rounded-xl flex items-center justify-center"
+                                style="background: var(--soft-green);">
+
+                                <i
+                                    class='bx bx-package text-2xl'
+                                    style="color: var(--green);">
+                                </i>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="progress-track mb-2">
+
+                            <div
+                                id="boxProgress"
+                                class="progress-value">
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex items-center justify-between">
+
+                            <p class="text-xs muted text-slate-500">
+
+                                <span id="openedCount">
+                                    0
+                                </span>
+
+                                of 3 boxes opened
+
+                            </p>
+
+
+                            <p
+                                class="text-xs font-medium"
+                                style="color: var(--green);">
+
+                                Maximum 3 per day
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="lg:w-72 border-soft lg:border-l lg:pl-6">
+
+                        <p class="text-xs muted text-slate-500 mb-1">
+                            Today's Mystery Box Earnings
+                        </p>
+
+                        <p class="font-sora text-2xl font-bold">
+
+                            $<span id="todayEarnings">
+                                0.00
+                            </span>
+
+                        </p>
+
+                        <p class="text-xs text-slate-400 mt-1">
+
+                            ≈ ₦<span id="todayNaira">
+                                0
+                            </span>
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= MAIN MYSTERY BOX AREA ================= -->
+
+            <section class="mb-8">
+
+                <div class="text-center mb-6">
+
+                    <div class="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold mb-3">
+
+                        <i class='bx bx-gift'></i>
+
+                        Pick Your Box
+
+                    </div>
+
+
+                    <h2 class="font-sora text-xl md:text-2xl font-bold">
+
+                        Which box will you choose?
+
+                    </h2>
+
+
+                    <p class="text-sm muted text-slate-500 mt-2 max-w-lg mx-auto">
+
+                        All three boxes contain a hidden cash reward.
+                        Choose any box you want and see what is inside.
+
+                    </p>
+
+                </div>
+
+
+                <!-- THREE BOXES -->
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+
+                    <!-- BOX 1 -->
+
+                    <div
+                        id="boxCard1"
+                        class="box-card available p-5"
+                        data-box="1">
+
+                        <div class="flex items-center justify-between">
+
+                            <span class="text-[11px] uppercase tracking-wider font-semibold text-slate-400">
+                                Mystery Box 01
+                            </span>
+
+
+                            <span
+                                id="boxStatus1"
+                                class="text-[11px] font-semibold px-2.5 py-1 rounded-full"
+                                style="background: var(--soft-green); color: #087443;">
+
+                                Available
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="gift-stage">
+
+                            <div
+                                id="giftBox1"
+                                class="gift-box">
+
+                                <div class="gift-spark spark-one"></div>
+                                <div class="gift-spark spark-two"></div>
+                                <div class="gift-spark spark-three"></div>
+
+                                <div class="gift-ribbon-left"></div>
+                                <div class="gift-ribbon-right"></div>
+
+                                <div class="gift-lid"></div>
+
+                                <div class="gift-body"></div>
+
+                                <div class="gift-question">
+                                    ?
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="text-center">
+
+                            <h3 class="font-sora font-semibold">
+                                Box 01
+                            </h3>
+
+                            <p class="text-xs muted text-slate-500 mt-1 mb-4">
+                                A hidden reward is waiting inside.
+                            </p>
+
+
+                            <button
+                                type="button"
+                                onclick="selectBox(1)"
+                                id="openButton1"
+                                class="w-full py-3 rounded-xl green-button text-sm font-semibold">
+
+                                <i class='bx bx-gift mr-1'></i>
+
+                                Open Box
+
+                            </button>
+
+                        </div>
+
+
+                        <div class="claimed-overlay">
+
+                            <div class="text-center">
+
+                                <div class="w-11 h-11 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-2">
+
+                                    <i class='bx bx-check text-2xl'></i>
+
+                                </div>
+
+                                <p class="text-sm font-semibold">
+                                    Box Opened
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- BOX 2 -->
+
+                    <div
+                        id="boxCard2"
+                        class="box-card available p-5"
+                        data-box="2">
+
+                        <div class="flex items-center justify-between">
+
+                            <span class="text-[11px] uppercase tracking-wider font-semibold text-slate-400">
+                                Mystery Box 02
+                            </span>
+
+
+                            <span
+                                id="boxStatus2"
+                                class="text-[11px] font-semibold px-2.5 py-1 rounded-full"
+                                style="background: var(--soft-green); color: #087443;">
+
+                                Available
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="gift-stage">
+
+                            <div
+                                id="giftBox2"
+                                class="gift-box">
+
+                                <div class="gift-spark spark-one"></div>
+                                <div class="gift-spark spark-two"></div>
+                                <div class="gift-spark spark-three"></div>
+
+                                <div class="gift-ribbon-left"></div>
+                                <div class="gift-ribbon-right"></div>
+
+                                <div class="gift-lid"></div>
+
+                                <div class="gift-body"></div>
+
+                                <div class="gift-question">
+                                    ?
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="text-center">
+
+                            <h3 class="font-sora font-semibold">
+                                Box 02
+                            </h3>
+
+                            <p class="text-xs muted text-slate-500 mt-1 mb-4">
+                                A hidden reward is waiting inside.
+                            </p>
+
+
+                            <button
+                                type="button"
+                                onclick="selectBox(2)"
+                                id="openButton2"
+                                class="w-full py-3 rounded-xl green-button text-sm font-semibold">
+
+                                <i class='bx bx-gift mr-1'></i>
+
+                                Open Box
+
+                            </button>
+
+                        </div>
+
+
+                        <div class="claimed-overlay">
+
+                            <div class="text-center">
+
+                                <div class="w-11 h-11 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-2">
+
+                                    <i class='bx bx-check text-2xl'></i>
+
+                                </div>
+
+                                <p class="text-sm font-semibold">
+                                    Box Opened
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- BOX 3 -->
+
+                    <div
+                        id="boxCard3"
+                        class="box-card available p-5"
+                        data-box="3">
+
+                        <div class="flex items-center justify-between">
+
+                            <span class="text-[11px] uppercase tracking-wider font-semibold text-slate-400">
+                                Mystery Box 03
+                            </span>
+
+
+                            <span
+                                id="boxStatus3"
+                                class="text-[11px] font-semibold px-2.5 py-1 rounded-full"
+                                style="background: var(--soft-green); color: #087443;">
+
+                                Available
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="gift-stage">
+
+                            <div
+                                id="giftBox3"
+                                class="gift-box">
+
+                                <div class="gift-spark spark-one"></div>
+                                <div class="gift-spark spark-two"></div>
+                                <div class="gift-spark spark-three"></div>
+
+                                <div class="gift-ribbon-left"></div>
+                                <div class="gift-ribbon-right"></div>
+
+                                <div class="gift-lid"></div>
+
+                                <div class="gift-body"></div>
+
+                                <div class="gift-question">
+                                    ?
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="text-center">
+
+                            <h3 class="font-sora font-semibold">
+                                Box 03
+                            </h3>
+
+                            <p class="text-xs muted text-slate-500 mt-1 mb-4">
+                                A hidden reward is waiting inside.
+                            </p>
+
+
+                            <button
+                                type="button"
+                                onclick="selectBox(3)"
+                                id="openButton3"
+                                class="w-full py-3 rounded-xl green-button text-sm font-semibold">
+
+                                <i class='bx bx-gift mr-1'></i>
+
+                                Open Box
+
+                            </button>
+
+                        </div>
+
+
+                        <div class="claimed-overlay">
+
+                            <div class="text-center">
+
+                                <div class="w-11 h-11 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-2">
+
+                                    <i class='bx bx-check text-2xl'></i>
+
+                                </div>
+
+                                <p class="text-sm font-semibold">
+                                    Box Opened
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= STATS ================= -->
+
+            <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-7">
+
+
+                <div class="surface stat-card p-5">
+
+                    <div class="flex items-center justify-between mb-4">
+
+                        <div
+                            class="w-10 h-10 rounded-xl flex items-center justify-center"
+                            style="background: var(--soft-green);">
+
+                            <i
+                                class='bx bx-package text-xl'
+                                style="color: var(--green);">
+                            </i>
+
+                        </div>
+
+                    </div>
+
+                    <p class="text-xs muted text-slate-500">
+                        Boxes Opened
+                    </p>
+
+                    <p
+                        id="totalOpened"
+                        class="font-sora text-2xl font-bold mt-1">
+
+                        0
+
+                    </p>
+
+                </div>
+
+
+                <div class="surface stat-card p-5">
+
+                    <div class="flex items-center justify-between mb-4">
+
+                        <div
+                            class="w-10 h-10 rounded-xl flex items-center justify-center"
+                            style="background: #EEF4FF;">
+
+                            <i
+                                class='bx bx-dollar-circle text-xl text-blue-600'>
+                            </i>
+
+                        </div>
+
+                    </div>
+
+                    <p class="text-xs muted text-slate-500">
+                        Today's Earnings
+                    </p>
+
+                    <p
+                        id="statsTodayEarnings"
+                        class="font-sora text-2xl font-bold mt-1">
+
+                        $0.00
+
+                    </p>
+
+                </div>
+
+
+                <div class="surface stat-card p-5">
+
+                    <div class="flex items-center justify-between mb-4">
+
+                        <div
+                            class="w-10 h-10 rounded-xl flex items-center justify-center"
+                            style="background: #FFF7E8;">
+
+                            <i
+                                class='bx bx-wallet text-xl'
+                                style="color: var(--warning);">
+                            </i>
+
+                        </div>
+
+                    </div>
+
+                    <p class="text-xs muted text-slate-500">
+                        Total Mystery Box Earnings
+                    </p>
+
+                    <p
+                        id="totalEarnings"
+                        class="font-sora text-2xl font-bold mt-1">
+
+                        $0.00
+
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= HOW IT WORKS ================= -->
+
+            <section class="surface p-5 md:p-6 mb-7">
+
+                <div class="mb-5">
+
+                    <p class="text-xs uppercase tracking-wider text-emerald-600 font-semibold mb-1">
+                        How it works
+                    </p>
+
+                    <h2 class="font-sora text-lg font-semibold">
+                        Discover your hidden reward
+                    </h2>
+
+                </div>
+
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+
+                    <div class="rounded-xl p-4 light-bg bg-slate-50">
+
+                        <div
+                            class="w-9 h-9 rounded-lg flex items-center justify-center mb-3"
+                            style="background: var(--soft-green);">
+
+                            <span
+                                class="text-sm font-bold"
+                                style="color: var(--green);">
+                                01
+                            </span>
+
+                        </div>
+
+                        <h3 class="text-sm font-semibold mb-1">
+                            Choose
+                        </h3>
+
+                        <p class="text-xs muted text-slate-500 leading-5">
+                            Pick any one of the three mystery boxes.
+                        </p>
+
+                    </div>
+
+
+                    <div class="rounded-xl p-4 light-bg bg-slate-50">
+
+                        <div
+                            class="w-9 h-9 rounded-lg flex items-center justify-center mb-3"
+                            style="background: var(--soft-green);">
+
+                            <span
+                                class="text-sm font-bold"
+                                style="color: var(--green);">
+                                02
+                            </span>
+
+                        </div>
+
+                        <h3 class="text-sm font-semibold mb-1">
+                            Open
+                        </h3>
+
+                        <p class="text-xs muted text-slate-500 leading-5">
+                            Click the box and reveal what is hidden inside.
+                        </p>
+
+                    </div>
+
+
+                    <div class="rounded-xl p-4 light-bg bg-slate-50">
+
+                        <div
+                            class="w-9 h-9 rounded-lg flex items-center justify-center mb-3"
+                            style="background: var(--soft-green);">
+
+                            <span
+                                class="text-sm font-bold"
+                                style="color: var(--green);">
+                                03
+                            </span>
+
+                        </div>
+
+                        <h3 class="text-sm font-semibold mb-1">
+                            Discover
+                        </h3>
+
+                        <p class="text-xs muted text-slate-500 leading-5">
+                            Your hidden cash reward is revealed.
+                        </p>
+
+                    </div>
+
+
+                    <div class="rounded-xl p-4 light-bg bg-slate-50">
+
+                        <div
+                            class="w-9 h-9 rounded-lg flex items-center justify-center mb-3"
+                            style="background: var(--soft-green);">
+
+                            <span
+                                class="text-sm font-bold"
+                                style="color: var(--green);">
+                                04
+                            </span>
+
+                        </div>
+
+                        <h3 class="text-sm font-semibold mb-1">
+                            Earn
+                        </h3>
+
+                        <p class="text-xs muted text-slate-500 leading-5">
+                            Once confirmed, the eligible reward is credited to your account.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= RULES ================= -->
+
+            <section class="surface p-5 md:p-6">
+
+                <div class="mb-5">
+
+                    <p class="text-xs uppercase tracking-wider text-emerald-600 font-semibold mb-1">
+                        Mystery Box Rules
+                    </p>
+
+                    <h2 class="font-sora text-lg font-semibold">
+                        Important information
+                    </h2>
+
+                </div>
+
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+
+                    <div class="rules-item rounded-xl bg-slate-50 p-4 flex gap-3">
+
+                        <i class='bx bx-check-circle text-emerald-500 text-xl shrink-0'></i>
+
+                        <p class="text-sm muted text-slate-600 leading-6">
+                            You can open a maximum of 3 mystery boxes per day.
+                        </p>
+
+                    </div>
+
+
+                    <div class="rules-item rounded-xl bg-slate-50 p-4 flex gap-3">
+
+                        <i class='bx bx-check-circle text-emerald-500 text-xl shrink-0'></i>
+
+                        <p class="text-sm muted text-slate-600 leading-6">
+                            All three boxes are available for you to choose from.
+                        </p>
+
+                    </div>
+
+
+                    <div class="rules-item rounded-xl bg-slate-50 p-4 flex gap-3">
+
+                        <i class='bx bx-check-circle text-emerald-500 text-xl shrink-0'></i>
+
+                        <p class="text-sm muted text-slate-600 leading-6">
+                            Each box contains an eligible reward between $1 and $5.
+                        </p>
+
+                    </div>
+
+
+                    <div class="rules-item rounded-xl bg-slate-50 p-4 flex gap-3">
+
+                        <i class='bx bx-check-circle text-emerald-500 text-xl shrink-0'></i>
+
+                        <p class="text-sm muted text-slate-600 leading-6">
+                            A box can only be opened once during the daily cycle.
+                        </p>
+
+                    </div>
+
+
+                    <div class="rules-item rounded-xl bg-slate-50 p-4 flex gap-3">
+
+                        <i class='bx bx-check-circle text-emerald-500 text-xl shrink-0'></i>
+
+                        <p class="text-sm muted text-slate-600 leading-6">
+                            Rewards are determined and credited by the backend.
+                        </p>
+
+                    </div>
+
+
+                    <div class="rules-item rounded-xl bg-slate-50 p-4 flex gap-3">
+
+                        <i class='bx bx-check-circle text-emerald-500 text-xl shrink-0'></i>
+
+                        <p class="text-sm muted text-slate-600 leading-6">
+                            Duplicate or replayed box-opening requests must be rejected.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="mt-5 pt-5 border-t border-soft">
+
+                    <div class="flex items-center gap-2">
+
+                        <i class='bx bx-info-circle text-slate-400'></i>
+
+                        <p class="text-xs muted text-slate-500">
+
+                            Currency:
+                            <strong>$1 = ₦1,000</strong>
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- ================= MOBILE NAV ================= -->
+
+    <nav class="bottom-nav">
+
+        <a href="dashboard.html">
+
+            <i class='bx bx-grid-alt'></i>
+
+            <span>
+                Home
+            </span>
+
+        </a>
+
+
+        <a href="tasks.html">
+
+            <i class='bx bx-task'></i>
+
+            <span>
+                Tasks
+            </span>
+
+        </a>
+
+
+        <a href="mystery-box.html" class="active">
+
+            <i class='bx bx-gift'></i>
+
+            <span>
+                Boxes
+            </span>
+
+        </a>
+
+
+        <a href="withdrawal.html">
+
+            <i class='bx bx-wallet'></i>
+
+            <span>
+                Wallet
+            </span>
+
+        </a>
+
+
+        <a href="settings.html">
+
+            <i class='bx bx-user'></i>
+
+            <span>
+                Profile
+            </span>
+
+        </a>
+
+    </nav>
+
+
+    <!-- ================= OPEN BOX MODAL ================= -->
+
+    <div id="openBoxModal" class="modal-backdrop">
+
+        <div class="modal surface">
+
+            <div class="flex items-start justify-between mb-5">
+
+                <div
+                    class="w-11 h-11 rounded-xl flex items-center justify-center"
+                    style="background: var(--soft-green);">
+
+                    <i
+                        class='bx bx-gift text-2xl'
+                        style="color: var(--green);">
+                    </i>
+
+                </div>
+
+
+                <button
+                    id="closeOpenModal"
+                    class="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800">
+
+                    <i class='bx bx-x text-xl'></i>
+
+                </button>
+
+            </div>
+
+
+            <p class="text-xs uppercase tracking-wider text-emerald-600 mb-2">
+                Mystery Box
+            </p>
+
+
+            <h2
+                id="openModalTitle"
+                class="font-sora text-xl font-bold mb-2">
+
+                Open Mystery Box
+
+            </h2>
+
+
+            <p class="text-sm muted text-slate-500 leading-6 mb-5">
+
+                You selected this mystery box. Open it to discover the
+                reward hidden inside.
+
+            </p>
+
+
+            <div class="reward-box p-5 text-center mb-5">
+
+                <i
+                    class='bx bx-gift text-4xl'
+                    style="color: var(--green);">
+                </i>
+
+
+                <p class="text-xs muted text-slate-500 mt-3">
+                    Hidden reward
+                </p>
+
+
+                <p class="font-sora text-lg font-semibold mt-1">
+                    $1.00 – $5.00
+                </p>
+
+            </div>
+
+
+            <div class="flex gap-3">
+
+                <button
+                    id="cancelOpenBtn"
+                    class="flex-1 py-3 rounded-xl outline-button text-sm font-semibold">
+
+                    Cancel
+
+                </button>
+
+
+                <button
+                    id="confirmOpenBtn"
+                    class="flex-1 py-3 rounded-xl green-button text-sm font-semibold">
+
+                    Open Box
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= REWARD MODAL ================= -->
+
+    <div id="rewardModal" class="modal-backdrop">
+
+        <div class="modal surface text-center">
+
+            <div class="flex justify-end">
+
+                <button
+                    id="closeRewardModal"
+                    class="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800">
+
+                    <i class='bx bx-x text-xl'></i>
+
+                </button>
+
+            </div>
+
+
+            <div class="reward-reveal">
+
+                <div
+                    class="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4"
+                    style="background: var(--soft-green);">
+
+                    <i
+                        class='bx bx-gift text-4xl'
+                        style="color: var(--green);">
+                    </i>
+
+                </div>
+
+
+                <p class="text-xs uppercase tracking-wider text-emerald-600 font-semibold mb-2">
+                    Congratulations!
+                </p>
+
+
+                <h2 class="font-sora text-xl font-bold">
+                    You opened a Mystery Box
+                </h2>
+
+
+                <p class="text-sm muted text-slate-500 mt-2">
+                    Your hidden reward is:
+                </p>
+
+
+                <div class="py-5">
+
+                    <p
+                        id="rewardAmount"
+                        class="reward-number text-5xl"
+                        style="color: var(--green);">
+
+                        $0.00
+
+                    </p>
+
+
+                    <p
+                        id="rewardNaira"
+                        class="text-sm muted text-slate-500 mt-2">
+
+                        ≈ ₦0
+
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="rounded-xl p-3 text-xs text-slate-600 dark:text-slate-300"
+                    style="background: var(--soft-green);">
+
+                    Your eligible reward has been recorded.
+
+                </div>
+
+
+                <button
+                    id="continueRewardBtn"
+                    class="w-full py-3 rounded-xl green-button text-sm font-semibold mt-5">
+
+                    Continue
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script>
+
+        /* =====================================================
+           VALIDATED USER STATE
+           Production values must come from the backend.
+        ===================================================== */
+
+        const user = {
+
+            validated: true,
+
+            balanceUsd: 0,
+
+            totalMysteryBoxEarningsUsd: 0
+
+        };
+
+
+        /* =====================================================
+           MYSTERY BOX STATE
+
+           IMPORTANT:
+           The three boxes are independent choices.
+
+           There is NO sequential unlocking.
+        ===================================================== */
+
+        const mysteryBoxes = {
+
+            1: {
+                opened: false,
+                reward: null
+            },
+
+            2: {
+                opened: false,
+                reward: null
+            },
+
+            3: {
+                opened: false,
+                reward: null
+            }
+
+        };
+
+
+        let selectedBox = null;
+
+        let todayEarnings = 0;
+
+
+        /* =====================================================
+           DEMO REWARDS
+
+           DEMO ONLY.
+
+           In production the backend should determine the
+           reward after securely validating the request.
+
+           Never trust a frontend-generated reward.
+        ===================================================== */
+
+        const demoRewards = [
+            1,
+            2,
+            3,
+            4,
+            5
+        ];
+
+
+        /* =====================================================
+           ELEMENTS
+        ===================================================== */
+
+        const openBoxModal =
+            document.getElementById('openBoxModal');
+
+        const rewardModal =
+            document.getElementById('rewardModal');
+
+        const openModalTitle =
+            document.getElementById('openModalTitle');
+
+        const rewardAmount =
+            document.getElementById('rewardAmount');
+
+        const rewardNaira =
+            document.getElementById('rewardNaira');
+
+
+        /* =====================================================
+           SELECT BOX
+        ===================================================== */
+
+        function selectBox(boxNumber) {
+
+            const box = mysteryBoxes[boxNumber];
+
+            if (!box) {
+                return;
+            }
+
+
+            if (box.opened) {
+                return;
+            }
+
+
+            const openedCount =
+                getOpenedCount();
+
+
+            if (openedCount >= 3) {
+
+                showToast(
+                    'You have opened all 3 boxes for today.'
+                );
+
+                return;
+
+            }
+
+
+            selectedBox = boxNumber;
+
+
+            openModalTitle.textContent =
+                `Open Mystery Box 0${boxNumber}`;
+
+
+            openBoxModal.classList.add('show');
+
+        }
+
+
+        /* =====================================================
+           CLOSE OPEN MODAL
+        ===================================================== */
+
+        function closeOpenModal() {
+
+            openBoxModal.classList.remove('show');
+
+            selectedBox = null;
+
+        }
+
+
+        /* =====================================================
+           CONFIRM OPEN
+        ===================================================== */
+
+        async function confirmOpenBox() {
+
+            if (!selectedBox) {
+                return;
+            }
+
+
+            const boxNumber = selectedBox;
+
+
+            const box = mysteryBoxes[boxNumber];
+
+
+            if (!box || box.opened) {
+
+                closeOpenModal();
+
+                return;
+
+            }
+
+
+            const button =
+                document.getElementById(
+                    'confirmOpenBtn'
+                );
+
+
+            button.disabled = true;
+
+            button.innerHTML =
+                "<i class='bx bx-loader-alt bx-spin mr-1'></i> Opening...";
+
+
+            /*
+                =================================================
+                PRODUCTION BACKEND FLOW
+
+                Replace this demo section with something similar
+                to:
+
+                POST /api/user/mystery-box/open
+
+                Body:
+                {
+                    boxId: boxNumber
+                }
+
+                Backend must verify:
+
+                - authenticated user
+                - dashboard validation
+                - current daily cycle
+                - box has not already been opened
+                - maximum 3 boxes per day
+                - valid box ID
+                - reward eligibility
+                - duplicate/replay protection
+                - transaction creation
+                - balance update
+
+                The backend should return:
+
+                {
+                    success: true,
+                    rewardUsd: 3.00,
+                    transactionId: "..."
+                }
+
+                Never calculate the real reward here.
+                =================================================
+            */
+
+
+            await new Promise(resolve =>
+                setTimeout(resolve, 700)
+            );
+
+
+            /*
+                DEMO ONLY
+            */
+
+            const reward =
+                demoRewards[
+                    Math.floor(
+                        Math.random() *
+                        demoRewards.length
+                    )
+                ];
+
+
+            box.opened = true;
+
+            box.reward = reward;
+
+
+            todayEarnings += reward;
+
+
+            user.balanceUsd += reward;
+
+            user.totalMysteryBoxEarningsUsd += reward;
+
+
+            closeOpenModal();
+
+
+            showReward(
+                reward
+            );
+
+
+            updatePage();
+
+
+            button.disabled = false;
+
+            button.innerHTML =
+                "<i class='bx bx-gift mr-1'></i> Open Box";
+
+        }
+
+
+        /* =====================================================
+           SHOW REWARD
+        ===================================================== */
+
+        function showReward(reward) {
+
+            rewardAmount.textContent =
+                `$${reward.toFixed(2)}`;
+
+
+            rewardNaira.textContent =
+                `≈ ₦${formatNaira(reward * 1000)}`;
+
+
+            rewardModal.classList.add('show');
+
+        }
+
+
+        /* =====================================================
+           CLOSE REWARD MODAL
+        ===================================================== */
+
+        function closeRewardModal() {
+
+            rewardModal.classList.remove('show');
+
+        }
+
+
+        /* =====================================================
+           GET OPENED COUNT
+        ===================================================== */
+
+        function getOpenedCount() {
+
+            return Object.values(
+                mysteryBoxes
+            ).filter(box => box.opened).length;
+
+        }
+
+
+        /* =====================================================
+           UPDATE BOX
+        ===================================================== */
+
+        function updateBox(boxNumber) {
+
+            const box =
+                mysteryBoxes[boxNumber];
+
+            const card =
+                document.getElementById(
+                    `boxCard${boxNumber}`
+                );
+
+            const status =
+                document.getElementById(
+                    `boxStatus${boxNumber}`
+                );
+
+            const button =
+                document.getElementById(
+                    `openButton${boxNumber}`
+                );
+
+            const gift =
+                document.getElementById(
+                    `giftBox${boxNumber}`
+                );
+
+
+            if (!box.opened) {
+
+                card.classList.add(
+                    'available'
+                );
+
+                card.classList.remove(
+                    'claimed'
+                );
+
+                gift.classList.remove(
+                    'claimed-box'
+                );
+
+
+                status.textContent =
+                    'Available';
+
+
+                status.style.background =
+                    'var(--soft-green)';
+
+                status.style.color =
+                    '#087443';
+
+
+                button.disabled = false;
+
+                button.className =
+                    'w-full py-3 rounded-xl green-button text-sm font-semibold';
+
+                button.innerHTML =
+                    "<i class='bx bx-gift mr-1'></i> Open Box";
+
+
+                return;
+
+            }
+
+
+            card.classList.remove(
+                'available'
+            );
+
+            card.classList.add(
+                'claimed'
+            );
+
+
+            gift.classList.add(
+                'claimed-box'
+            );
+
+
+            status.textContent =
+                'Claimed';
+
+
+            status.style.background =
+                '#ECFDF3';
+
+            status.style.color =
+                '#087443';
+
+
+            button.disabled = true;
+
+            button.className =
+                'w-full py-3 rounded-xl bg-slate-100 text-slate-400 text-sm font-semibold cursor-not-allowed dark:bg-slate-800 dark:text-slate-500';
+
+
+            button.innerHTML =
+                "<i class='bx bx-check mr-1'></i> Opened";
+
+        }
+
+
+        /* =====================================================
+           UPDATE PAGE
+        ===================================================== */
+
+        function updatePage() {
+
+            const opened =
+                getOpenedCount();
+
+
+            document.getElementById(
+                'headerBoxCount'
+            ).textContent =
+                opened;
+
+
+            document.getElementById(
+                'openedCount'
+            ).textContent =
+                opened;
+
+
+            document.getElementById(
+                'boxProgressText'
+            ).textContent =
+                `${opened} / 3`;
+
+
+            document.getElementById(
+                'totalOpened'
+            ).textContent =
+                opened;
+
+
+            document.getElementById(
+                'todayEarnings'
+            ).textContent =
+                todayEarnings.toFixed(2);
+
+
+            document.getElementById(
+                'statsTodayEarnings'
+            ).textContent =
+                `$${todayEarnings.toFixed(2)}`;
+
+
+            document.getElementById(
+                'totalEarnings'
+            ).textContent =
+                `$${user.totalMysteryBoxEarningsUsd.toFixed(2)}`;
+
+
+            document.getElementById(
+                'todayNaira'
+            ).textContent =
+                formatNaira(
+                    todayEarnings * 1000
+                );
+
+
+            const progress =
+                (opened / 3) * 100;
+
+
+            document.getElementById(
+                'boxProgress'
+            ).style.width =
+                `${progress}%`;
+
+
+            updateBox(1);
+            updateBox(2);
+            updateBox(3);
+
+
+            if (opened === 3) {
+
+                document.querySelectorAll(
+                    '.box-card.available'
+                ).forEach(card => {
+
+                    card.classList.remove(
+                        'available'
+                    );
+
+                });
+
+            }
+
+        }
+
+
+        /* =====================================================
+           NAIRA FORMAT
+        ===================================================== */
+
+        function formatNaira(value) {
+
+            return new Intl.NumberFormat(
+                'en-NG'
+            ).format(
+                Math.round(value)
+            );
+
+        }
+
+
+        /* =====================================================
+           TOAST
+        ===================================================== */
+
+        function showToast(message) {
+
+            const toast =
+                document.createElement('div');
+
+
+            toast.className =
+                'fixed bottom-24 md:bottom-6 right-5 z-[200] bg-[#071A2B] text-white px-4 py-3 rounded-xl shadow-xl text-sm';
+
+
+            toast.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <i class="bx bx-info-circle text-emerald-400"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+
+            document.body.appendChild(
+                toast
+            );
+
+
+            setTimeout(() => {
+
+                toast.remove();
+
+            }, 2500);
+
+        }
+
+
+        /* =====================================================
+           THEME
+        ===================================================== */
+
+        const themeBtn =
+            document.getElementById(
+                'themeBtn'
+            );
+
+        const themeIcon =
+            document.getElementById(
+                'themeIcon'
+            );
+
+
+        function updateThemeIcon() {
+
+            if (
+                document.documentElement
+                    .classList.contains('dark')
+            ) {
+
+                themeIcon.className =
+                    'bx bx-sun text-lg';
+
+            } else {
+
+                themeIcon.className =
+                    'bx bx-moon text-lg';
+
+            }
+
+        }
+
+
+        if (
+            localStorage.getItem(
+                'optify-theme'
+            ) === 'dark'
+        ) {
+
+            document.documentElement
+                .classList.add('dark');
+
+        }
+
+
+        updateThemeIcon();
+
+
+        themeBtn.addEventListener(
+            'click',
+            () => {
+
+                document.documentElement
+                    .classList.toggle('dark');
+
+
+                const dark =
+                    document.documentElement
+                        .classList.contains('dark');
+
+
+                localStorage.setItem(
+                    'optify-theme',
+                    dark
+                        ? 'dark'
+                        : 'light'
+                );
+
+
+                updateThemeIcon();
+
+            }
+        );
+
+
+        /* =====================================================
+           MOBILE SIDEBAR
+        ===================================================== */
+
+        const sidebar =
+            document.getElementById(
+                'sidebar'
+            );
+
+        const menuBtn =
+            document.getElementById(
+                'menuBtn'
+            );
+
+        const mobileOverlay =
+            document.getElementById(
+                'mobileOverlay'
+            );
+
+
+        function closeSidebar() {
+
+            sidebar.classList.remove(
+                'open'
+            );
+
+            mobileOverlay.classList.remove(
+                'show'
+            );
+
+        }
+
+
+        menuBtn.addEventListener(
+            'click',
+            () => {
+
+                sidebar.classList.add(
+                    'open'
+                );
+
+                mobileOverlay.classList.add(
+                    'show'
+                );
+
+            }
+        );
+
+
+        mobileOverlay.addEventListener(
+            'click',
+            closeSidebar
+        );
+
+
+        /* =====================================================
+           MODAL EVENTS
+        ===================================================== */
+
+        document.getElementById(
+            'closeOpenModal'
+        ).addEventListener(
+            'click',
+            closeOpenModal
+        );
+
+
+        document.getElementById(
+            'cancelOpenBtn'
+        ).addEventListener(
+            'click',
+            closeOpenModal
+        );
+
+
+        document.getElementById(
+            'confirmOpenBtn'
+        ).addEventListener(
+            'click',
+            confirmOpenBox
+        );
+
+
+        document.getElementById(
+            'closeRewardModal'
+        ).addEventListener(
+            'click',
+            closeRewardModal
+        );
+
+
+        document.getElementById(
+            'continueRewardBtn'
+        ).addEventListener(
+            'click',
+            closeRewardModal
+        );
+
+
+        openBoxModal.addEventListener(
+            'click',
+            event => {
+
+                if (
+                    event.target ===
+                    openBoxModal
+                ) {
+
+                    closeOpenModal();
+
+                }
+
+            }
+        );
+
+
+        rewardModal.addEventListener(
+            'click',
+            event => {
+
+                if (
+                    event.target ===
+                    rewardModal
+                ) {
+
+                    closeRewardModal();
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           LOGOUT
+        ===================================================== */
+
+        document.getElementById(
+            'logoutBtn'
+        ).addEventListener(
+            'click',
+            () => {
+
+                /*
+                    Production:
+
+                    await signOut(auth);
+
+                    Then redirect to login.html.
+                */
+
+                window.location.href =
+                    'login.html';
+
+            }
+        );
+
+
+        /* =====================================================
+           INITIAL PAGE STATE
+        ===================================================== */
+
+        updatePage();
+
+
+        /*
+            =====================================================
+            PRODUCTION BACKEND ENDPOINTS
+            =====================================================
+
+            GET
+
+            /api/user/mystery-box
+
+            Should return:
+
+            {
+                validated: true,
+                boxesOpenedToday: 0,
+                todayEarningsUsd: 0,
+                totalEarningsUsd: 0,
+                boxes: [
+                    {
+                        id: "box_1",
+                        opened: false
+                    },
+                    {
+                        id: "box_2",
+                        opened: false
+                    },
+                    {
+                        id: "box_3",
+                        opened: false
+                    }
+                ]
+            }
+
+
+            POST
+
+            /api/user/mystery-box/open
+
+            Request:
+
+            {
+                boxId: "box_1"
+            }
+
+
+            Backend should:
+
+            1. Authenticate the user.
+
+            2. Confirm dashboard validation.
+
+            3. Confirm the selected box exists.
+
+            4. Confirm the selected box has not
+               already been opened.
+
+            5. Confirm the user has not exceeded
+               3 boxes for the current day.
+
+            6. Determine the eligible reward.
+
+            7. Record the reward transaction.
+
+            8. Update the user's balance atomically.
+
+            9. Mark that specific box as opened.
+
+            10. Return the actual reward.
+
+            The frontend must never be trusted to:
+
+            - choose the real reward
+            - credit the user's balance
+            - bypass validation
+            - open a box twice
+            - create financial transactions
+            - change the daily limit
+        */
+
+
+    </script>
+
+</body>
+</html>

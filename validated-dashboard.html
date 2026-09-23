@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Optify — Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #12B76A;
+            --primary-dark: #0E9958;
+            --teal: #0EA5A4;
+
+            --background: #F7F9FC;
+            --surface: #FFFFFF;
+            --surface-soft: #F9FAFB;
+
+            --text: #101828;
+            --muted: #667085;
+            --border: #E4E7EC;
+
+            --navy: #071A2B;
+            --navy-2: #0B3043;
+
+            --success-bg: #E8F8F0;
+            --warning: #F79009;
+            --danger: #F04438;
+
+            --shadow: 0 8px 30px rgba(16, 24, 40, 0.055);
+            --shadow-hover: 0 14px 35px rgba(16, 24, 40, 0.09);
+        }
+
+        body.dark {
+            --background: #08131F;
+            --surface: #0F1F2D;
+            --surface-soft: #132636;
+
+            --text: #F8FAFC;
+            --muted: #98A2B3;
+            --border: #223746;
+
+            --navy: #07131E;
+            --navy-2: #102D3D;
+
+            --success-bg: rgba(18, 183, 106, .12);
+
+            --shadow: 0 8px 30px rgba(0, 0, 0, .16);
+            --shadow-hover: 0 14px 35px rgba(0, 0, 0, .24);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background: var(--background);
+            color: var(--text);
+            transition:
+                background-color .25s ease,
+                color .25s ease;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-sora {
+            font-family: "Sora", sans-serif;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .sidebar {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+        }
+
+        .sidebar-link {
+            color: var(--muted);
+            transition: all .2s ease;
+        }
+
+        .sidebar-link:hover {
+            color: var(--text);
+            background: var(--surface-soft);
+        }
+
+        .sidebar-link.active {
+            background: rgba(18, 183, 106, .10);
+            color: var(--primary);
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease,
+                background-color .25s ease,
+                border-color .25s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .balance-card {
+            background:
+                radial-gradient(circle at 88% 20%, rgba(18, 183, 106, .28), transparent 28%),
+                linear-gradient(135deg, #071A2B 0%, #0B3043 58%, #087C68 100%);
+            color: white;
+            border: none;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .balance-card::after {
+            content: "";
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            right: -90px;
+            bottom: -150px;
+            border-radius: 50%;
+            background: rgba(18, 183, 106, .15);
+        }
+
+        .balance-card-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .balance-number {
+            letter-spacing: -1.8px;
+        }
+
+        .task-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-card::after {
+            content: "";
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            right: -35px;
+            top: -35px;
+            border-radius: 50%;
+            background: rgba(18, 183, 106, .06);
+            pointer-events: none;
+        }
+
+        .icon-box {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            flex-shrink: 0;
+        }
+
+        .progress-track {
+            height: 7px;
+            width: 100%;
+            border-radius: 999px;
+            background: var(--border);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--teal), var(--primary));
+        }
+
+        .theme-toggle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: .2s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-1px);
+            border-color: rgba(18, 183, 106, .4);
+            color: var(--primary);
+        }
+
+        .notification-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-dot {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--primary);
+            top: 8px;
+            right: 9px;
+            border: 2px solid var(--surface);
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #D9FBEA, #B7F0D2);
+            color: #087A48;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .dark .avatar {
+            background: #164C3A;
+            color: #8CF2BF;
+        }
+
+        .action-btn {
+            transition: .2s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
+
+        .toast {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            z-index: 100;
+            background: var(--text);
+            color: var(--surface);
+            padding: 13px 17px;
+            border-radius: 12px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, .18);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(120px);
+            opacity: 0;
+            pointer-events: none;
+            transition: .3s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .mobile-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .45);
+            z-index: 40;
+            opacity: 0;
+            visibility: hidden;
+            transition: .25s ease;
+        }
+
+        .mobile-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 1023px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 270px;
+                z-index: 50;
+                transform: translateX(-100%);
+                transition: transform .28s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .main-content {
+                padding-bottom: 92px;
+            }
+
+            .balance-number {
+                font-size: 35px !important;
+            }
+
+            .mobile-bottom-nav {
+                display: flex !important;
+            }
+
+            .toast {
+                left: 16px;
+                right: 16px;
+                bottom: 82px;
+            }
+        }
+
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 68px;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            z-index: 35;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .bottom-link {
+            color: var(--muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .bottom-link i {
+            font-size: 21px;
+        }
+
+        .bottom-link.active {
+            color: var(--primary);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            scrollbar-width: none;
+        }
+
+        .menu-button {
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar flex flex-col fixed left-0 top-0 bottom-0 w-[255px] z-50" id="sidebar">
+
+        <!-- Logo -->
+        <div class="h-[82px] px-7 flex items-center border-b" style="border-color: var(--border);">
+            <a href="dashboard.html" class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white"
+                     style="background: linear-gradient(135deg, #12B76A, #0EA5A4);">
+                    <i class='bx bx-shape-polygon text-xl'></i>
+                </div>
+
+                <span class="font-sora text-xl font-bold tracking-tight">
+                    Optify
+                </span>
+            </a>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex-1 overflow-y-auto px-4 py-6 no-scrollbar">
+
+            <p class="text-[10px] font-bold uppercase tracking-[.14em] mb-3 px-3"
+               style="color: var(--muted);">
+                Main Menu
+            </p>
+
+            <nav class="space-y-1">
+
+                <a href="dashboard.html" class="sidebar-link active flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold">
+                    <i class='bx bx-grid-alt text-[20px]'></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="tasks.html" class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium">
+                    <i class='bx bx-task text-[20px]'></i>
+                    <span>Tasks</span>
+                </a>
+
+                <a href="streak.html" class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium">
+                    <i class='bx bx-flame text-[20px]'></i>
+                    <span>Streak</span>
+                </a>
+
+                <a href="mystery-box.html" class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium">
+                    <i class='bx bx-gift text-[20px]'></i>
+                    <span>Mystery Box</span>
+                </a>
+
+                <a href="quiz.html" class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium">
+                    <i class='bx bx-brain text-[20px]'></i>
+                    <span>Quiz</span>
+                </a>
+
+                <a href="referral.html" class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium">
+                    <i class='bx bx-group text-[20px]'></i>
+                    <span>Referral</span>
+                </a>
+
+            </nav>
+
+            <p class="text-[10px] font-bold uppercase tracking-[.14em] mb-3 mt-8 px-3"
+               style="color: var(--muted);">
+                Money
+            </p>
+
+            <nav class="space-y-1">
+
+                <a href="withdrawal.html" class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium">
+                    <i class='bx bx-wallet text-[20px]'></i>
+                    <span>Withdrawal</span>
+                </a>
+
+                <a href="transactions.html" class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium">
+                    <i class='bx bx-receipt text-[20px]'></i>
+                    <span>Transactions</span>
+                </a>
+
+            </nav>
+
+            <p class="text-[10px] font-bold uppercase tracking-[.14em] mb-3 mt-8 px-3"
+               style="color: var(--muted);">
+                Account
+            </p>
+
+            <nav class="space-y-1">
+
+                <a href="settings.html" class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium">
+                    <i class='bx bx-cog text-[20px]'></i>
+                    <span>Settings</span>
+                </a>
+
+                <a href="#" id="supportLink" class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium">
+                    <i class='bx bx-help-circle text-[20px]'></i>
+                    <span>Help & Support</span>
+                </a>
+
+            </nav>
+
+        </div>
+
+        <!-- Profile / Logout -->
+        <div class="p-4 border-t" style="border-color: var(--border);">
+
+            <div class="flex items-center gap-3 p-2 mb-2">
+                <div class="avatar">
+                    DG
+                </div>
+
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-semibold truncate" id="sidebarName">
+                        David
+                    </p>
+
+                    <p class="text-[11px] truncate" style="color: var(--muted);">
+                        Optify Member
+                    </p>
+                </div>
+            </div>
+
+            <button id="logoutBtn"
+                    class="sidebar-link w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                <i class='bx bx-log-out text-[19px]'></i>
+                <span>Logout</span>
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- Main -->
+    <main class="main-content lg:ml-[255px] min-h-screen">
+
+        <!-- Header -->
+        <header class="h-[82px] flex items-center justify-between px-5 sm:px-7 lg:px-9 sticky top-0 z-30"
+                style="background: color-mix(in srgb, var(--background) 92%, transparent); backdrop-filter: blur(14px);">
+
+            <div class="flex items-center gap-3">
+
+                <button class="menu-button lg:hidden" id="menuBtn">
+                    <i class='bx bx-menu text-xl'></i>
+                </button>
+
+                <div>
+                    <p class="text-xs sm:text-sm" style="color: var(--muted);">
+                        Good afternoon
+                    </p>
+
+                    <h1 class="font-sora text-base sm:text-lg font-semibold mt-0.5">
+                        Welcome back, <span id="greetingName">David</span> 👋
+                    </h1>
+                </div>
+
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+
+                <!-- Notification -->
+                <button class="notification-btn" id="notificationBtn" aria-label="Notifications">
+                    <i class='bx bx-bell text-xl'></i>
+                    <span class="notification-dot"></span>
+                </button>
+
+                <!-- Theme -->
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <i class='bx bx-moon text-xl' id="themeIcon"></i>
+                </button>
+
+                <!-- Avatar -->
+                <button class="avatar hidden sm:flex">
+                    DG
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- Content -->
+        <div class="px-5 sm:px-7 lg:px-9 pb-10">
+
+            <!-- Top Grid -->
+            <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.55fr)_minmax(300px,.8fr)] gap-5 mb-6">
+
+                <!-- Balance Card -->
+                <section class="balance-card rounded-[24px] p-6 sm:p-7">
+
+                    <div class="balance-card-content">
+
+                        <div class="flex items-start justify-between gap-5">
+
+                            <div>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="text-sm text-white/65">
+                                        Available Balance
+                                    </span>
+
+                                    <button id="balanceVisibility" class="text-white/60 hover:text-white transition">
+                                        <i class='bx bx-show text-lg' id="balanceEye"></i>
+                                    </button>
+                                </div>
+
+                                <div class="flex items-end gap-3">
+                                    <h2 class="font-sora text-[42px] sm:text-[48px] font-semibold balance-number"
+                                        id="balanceAmount">
+                                        $24.50
+                                    </h2>
+                                </div>
+
+                                <p class="text-sm text-white/60 mt-1">
+                                    ≈ <span id="nairaBalance">₦24,500</span>
+                                </p>
+                            </div>
+
+                            <div class="hidden sm:flex w-12 h-12 rounded-2xl items-center justify-center"
+                                 style="background: rgba(255,255,255,.10);">
+                                <i class='bx bx-wallet text-2xl'></i>
+                            </div>
+
+                        </div>
+
+
+                        <div class="grid grid-cols-3 gap-3 mt-7">
+
+                            <div class="rounded-2xl p-3 sm:p-4"
+                                 style="background: rgba(255,255,255,.075);">
+                                <p class="text-[10px] sm:text-xs text-white/55">
+                                    Total Earned
+                                </p>
+
+                                <p class="font-sora text-sm sm:text-lg font-semibold mt-1">
+                                    $48.50
+                                </p>
+                            </div>
+
+                            <div class="rounded-2xl p-3 sm:p-4"
+                                 style="background: rgba(255,255,255,.075);">
+                                <p class="text-[10px] sm:text-xs text-white/55">
+                                    Pending
+                                </p>
+
+                                <p class="font-sora text-sm sm:text-lg font-semibold mt-1">
+                                    $0.00
+                                </p>
+                            </div>
+
+                            <div class="rounded-2xl p-3 sm:p-4"
+                                 style="background: rgba(255,255,255,.075);">
+                                <p class="text-[10px] sm:text-xs text-white/55">
+                                    Withdrawn
+                                </p>
+
+                                <p class="font-sora text-sm sm:text-lg font-semibold mt-1">
+                                    $0.00
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex flex-wrap gap-3 mt-6">
+
+                            <button onclick="window.location.href='withdrawal.html'"
+                                    class="px-5 py-3 rounded-xl bg-white text-[#071A2B] text-sm font-semibold hover:bg-gray-100 transition">
+                                Withdraw Funds
+                            </button>
+
+                            <button onclick="window.location.href='transactions.html'"
+                                    class="px-5 py-3 rounded-xl text-white text-sm font-semibold transition"
+                                    style="background: rgba(255,255,255,.10);">
+                                View Transactions
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Account Status -->
+                <section class="card rounded-[24px] p-6 flex flex-col justify-between">
+
+                    <div>
+
+                        <div class="flex items-start justify-between">
+
+                            <div>
+                                <p class="text-sm" style="color: var(--muted);">
+                                    Account Status
+                                </p>
+
+                                <h2 class="font-sora text-xl font-semibold mt-1">
+                                    Dashboard Validated
+                                </h2>
+                            </div>
+
+                            <div class="w-11 h-11 rounded-2xl flex items-center justify-center"
+                                 style="background: var(--success-bg); color: var(--primary);">
+                                <i class='bx bx-check-shield text-2xl'></i>
+                            </div>
+
+                        </div>
+
+
+                        <div class="mt-6 p-4 rounded-2xl"
+                             style="background: var(--success-bg);">
+
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full flex items-center justify-center"
+                                     style="background: rgba(18,183,106,.14); color: var(--primary);">
+                                    <i class='bx bx-check text-xl'></i>
+                                </div>
+
+                                <div>
+                                    <p class="text-sm font-semibold">
+                                        Account is active
+                                    </p>
+
+                                    <p class="text-xs mt-0.5" style="color: var(--muted);">
+                                        Earning features are unlocked.
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mt-7">
+
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs" style="color: var(--muted);">
+                                Account setup
+                            </span>
+
+                            <span class="text-xs font-semibold" style="color: var(--primary);">
+                                100%
+                            </span>
+                        </div>
+
+                        <div class="progress-track">
+                            <div class="progress-fill" style="width: 100%;"></div>
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- Quick Actions -->
+            <section class="mb-7">
+
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="font-sora text-lg font-semibold">
+                        Quick Actions
+                    </h2>
+
+                    <a href="tasks.html"
+                       class="text-sm font-semibold"
+                       style="color: var(--primary);">
+                        View all
+                    </a>
+                </div>
+
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+
+                    <button onclick="window.location.href='streak.html'"
+                            class="card action-btn rounded-2xl p-4 text-left">
+
+                        <div class="icon-box mb-4"
+                             style="background: #FFF3E8; color: #F97316;">
+                            <i class='bx bx-flame text-xl'></i>
+                        </div>
+
+                        <p class="text-sm font-semibold">
+                            Streak
+                        </p>
+
+                        <p class="text-[11px] mt-1" style="color: var(--muted);">
+                            Daily rewards
+                        </p>
+
+                    </button>
+
+
+                    <button onclick="window.location.href='mystery-box.html'"
+                            class="card action-btn rounded-2xl p-4 text-left">
+
+                        <div class="icon-box mb-4"
+                             style="background: #FFF8DD; color: #D9A900;">
+                            <i class='bx bx-gift text-xl'></i>
+                        </div>
+
+                        <p class="text-sm font-semibold">
+                            Mystery Box
+                        </p>
+
+                        <p class="text-[11px] mt-1" style="color: var(--muted);">
+                            Open & earn
+                        </p>
+
+                    </button>
+
+
+                    <button onclick="window.location.href='quiz.html'"
+                            class="card action-btn rounded-2xl p-4 text-left">
+
+                        <div class="icon-box mb-4"
+                             style="background: #EEF4FF; color: #155EEF;">
+                            <i class='bx bx-brain text-xl'></i>
+                        </div>
+
+                        <p class="text-sm font-semibold">
+                            Quiz
+                        </p>
+
+                        <p class="text-[11px] mt-1" style="color: var(--muted);">
+                            Answer & earn
+                        </p>
+
+                    </button>
+
+
+                    <button onclick="window.location.href='referral.html'"
+                            class="card action-btn rounded-2xl p-4 text-left">
+
+                        <div class="icon-box mb-4"
+                             style="background: #E8F8F0; color: #12B76A;">
+                            <i class='bx bx-group text-xl'></i>
+                        </div>
+
+                        <p class="text-sm font-semibold">
+                            Referral
+                        </p>
+
+                        <p class="text-[11px] mt-1" style="color: var(--muted);">
+                            Earn $5
+                        </p>
+
+                    </button>
+
+
+                    <button onclick="window.location.href='withdrawal.html'"
+                            class="card action-btn rounded-2xl p-4 text-left">
+
+                        <div class="icon-box mb-4"
+                             style="background: #E9F8F8; color: #0EA5A4;">
+                            <i class='bx bx-money-withdraw text-xl'></i>
+                        </div>
+
+                        <p class="text-sm font-semibold">
+                            Withdraw
+                        </p>
+
+                        <p class="text-[11px] mt-1" style="color: var(--muted);">
+                            Cash out
+                        </p>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- Earning Features -->
+            <section class="mb-7">
+
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="font-sora text-lg font-semibold">
+                            Earn With Optify
+                        </h2>
+
+                        <p class="text-xs mt-1" style="color: var(--muted);">
+                            Complete activities and grow your balance.
+                        </p>
+                    </div>
+                </div>
+
+
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+
+                    <!-- Streak -->
+                    <article class="card task-card rounded-2xl p-5">
+
+                        <div class="flex items-center justify-between">
+
+                            <div class="icon-box"
+                                 style="background: #FFF3E8; color: #F97316;">
+                                <i class='bx bx-flame text-xl'></i>
+                            </div>
+
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold"
+                                  style="background: var(--success-bg); color: var(--primary);">
+                                $1.50 / claim
+                            </span>
+
+                        </div>
+
+                        <h3 class="font-sora text-base font-semibold mt-5">
+                            Daily Streak
+                        </h3>
+
+                        <p class="text-xs leading-5 mt-2" style="color: var(--muted);">
+                            Claim your morning, afternoon and night rewards.
+                        </p>
+
+                        <div class="mt-5">
+
+                            <div class="flex justify-between text-[11px] mb-2">
+                                <span style="color: var(--muted);">Today's progress</span>
+                                <span class="font-semibold">2 / 3</span>
+                            </div>
+
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width: 66%;"></div>
+                            </div>
+
+                        </div>
+
+                        <button onclick="window.location.href='streak.html'"
+                                class="mt-5 w-full py-2.5 rounded-xl text-sm font-semibold transition"
+                                style="background: var(--success-bg); color: var(--primary);">
+                            Continue
+                        </button>
+
+                    </article>
+
+
+                    <!-- Mystery Box -->
+                    <article class="card task-card rounded-2xl p-5">
+
+                        <div class="flex items-center justify-between">
+
+                            <div class="icon-box"
+                                 style="background: #FFF8DD; color: #D9A900;">
+                                <i class='bx bx-gift text-xl'></i>
+                            </div>
+
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold"
+                                  style="background: #FFF8DD; color: #A77D00;">
+                                $1 – $5
+                            </span>
+
+                        </div>
+
+                        <h3 class="font-sora text-base font-semibold mt-5">
+                            Mystery Box
+                        </h3>
+
+                        <p class="text-xs leading-5 mt-2" style="color: var(--muted);">
+                            Open up to three mystery boxes and discover your reward.
+                        </p>
+
+                        <div class="mt-5">
+
+                            <div class="flex justify-between text-[11px] mb-2">
+                                <span style="color: var(--muted);">Boxes opened</span>
+                                <span class="font-semibold">2 / 3</span>
+                            </div>
+
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width: 66%;"></div>
+                            </div>
+
+                        </div>
+
+                        <button onclick="window.location.href='mystery-box.html'"
+                                class="mt-5 w-full py-2.5 rounded-xl text-sm font-semibold"
+                                style="background: #FFF8DD; color: #A77D00;">
+                            Open Box
+                        </button>
+
+                    </article>
+
+
+                    <!-- Quiz -->
+                    <article class="card task-card rounded-2xl p-5">
+
+                        <div class="flex items-center justify-between">
+
+                            <div class="icon-box"
+                                 style="background: #EEF4FF; color: #155EEF;">
+                                <i class='bx bx-brain text-xl'></i>
+                            </div>
+
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold"
+                                  style="background: #EEF4FF; color: #155EEF;">
+                                $1 – $5
+                            </span>
+
+                        </div>
+
+                        <h3 class="font-sora text-base font-semibold mt-5">
+                            Quiz
+                        </h3>
+
+                        <p class="text-xs leading-5 mt-2" style="color: var(--muted);">
+                            Test your knowledge with available Optify quizzes.
+                        </p>
+
+                        <div class="mt-5 rounded-xl p-3"
+                             style="background: var(--surface-soft);">
+                            <div class="flex items-center gap-2">
+                                <i class='bx bx-check-circle'
+                                   style="color: var(--primary);"></i>
+                                <span class="text-xs font-medium">
+                                    Quiz available
+                                </span>
+                            </div>
+                        </div>
+
+                        <button onclick="window.location.href='quiz.html'"
+                                class="mt-5 w-full py-2.5 rounded-xl text-sm font-semibold"
+                                style="background: #EEF4FF; color: #155EEF;">
+                            Start Quiz
+                        </button>
+
+                    </article>
+
+
+                    <!-- Referral -->
+                    <article class="card task-card rounded-2xl p-5">
+
+                        <div class="flex items-center justify-between">
+
+                            <div class="icon-box"
+                                 style="background: #E8F8F0; color: #12B76A;">
+                                <i class='bx bx-group text-xl'></i>
+                            </div>
+
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold"
+                                  style="background: var(--success-bg); color: var(--primary);">
+                                $5 / referral
+                            </span>
+
+                        </div>
+
+                        <h3 class="font-sora text-base font-semibold mt-5">
+                            Referral
+                        </h3>
+
+                        <p class="text-xs leading-5 mt-2" style="color: var(--muted);">
+                            Invite friends and earn when eligible referrals validate.
+                        </p>
+
+                        <div class="mt-5 flex items-center justify-between rounded-xl p-3"
+                             style="background: var(--surface-soft);">
+                            <span class="text-xs" style="color: var(--muted);">
+                                Eligible referrals
+                            </span>
+
+                            <strong class="text-sm">
+                                8
+                            </strong>
+                        </div>
+
+                        <button onclick="window.location.href='referral.html'"
+                                class="mt-5 w-full py-2.5 rounded-xl text-sm font-semibold"
+                                style="background: var(--success-bg); color: var(--primary);">
+                            Invite Friends
+                        </button>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- Lower Grid -->
+            <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.3fr)_minmax(320px,.8fr)] gap-5">
+
+                <!-- Recent Activity -->
+                <section class="card rounded-[22px] overflow-hidden">
+
+                    <div class="p-5 sm:p-6 border-b flex items-center justify-between"
+                         style="border-color: var(--border);">
+
+                        <div>
+                            <h2 class="font-sora text-base font-semibold">
+                                Recent Activity
+                            </h2>
+
+                            <p class="text-xs mt-1" style="color: var(--muted);">
+                                Your latest account activity.
+                            </p>
+                        </div>
+
+                        <a href="transactions.html"
+                           class="text-xs font-semibold"
+                           style="color: var(--primary);">
+                            View all
+                        </a>
+
+                    </div>
+
+
+                    <div class="divide-y" style="border-color: var(--border);">
+
+                        <!-- Activity -->
+                        <div class="p-5 flex items-center gap-3">
+
+                            <div class="activity-icon"
+                                 style="background: #FFF3E8; color: #F97316;">
+                                <i class='bx bx-flame text-lg'></i>
+                            </div>
+
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold">
+                                    Streak reward
+                                </p>
+
+                                <p class="text-[11px] mt-1" style="color: var(--muted);">
+                                    Today, 8:42 AM
+                                </p>
+                            </div>
+
+                            <span class="text-sm font-semibold" style="color: var(--primary);">
+                                +$1.50
+                            </span>
+
+                        </div>
+
+
+                        <div class="p-5 flex items-center gap-3">
+
+                            <div class="activity-icon"
+                                 style="background: #FFF8DD; color: #D9A900;">
+                                <i class='bx bx-gift text-lg'></i>
+                            </div>
+
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold">
+                                    Mystery Box reward
+                                </p>
+
+                                <p class="text-[11px] mt-1" style="color: var(--muted);">
+                                    Yesterday, 4:20 PM
+                                </p>
+                            </div>
+
+                            <span class="text-sm font-semibold" style="color: var(--primary);">
+                                +$3.20
+                            </span>
+
+                        </div>
+
+
+                        <div class="p-5 flex items-center gap-3">
+
+                            <div class="activity-icon"
+                                 style="background: var(--success-bg); color: var(--primary);">
+                                <i class='bx bx-group text-lg'></i>
+                            </div>
+
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold">
+                                    Referral reward
+                                </p>
+
+                                <p class="text-[11px] mt-1" style="color: var(--muted);">
+                                    Yesterday, 1:12 PM
+                                </p>
+                            </div>
+
+                            <span class="text-sm font-semibold" style="color: var(--primary);">
+                                +$5.00
+                            </span>
+
+                        </div>
+
+
+                        <div class="p-5 flex items-center gap-3">
+
+                            <div class="activity-icon"
+                                 style="background: #EEF4FF; color: #155EEF;">
+                                <i class='bx bx-check-shield text-lg'></i>
+                            </div>
+
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold">
+                                    Dashboard validation
+                                </p>
+
+                                <p class="text-[11px] mt-1" style="color: var(--muted);">
+                                    Sep 20, 2026
+                                </p>
+                            </div>
+
+                            <span class="text-sm font-semibold" style="color: var(--muted);">
+                                -$5.00
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Right Column -->
+                <div class="space-y-5">
+
+                    <!-- Daily Progress -->
+                    <section class="card rounded-[22px] p-5 sm:p-6">
+
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="font-sora text-base font-semibold">
+                                    Today's Progress
+                                </h2>
+
+                                <p class="text-xs mt-1" style="color: var(--muted);">
+                                    Keep going to maximize your rewards.
+                                </p>
+                            </div>
+
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                                 style="background: var(--success-bg); color: var(--primary);">
+                                <i class='bx bx-trending-up text-xl'></i>
+                            </div>
+                        </div>
+
+
+                        <div class="space-y-5 mt-6">
+
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-xs font-medium">
+                                        Streak
+                                    </span>
+
+                                    <span class="text-xs" style="color: var(--muted);">
+                                        2 / 3
+                                    </span>
+                                </div>
+
+                                <div class="progress-track">
+                                    <div class="progress-fill" style="width: 66%;"></div>
+                                </div>
+                            </div>
+
+
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-xs font-medium">
+                                        Mystery Box
+                                    </span>
+
+                                    <span class="text-xs" style="color: var(--muted);">
+                                        2 / 3
+                                    </span>
+                                </div>
+
+                                <div class="progress-track">
+                                    <div class="progress-fill" style="width: 66%;"></div>
+                                </div>
+                            </div>
+
+
+                            <div>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-xs font-medium">
+                                        Quiz
+                                    </span>
+
+                                    <span class="text-xs" style="color: var(--muted);">
+                                        Available
+                                    </span>
+                                </div>
+
+                                <div class="progress-track">
+                                    <div class="progress-fill" style="width: 40%;"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- Referral -->
+                    <section class="card rounded-[22px] p-5 sm:p-6">
+
+                        <div class="flex items-start gap-3">
+
+                            <div class="icon-box"
+                                 style="background: var(--success-bg); color: var(--primary);">
+                                <i class='bx bx-user-plus text-xl'></i>
+                            </div>
+
+                            <div>
+                                <h2 class="font-sora text-base font-semibold">
+                                    Invite Friends
+                                </h2>
+
+                                <p class="text-xs leading-5 mt-1" style="color: var(--muted);">
+                                    Earn $5 for every eligible referral.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="mt-5 flex gap-2">
+
+                            <div class="flex-1 min-w-0 rounded-xl px-3 py-2.5 text-xs truncate"
+                                 style="background: var(--surface-soft); border: 1px solid var(--border);"
+                                 id="referralLink">
+                                optify.com/register?ref=David
+                            </div>
+
+                            <button id="copyReferral"
+                                    class="w-11 h-11 rounded-xl flex items-center justify-center text-white flex-shrink-0"
+                                    style="background: var(--primary);">
+                                <i class='bx bx-copy text-lg'></i>
+                            </button>
+
+                        </div>
+
+
+                        <div class="grid grid-cols-3 gap-2 mt-5">
+
+                            <div>
+                                <p class="text-[10px]" style="color: var(--muted);">
+                                    Referrals
+                                </p>
+                                <p class="font-sora text-sm font-semibold mt-1">
+                                    12
+                                </p>
+                            </div>
+
+                            <div>
+                                <p class="text-[10px]" style="color: var(--muted);">
+                                    Eligible
+                                </p>
+                                <p class="font-sora text-sm font-semibold mt-1">
+                                    8
+                                </p>
+                            </div>
+
+                            <div>
+                                <p class="text-[10px]" style="color: var(--muted);">
+                                    Earned
+                                </p>
+                                <p class="font-sora text-sm font-semibold mt-1">
+                                    $40
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- Conversion -->
+                    <section class="card rounded-[22px] p-5 sm:p-6">
+
+                        <div class="flex items-center justify-between">
+
+                            <div class="flex items-center gap-3">
+                                <div class="icon-box"
+                                     style="background: #EEF4FF; color: #155EEF;">
+                                    <i class='bx bx-transfer-alt text-xl'></i>
+                                </div>
+
+                                <div>
+                                    <h2 class="font-sora text-sm font-semibold">
+                                        Optify Conversion
+                                    </h2>
+
+                                    <p class="text-[11px] mt-1" style="color: var(--muted);">
+                                        Current display rate
+                                    </p>
+                                </div>
+                            </div>
+
+                            <strong class="font-sora text-sm">
+                                $1 = ₦1,000
+                            </strong>
+
+                        </div>
+
+
+                        <div class="grid grid-cols-3 gap-2 mt-5">
+
+                            <div class="rounded-xl p-3 text-center"
+                                 style="background: var(--surface-soft);">
+                                <p class="text-[10px]" style="color: var(--muted);">
+                                    $5
+                                </p>
+                                <p class="text-xs font-semibold mt-1">
+                                    ₦5,000
+                                </p>
+                            </div>
+
+                            <div class="rounded-xl p-3 text-center"
+                                 style="background: var(--surface-soft);">
+                                <p class="text-[10px]" style="color: var(--muted);">
+                                    $10
+                                </p>
+                                <p class="text-xs font-semibold mt-1">
+                                    ₦10,000
+                                </p>
+                            </div>
+
+                            <div class="rounded-xl p-3 text-center"
+                                 style="background: var(--surface-soft);">
+                                <p class="text-[10px]" style="color: var(--muted);">
+                                    $25
+                                </p>
+                                <p class="text-xs font-semibold mt-1">
+                                    ₦25,000
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </div>
+
+
+            <!-- Withdrawal Information -->
+            <section class="card rounded-[22px] mt-5 p-5 sm:p-6">
+
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+
+                    <div class="flex items-start gap-4">
+
+                        <div class="icon-box"
+                             style="background: #E9F8F8; color: #0EA5A4;">
+                            <i class='bx bx-money-withdraw text-xl'></i>
+                        </div>
+
+                        <div>
+                            <h2 class="font-sora text-base font-semibold">
+                                Withdrawal
+                            </h2>
+
+                            <p class="text-xs mt-1" style="color: var(--muted);">
+                                Minimum withdrawal is $10. Your current balance is available for withdrawal.
+                            </p>
+
+                            <div class="flex flex-wrap items-center gap-3 mt-3">
+
+                                <span class="inline-flex items-center gap-1.5 text-xs font-medium">
+                                    <i class='bx bx-check-circle'
+                                       style="color: var(--primary);"></i>
+                                    Account validated
+                                </span>
+
+                                <span class="text-xs" style="color: var(--border);">
+                                    •
+                                </span>
+
+                                <span class="text-xs" style="color: var(--muted);">
+                                    Minimum: $10
+                                </span>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <button onclick="window.location.href='withdrawal.html'"
+                            class="w-full md:w-auto px-6 py-3 rounded-xl text-white text-sm font-semibold"
+                            style="background: var(--navy);">
+                        Withdraw Funds
+                    </button>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+
+        <a href="dashboard.html" class="bottom-link active">
+            <i class='bx bx-grid-alt'></i>
+            <span>Home</span>
+        </a>
+
+        <a href="tasks.html" class="bottom-link">
+            <i class='bx bx-task'></i>
+            <span>Tasks</span>
+        </a>
+
+        <a href="referral.html" class="bottom-link">
+            <i class='bx bx-group'></i>
+            <span>Referral</span>
+        </a>
+
+        <a href="transactions.html" class="bottom-link">
+            <i class='bx bx-receipt'></i>
+            <span>History</span>
+        </a>
+
+        <a href="settings.html" class="bottom-link">
+            <i class='bx bx-cog'></i>
+            <span>Settings</span>
+        </a>
+
+    </nav>
+
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <i class='bx bx-check-circle text-lg' style="color: #12B76A;"></i>
+        <span id="toastMessage">Copied successfully</span>
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            /*
+             * ==========================================
+             * DEMO USER DATA
+             * Replace this object with backend/API data.
+             * ==========================================
+             */
+
+            const user = {
+                name: "David",
+                balance: 24.50,
+                totalEarned: 48.50,
+                pending: 0,
+                withdrawn: 0,
+                validated: true,
+                referralCode: "David"
+            };
+
+
+            /*
+             * ==========================================
+             * ELEMENTS
+             * ==========================================
+             */
+
+            const body = document.body;
+
+            const themeToggle = document.getElementById("themeToggle");
+            const themeIcon = document.getElementById("themeIcon");
+
+            const menuBtn = document.getElementById("menuBtn");
+            const sidebar = document.getElementById("sidebar");
+            const mobileOverlay = document.getElementById("mobileOverlay");
+
+            const copyReferral = document.getElementById("copyReferral");
+            const referralLink = document.getElementById("referralLink");
+
+            const toast = document.getElementById("toast");
+            const toastMessage = document.getElementById("toastMessage");
+
+            const balanceVisibility = document.getElementById("balanceVisibility");
+            const balanceEye = document.getElementById("balanceEye");
+            const balanceAmount = document.getElementById("balanceAmount");
+            const nairaBalance = document.getElementById("nairaBalance");
+
+
+            /*
+             * ==========================================
+             * LOAD USER
+             * ==========================================
+             */
+
+            document.getElementById("greetingName").textContent = user.name;
+            document.getElementById("sidebarName").textContent = user.name;
+
+            const referralUrl =
+                "https://optify.com/register?ref=" + encodeURIComponent(user.referralCode);
+
+            referralLink.textContent = referralUrl;
+
+
+            /*
+             * ==========================================
+             * BALANCE
+             * ==========================================
+             */
+
+            const formatNaira = value => {
+                return "₦" + Number(value).toLocaleString("en-NG", {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 2
+                });
+            };
+
+            nairaBalance.textContent = formatNaira(user.balance * 1000);
+
+
+            /*
+             * ==========================================
+             * BALANCE VISIBILITY
+             * ==========================================
+             */
+
+            let balanceVisible = true;
+
+            balanceVisibility.addEventListener("click", () => {
+
+                balanceVisible = !balanceVisible;
+
+                if (balanceVisible) {
+
+                    balanceAmount.textContent =
+                        "$" + user.balance.toFixed(2);
+
+                    nairaBalance.textContent =
+                        formatNaira(user.balance * 1000);
+
+                    balanceEye.className = "bx bx-show text-lg";
+
+                } else {
+
+                    balanceAmount.textContent = "••••••";
+                    nairaBalance.textContent = "••••••";
+
+                    balanceEye.className = "bx bx-hide text-lg";
+                }
+            });
+
+
+            /*
+             * ==========================================
+             * THEME
+             * ==========================================
+             */
+
+            function updateThemeIcon() {
+
+                if (body.classList.contains("dark")) {
+                    themeIcon.className = "bx bx-sun text-xl";
+                } else {
+                    themeIcon.className = "bx bx-moon text-xl";
+                }
+
+            }
+
+
+            const savedTheme = localStorage.getItem("optify-theme");
+
+            if (savedTheme === "dark") {
+                body.classList.add("dark");
+            }
+
+            updateThemeIcon();
+
+
+            themeToggle.addEventListener("click", () => {
+
+                body.classList.toggle("dark");
+
+                const isDark =
+                    body.classList.contains("dark");
+
+                localStorage.setItem(
+                    "optify-theme",
+                    isDark ? "dark" : "light"
+                );
+
+                updateThemeIcon();
+
+            });
+
+
+            /*
+             * ==========================================
+             * MOBILE SIDEBAR
+             * ==========================================
+             */
+
+            function openSidebar() {
+                sidebar.classList.add("open");
+                mobileOverlay.classList.add("show");
+                document.body.style.overflow = "hidden";
+            }
+
+            function closeSidebar() {
+                sidebar.classList.remove("open");
+                mobileOverlay.classList.remove("show");
+                document.body.style.overflow = "";
+            }
+
+
+            menuBtn.addEventListener("click", openSidebar);
+            mobileOverlay.addEventListener("click", closeSidebar);
+
+
+            document.querySelectorAll(".sidebar-link").forEach(link => {
+
+                link.addEventListener("click", () => {
+
+                    if (window.innerWidth < 1024) {
+                        closeSidebar();
+                    }
+
+                });
+
+            });
+
+
+            /*
+             * ==========================================
+             * COPY REFERRAL
+             * ==========================================
+             */
+
+            copyReferral.addEventListener("click", async () => {
+
+                try {
+
+                    await navigator.clipboard.writeText(referralUrl);
+
+                    showToast("Referral link copied");
+
+                    copyReferral.innerHTML =
+                        "<i class='bx bx-check text-lg'></i>";
+
+                    setTimeout(() => {
+
+                        copyReferral.innerHTML =
+                            "<i class='bx bx-copy text-lg'></i>";
+
+                    }, 1800);
+
+                } catch (error) {
+
+                    showToast("Unable to copy link");
+
+                }
+
+            });
+
+
+            /*
+             * ==========================================
+             * TOAST
+             * ==========================================
+             */
+
+            let toastTimer;
+
+            function showToast(message) {
+
+                toastMessage.textContent = message;
+
+                toast.classList.add("show");
+
+                clearTimeout(toastTimer);
+
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove("show");
+                }, 2500);
+
+            }
+
+
+            /*
+             * ==========================================
+             * NOTIFICATION
+             * ==========================================
+             */
+
+            document.getElementById("notificationBtn")
+                .addEventListener("click", () => {
+
+                    showToast("You have no new notifications");
+
+                });
+
+
+            /*
+             * ==========================================
+             * SUPPORT
+             * ==========================================
+             */
+
+            document.getElementById("supportLink")
+                .addEventListener("click", event => {
+
+                    event.preventDefault();
+
+                    showToast("Support center coming soon");
+
+                });
+
+
+            /*
+             * ==========================================
+             * LOGOUT
+             * ==========================================
+             *
+             * Replace this with real Firebase/backend
+             * logout logic.
+             */
+
+            document.getElementById("logoutBtn")
+                .addEventListener("click", () => {
+
+                    showToast("Logging out...");
+
+                    setTimeout(() => {
+
+                        // Replace with real logout:
+                        // window.location.href = "login.html";
+
+                    }, 800);
+
+                });
+
+
+            /*
+             * ==========================================
+             * RESPONSIVE SIDEBAR
+             * ==========================================
+             */
+
+            window.addEventListener("resize", () => {
+
+                if (window.innerWidth >= 1024) {
+                    closeSidebar();
+                }
+
+            });
+
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1340 @@
+Absolutely. Since **you are handling the frontend yourself**, I’d structure Optify as a proper development roadmap so you don't jump between pages and end up rewriting things later.
+
+The key is to build **the frontend structure first**, then connect Firebase/Paystack/backend functionality progressively.
+
+# OPTIFY — FRONTEND DEVELOPMENT ROADMAP
+
+### Recommended stack
+
+For your frontend, I recommend keeping it straightforward:
+
+* **HTML5**
+* **CSS3**
+* **Tailwind CSS** where useful
+* **Vanilla JavaScript**
+* **Boxicons**
+* **Firebase SDK** for authentication/database integration
+* **Paystack** for payment integration
+* Responsive design: **mobile → tablet → desktop**
+
+No React/Vue/Bootstrap is necessary unless you later decide you want a framework.
+
+---
+
+# PHASE 0 — PROJECT FOUNDATION
+
+Before creating the actual pages, set up the project structure.
+
+```text
+optify/
+│
+├── index.html
+├── register.html
+├── login.html
+│
+├── dashboard.html
+├── tasks.html
+├── streak.html
+├── mystery-box.html
+├── quiz.html
+├── referral.html
+│
+├── wallet.html
+├── withdrawal.html
+├── epin.html
+├── transactions.html
+│
+├── settings.html
+├── profile.html
+│
+├── validation.html
+│
+├── admin/
+│   ├── admin-login.html
+│   ├── admin.html
+│   ├── users.html
+│   ├── validations.html
+│   ├── quizzes.html
+│   ├── mystery-box.html
+│   ├── streak.html
+│   ├── referrals.html
+│   ├── epins.html
+│   ├── withdrawals.html
+│   └── settings.html
+│
+├── assets/
+│   ├── images/
+│   ├── icons/
+│   └── logo/
+│
+├── css/
+│   ├── style.css
+│   ├── auth.css
+│   ├── dashboard.css
+│   └── admin.css
+│
+├── js/
+│   ├── main.js
+│   ├── auth.js
+│   ├── dashboard.js
+│   ├── tasks.js
+│   ├── withdrawal.js
+│   └── admin.js
+│
+└── firebase/
+    └── firebase-config.js
+```
+
+We don't necessarily have to keep this exact structure, but having organization from day one will make the project much easier to maintain.
+
+---
+
+# PHASE 1 — BRAND & DESIGN SYSTEM
+
+Before coding pages, establish Optify's visual language.
+
+We should decide:
+
+### Brand
+
+**OPTIFY**
+
+### Currency
+
+Primary:
+
+**USD**
+
+Conversion:
+
+**$1 = ₦1,000**
+
+### Design components
+
+Create reusable styles for:
+
+* Buttons
+* Inputs
+* Cards
+* Modals
+* Toasts
+* Badges
+* Dropdowns
+* Navigation
+* Bottom navigation
+* Tables
+* Empty states
+* Loading states
+* Success states
+* Error states
+
+For example, define:
+
+```text
+Primary button
+Secondary button
+Danger button
+Success badge
+Pending badge
+Locked badge
+Verified badge
+```
+
+This means when we build page 15, we're not inventing a completely different button.
+
+---
+
+# PHASE 2 — LANDING PAGE
+
+### File
+
+```text
+index.html
+```
+
+This is the first page we build.
+
+Sections:
+
+1. Navbar
+2. Hero
+3. How Optify works
+4. Tasks/rewards section
+5. Streak
+6. Mystery Box
+7. Quiz
+8. Referral
+9. Withdrawal
+10. Community
+11. FAQ
+12. CTA
+13. Footer
+
+Main CTA:
+
+**Get Started**
+
+Secondary CTA:
+
+**Login**
+
+The landing page should explain the platform without making unsupported guarantees about earnings.
+
+---
+
+# PHASE 3 — AUTHENTICATION PAGES
+
+Build:
+
+```text
+register.html
+login.html
+```
+
+### Registration
+
+Fields:
+
+* Full name
+* Username
+* Email
+* Phone
+* Password
+* Confirm password
+* Referral code
+
+Flow:
+
+```text
+Register
+   ↓
+Account created
+   ↓
+Community popup
+   ↓
+Dashboard
+```
+
+### Login
+
+```text
+Email
+Password
+Remember me
+Forgot password
+Login
+```
+
+We'll initially build the UI with mock interactions, then connect Firebase authentication.
+
+---
+
+# PHASE 4 — POST-REGISTRATION COMMUNITY POPUP
+
+This deserves its own component because it appears immediately after registration.
+
+Example:
+
+```text
+┌──────────────────────────┐
+│        🎉 Welcome        │
+│                          │
+│ Join the official        │
+│ Optify community         │
+│                          │
+│ [ Join Community ]       │
+│                          │
+│ Continue to Dashboard    │
+└──────────────────────────┘
+```
+
+But the link shouldn't be hard-coded permanently.
+
+Later:
+
+```text
+Admin Dashboard
+      ↓
+Community Link
+      ↓
+Firebase
+      ↓
+Registration Popup
+```
+
+---
+
+# PHASE 5 — VALIDATION PAGE
+
+### File
+
+```text
+validation.html
+```
+
+This is the first important payment-related page.
+
+Display:
+
+```text
+Dashboard Validation
+
+$5.00
+
+₦5,000
+
+One-time validation
+```
+
+CTA:
+
+**Validate Dashboard**
+
+Flow:
+
+```text
+User clicks Validate
+        ↓
+Paystack
+        ↓
+Payment
+        ↓
+Payment verification
+        ↓
+Account validated
+        ↓
+Earning features unlocked
+```
+
+For frontend development, initially use a mock successful payment state.
+
+Then integrate Paystack after the UI is stable.
+
+---
+
+# PHASE 6 — MAIN USER DASHBOARD
+
+### File
+
+```text
+dashboard.html
+```
+
+This is the most important user page.
+
+Structure:
+
+```text
+Sidebar / Mobile Nav
+        │
+        ├── Dashboard
+        ├── Tasks
+        ├── Wallet
+        ├── Referral
+        ├── Transactions
+        └── Settings
+```
+
+Dashboard content:
+
+### Balance card
+
+```text
+Available Balance
+
+$24.50
+
+≈ ₦24,500
+```
+
+### Quick actions
+
+```text
+Tasks
+Withdraw
+Referral
+History
+```
+
+### Daily progress
+
+```text
+Today's Progress
+
+Streak       ✓
+Mystery Box  2/3
+Quiz         Not completed
+```
+
+### Recent transactions
+
+Display the latest activity.
+
+---
+
+# PHASE 7 — TASK CENTER
+
+### File
+
+```text
+tasks.html
+```
+
+This becomes the central earning/reward area.
+
+Cards:
+
+```text
+🔥 Streak
+🎁 Mystery Box
+🧠 Quiz
+👥 Referral
+```
+
+Each card shows:
+
+* Reward
+* Status
+* Progress
+* CTA
+
+---
+
+# PHASE 8 — STREAK
+
+### File
+
+```text
+streak.html
+```
+
+Build the complete visual interaction before backend integration.
+
+```text
+Today's Streak
+
+🌅 Morning
+$1.50
+[ Claimed ]
+
+☀️ Afternoon
+$1.50
+[ Claim ]
+
+🌙 Night
+$1.50
+[ Locked ]
+```
+
+Add:
+
+* Countdown
+* Claim animation
+* Success modal
+* Claimed state
+* Locked state
+
+Later JavaScript/Firebase handles the actual eligibility.
+
+---
+
+# PHASE 9 — MYSTERY BOX
+
+### File
+
+```text
+mystery-box.html
+```
+
+UI:
+
+```text
+Mystery Box
+
+Choose a box
+
+[ ? ] [ ? ] [ ? ]
+
+Boxes remaining: 3
+```
+
+After opening:
+
+```text
+🎉 You received
+
+$3.00
+
+[ Continue ]
+```
+
+We'll make the animation nice but not excessive.
+
+---
+
+# PHASE 10 — QUIZ
+
+### File
+
+```text
+quiz.html
+```
+
+Build:
+
+```text
+Question 1 / 5
+
+What is ...?
+
+○ Answer A
+○ Answer B
+○ Answer C
+○ Answer D
+
+[ Next ]
+```
+
+Final screen:
+
+```text
+Quiz Complete 🎉
+
+4 / 5
+
+Reward
+$3.00
+
+[ Continue ]
+```
+
+Initially, questions can come from a JavaScript array.
+
+Later:
+
+```text
+Admin
+ ↓
+Firebase
+ ↓
+Quiz
+ ↓
+User
+```
+
+---
+
+# PHASE 11 — REFERRAL
+
+### File
+
+```text
+referral.html
+```
+
+Display:
+
+```text
+Referral Program
+
+Earn $5
+for each qualified referral.
+
+Your referral link
+
+[ optify.com/register?ref=ABC123 ]
+
+[ Copy Link ]
+```
+
+Stats:
+
+```text
+Total Referrals       12
+Qualified             7
+Pending               5
+
+Referral Earnings
+$35.00
+```
+
+---
+
+# PHASE 12 — WALLET
+
+### File
+
+```text
+wallet.html
+```
+
+This becomes the user's financial overview.
+
+Show:
+
+```text
+Available
+$24.50
+
+Pending
+$5.00
+
+Total Earned
+$47.00
+```
+
+Then:
+
+* Withdraw
+* Buy E-Pin
+* Transaction history
+
+---
+
+# PHASE 13 — WITHDRAWAL
+
+### File
+
+```text
+withdrawal.html
+```
+
+Two states.
+
+### Locked
+
+If not validated:
+
+```text
+🔒 Withdrawal Locked
+
+Validate your dashboard to unlock withdrawals.
+```
+
+### Unlocked
+
+```text
+Available Balance
+$24.50
+
+Minimum Withdrawal
+$10.00
+
+Withdrawal Amount
+[ $ ______ ]
+
+Bank Account
+****1234
+
+[ Withdraw ]
+```
+
+We should also make it obvious that withdrawal requests are subject to the platform's processing/approval rules.
+
+---
+
+# PHASE 14 — E-PIN
+
+### File
+
+```text
+epin.html
+```
+
+Display:
+
+```text
+Optify Withdrawal E-Pin
+
+$2.00
+₦2,000
+
+Purchase an E-Pin to initiate
+eligible withdrawals.
+
+[ Buy E-Pin ]
+```
+
+Then states:
+
+```text
+Payment Pending
+        ↓
+Admin Review
+        ↓
+Approved
+```
+
+---
+
+# PHASE 15 — TRANSACTION HISTORY
+
+### File
+
+```text
+transactions.html
+```
+
+Transaction types:
+
+```text
+Validation
+Streak
+Mystery Box
+Quiz
+Referral
+E-Pin
+Withdrawal
+```
+
+Example:
+
+```text
++ $1.50
+Morning Streak
+Completed
+
+- $2.00
+Withdrawal E-Pin
+Completed
+
++ $5.00
+Referral Reward
+Completed
+```
+
+Filters:
+
+```text
+All
+Rewards
+Payments
+Withdrawals
+```
+
+---
+
+# PHASE 16 — SETTINGS
+
+### File
+
+```text
+settings.html
+```
+
+Sections:
+
+### Personal Details
+
+```text
+Full Name
+Username
+Email
+Phone
+```
+
+### Bank Details
+
+```text
+Bank
+Account Name
+Account Number
+```
+
+### Security
+
+```text
+Change Password
+```
+
+### Account
+
+```text
+Logout
+```
+
+---
+
+# PHASE 17 — USER EXPERIENCE STATES
+
+Before connecting the backend, we should make sure every page has all necessary states.
+
+For example:
+
+### Loading
+
+```text
+Loading...
+```
+
+### Empty
+
+```text
+No transactions yet.
+```
+
+### Locked
+
+```text
+Feature locked
+```
+
+### Pending
+
+```text
+Pending approval
+```
+
+### Success
+
+```text
+Transaction successful
+```
+
+### Error
+
+```text
+Something went wrong.
+```
+
+### Offline
+
+```text
+Unable to connect.
+Please try again.
+```
+
+This is something many frontend projects skip, but it makes Optify feel much more complete.
+
+---
+
+# PHASE 18 — ADMIN AUTHENTICATION
+
+Now we start the admin side.
+
+### File
+
+```text
+admin/admin-login.html
+```
+
+Admin login:
+
+```text
+OPTIFY ADMIN
+
+Email
+Password
+
+[ Login ]
+```
+
+The admin area must be protected by actual authentication. We shouldn't simply hide the admin pages with JavaScript.
+
+---
+
+# PHASE 19 — ADMIN DASHBOARD
+
+### File
+
+```text
+admin/admin.html
+```
+
+Dashboard statistics:
+
+```text
+Total Users
+12,450
+
+Validated Users
+8,320
+
+Pending Validation
+42
+
+Pending Withdrawals
+31
+```
+
+Recent activity:
+
+```text
+Recent Users
+Recent Payments
+Recent Withdrawals
+Recent Referrals
+```
+
+---
+
+# PHASE 20 — ADMIN USER MANAGEMENT
+
+### File
+
+```text
+admin/users.html
+```
+
+Features:
+
+* Search users
+* Filter users
+* View user
+* Validation status
+* Balance
+* Referral information
+* Account status
+
+User details page/modal:
+
+```text
+User Information
+Balance
+Validation
+Referral
+Transactions
+Withdrawals
+```
+
+---
+
+# PHASE 21 — ADMIN VALIDATION MANAGEMENT
+
+### File
+
+```text
+admin/validations.html
+```
+
+Admin can see:
+
+```text
+User
+Amount
+Payment Reference
+Date
+Status
+```
+
+This will eventually connect to verified Paystack transactions.
+
+---
+
+# PHASE 22 — ADMIN STREAK MANAGEMENT
+
+### File
+
+```text
+admin/streak.html
+```
+
+Admin controls:
+
+```text
+Morning Reward
+$1.50
+
+Afternoon Reward
+$1.50
+
+Night Reward
+$1.50
+```
+
+And potentially:
+
+```text
+Morning Claim Window
+Afternoon Claim Window
+Night Claim Window
+```
+
+---
+
+# PHASE 23 — ADMIN MYSTERY BOX
+
+### File
+
+```text
+admin/mystery-box.html
+```
+
+Admin controls:
+
+* Number of boxes
+* Reward range
+* Availability
+* Active/inactive status
+
+For example:
+
+```text
+Minimum Reward
+$1
+
+Maximum Reward
+$5
+```
+
+---
+
+# PHASE 24 — ADMIN QUIZ MANAGEMENT
+
+### File
+
+```text
+admin/quizzes.html
+```
+
+This will be one of the more important admin pages.
+
+Admin can:
+
+```text
++ Add Question
+```
+
+Then:
+
+```text
+Question
+Option A
+Option B
+Option C
+Option D
+
+Correct Answer
+
+Reward
+```
+
+Question table:
+
+```text
+Question              Reward     Status
+What is...?           $2         Active
+Which...?             $3         Active
+...
+```
+
+---
+
+# PHASE 25 — ADMIN REFERRALS
+
+### File
+
+```text
+admin/referrals.html
+```
+
+Admin sees:
+
+```text
+Referrer
+Referred User
+Validation Status
+Commission
+Date
+```
+
+The system only marks the referral as qualified after the referred user's validation is successfully confirmed.
+
+---
+
+# PHASE 26 — ADMIN E-PINS
+
+### File
+
+```text
+admin/epins.html
+```
+
+Admin sees:
+
+```text
+User
+Payment
+Reference
+Date
+Status
+```
+
+Actions:
+
+```text
+Approve
+Reject
+```
+
+---
+
+# PHASE 27 — ADMIN WITHDRAWALS
+
+### File
+
+```text
+admin/withdrawals.html
+```
+
+This should be one of the most carefully designed admin screens.
+
+Display:
+
+```text
+User
+Amount
+Bank
+Account Name
+Account Number
+E-Pin Status
+Request Date
+Status
+```
+
+Actions:
+
+```text
+View
+Approve
+Reject
+```
+
+Use confirmation modals for sensitive actions.
+
+---
+
+# PHASE 28 — ADMIN COMMUNITY SETTINGS
+
+This directly controls the registration popup.
+
+```text
+Community Type
+
+Telegram Channel
+
+Community Link
+
+[ Save Changes ]
+```
+
+The user-facing popup reads the current setting.
+
+---
+
+# PHASE 29 — ADMIN PLATFORM SETTINGS
+
+Create a central settings page.
+
+```text
+Platform Currency
+USD
+
+Conversion Rate
+₦1,000
+
+Validation Fee
+$5
+
+E-Pin Price
+$2
+
+Minimum Withdrawal
+$10
+
+Referral Reward
+$5
+```
+
+This prevents you from hard-coding these values throughout the frontend.
+
+---
+
+# PHASE 30 — FIREBASE INTEGRATION
+
+Only after the UI is properly structured would I connect everything.
+
+Firebase components:
+
+```text
+Firebase Authentication
+        +
+Firestore / Realtime Database
+        +
+Cloud Functions / secure backend logic
+```
+
+User:
+
+```text
+Register
+   ↓
+Firebase Auth
+   ↓
+User document
+   ↓
+Dashboard
+```
+
+Admin:
+
+```text
+Admin Login
+   ↓
+Firebase Auth
+   ↓
+Admin authorization
+   ↓
+Admin dashboard
+```
+
+---
+
+# PHASE 31 — PAYSTACK
+
+Then integrate payment flows.
+
+### Payment 1
+
+Dashboard validation:
+
+**$5 / ₦5,000**
+
+### Payment 2
+
+Withdrawal E-Pin:
+
+**$2 / ₦2,000**
+
+The frontend initiates payment, but **payment verification should happen on the server/backend**, not solely in browser JavaScript.
+
+---
+
+# PHASE 32 — SECURITY & TESTING
+
+Before deployment, test:
+
+### Authentication
+
+* Registration
+* Login
+* Logout
+* Password reset
+* Unauthorized admin access
+
+### Rewards
+
+* Duplicate streak claims
+* Mystery box limits
+* Quiz reward duplication
+* Referral qualification
+
+### Payments
+
+* Successful payment
+* Failed payment
+* Cancelled payment
+* Duplicate payment callback
+* Payment verification
+
+### Withdrawal
+
+* Below $10
+* Exactly $10
+* Above $10
+* Insufficient balance
+* Unvalidated account
+* Pending E-Pin
+* Approved E-Pin
+
+---
+
+# FINAL DEVELOPMENT ORDER
+
+So I would personally have you work through Optify in this exact sequence:
+
+```text
+01  Project Setup
+        ↓
+02  Brand / Design System
+        ↓
+03  Landing Page
+        ↓
+04  Register
+        ↓
+05  Login
+        ↓
+06  Community Popup
+        ↓
+07  Validation Page
+        ↓
+08  Dashboard
+        ↓
+09  Tasks
+        ↓
+10  Streak
+        ↓
+11  Mystery Box
+        ↓
+12  Quiz
+        ↓
+13  Referral
+        ↓
+14  Wallet
+        ↓
+15  Withdrawal
+        ↓
+16  E-Pin
+        ↓
+17  Transactions
+        ↓
+18  Settings
+        ↓
+19  Admin Login
+        ↓
+20  Admin Dashboard
+        ↓
+21  Admin Users
+        ↓
+22  Admin Validation
+        ↓
+23  Admin Streak
+        ↓
+24  Admin Mystery Box
+        ↓
+25  Admin Quiz
+        ↓
+26  Admin Referrals
+        ↓
+27  Admin E-Pins
+        ↓
+28  Admin Withdrawals
+        ↓
+29  Admin Community
+        ↓
+30  Admin Platform Settings
+        ↓
+31  Firebase
+        ↓
+32  Paystack
+        ↓
+33  Security
+        ↓
+34  Testing
+        ↓
+35  Deployment
+```
+
+### How I suggest we work together
+
+Rather than generating everything at once, we can treat **Optify like a real development project**.
+
+For each stage, I'll give you:
+
+**1. The page specification** → what the page must contain
+**2. The UI/UX prompt** → detailed prompt for generating the design
+**3. The frontend code** → HTML/CSS/JS
+**4. The functionality checklist** → what should work
+**5. The next-page connection** → how it connects to the previous page
+
+That way, when we eventually reach Firebase and Paystack, we're connecting a properly organized frontend instead of trying to fix a large collection of disconnected pages.

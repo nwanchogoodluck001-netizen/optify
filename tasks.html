@@ -1,0 +1,1999 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tasks | Optify</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Boxicons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        sora: ['Sora', 'sans-serif']
+                    },
+                    colors: {
+                        optify: {
+                            navy: '#071A2B',
+                            green: '#12B76A',
+                            teal: '#0EA5A4',
+                            soft: '#E8F8F0',
+                            bg: '#F7F9FC',
+                            text: '#101828',
+                            muted: '#667085',
+                            border: '#E4E7EC',
+                            warning: '#F79009'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F7F9FC;
+            color: #101828;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        button,
+        a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        ::selection {
+            background: rgba(18, 183, 106, 0.18);
+        }
+
+        /* =========================
+           DARK MODE
+        ========================= */
+
+        .dark body {
+            background: #08131f;
+            color: #f8fafc;
+        }
+
+        .dark .page-bg {
+            background: #08131f;
+        }
+
+        .dark .surface {
+            background: #0d1b2a;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .dark .surface-soft {
+            background: #101f2e;
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .dark .text-main {
+            color: #f8fafc;
+        }
+
+        .dark .text-muted {
+            color: #94a3b8;
+        }
+
+        .dark .border-main {
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .dark .task-description {
+            color: #94a3b8;
+        }
+
+        .dark .stat-number {
+            color: #f8fafc;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 260px;
+            background: #071A2B;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 60;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #12B76A, #0EA5A4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 21px;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(18, 183, 106, 0.18);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 11px 14px;
+            border-radius: 11px;
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link i {
+            font-size: 20px;
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .nav-link.active {
+            background: rgba(18, 183, 106, 0.14);
+            color: #5ee7a5;
+        }
+
+        .nav-link.active i {
+            color: #12B76A;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main-wrapper {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 76px;
+            background: rgba(247, 249, 252, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid #E4E7EC;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .dark .topbar {
+            background: rgba(8, 19, 31, 0.9);
+            border-color: rgba(255, 255, 255, 0.07);
+        }
+
+        .profile-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            background: #E8F8F0;
+            color: #12B76A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-family: 'Sora', sans-serif;
+        }
+
+        .dark .profile-avatar {
+            background: rgba(18, 183, 106, 0.12);
+        }
+
+        /* =========================
+           STAT CARDS
+        ========================= */
+
+        .stat-card {
+            border: 1px solid #E4E7EC;
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 18px;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(18, 183, 106, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+        /* =========================
+           TASK CARDS
+        ========================= */
+
+        .task-card {
+            position: relative;
+            border: 1px solid #E4E7EC;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 22px;
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                border-color 0.2s ease;
+            overflow: hidden;
+        }
+
+        .task-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(18, 183, 106, 0.32);
+            box-shadow: 0 14px 35px rgba(16, 24, 40, 0.07);
+        }
+
+        .dark .task-card:hover {
+            box-shadow: 0 14px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .task-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+        }
+
+        .task-action {
+            transition: all 0.2s ease;
+        }
+
+        .task-card:hover .task-action {
+            transform: translateX(3px);
+        }
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .primary-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #12B76A;
+            color: #ffffff;
+            border-radius: 11px;
+            padding: 11px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .primary-btn:hover {
+            background: #0e9f5b;
+            transform: translateY(-1px);
+        }
+
+        .secondary-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #F2F4F7;
+            color: #344054;
+            border-radius: 11px;
+            padding: 11px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .secondary-btn:hover {
+            background: #E4E7EC;
+        }
+
+        .dark .secondary-btn {
+            background: rgba(255, 255, 255, 0.07);
+            color: #e2e8f0;
+        }
+
+        .dark .secondary-btn:hover {
+            background: rgba(255, 255, 255, 0.11);
+        }
+
+        /* =========================
+           PROGRESS
+        ========================= */
+
+        .progress-track {
+            width: 100%;
+            height: 7px;
+            background: #EAECF0;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .dark .progress-track {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #12B76A, #0EA5A4);
+            border-radius: inherit;
+            transition: width 0.5s ease;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        .mobile-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(7, 26, 43, 0.55);
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+        }
+
+        .mobile-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        .mobile-bottom-nav {
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .mobile-bottom-nav {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .topbar {
+                height: 68px;
+            }
+
+            .page-content {
+                padding-bottom: 95px !important;
+            }
+
+            .task-card {
+                padding: 18px;
+                border-radius: 17px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .mobile-bottom-nav {
+                position: fixed;
+                left: 12px;
+                right: 12px;
+                bottom: 12px;
+                height: 66px;
+                z-index: 45;
+                border: 1px solid #E4E7EC;
+                background: rgba(255, 255, 255, 0.94);
+                backdrop-filter: blur(16px);
+                border-radius: 18px;
+                box-shadow: 0 12px 35px rgba(16, 24, 40, 0.13);
+                align-items: center;
+                justify-content: space-around;
+            }
+
+            .dark .mobile-bottom-nav {
+                background: rgba(13, 27, 42, 0.95);
+                border-color: rgba(255, 255, 255, 0.08);
+            }
+
+            .bottom-nav-item {
+                width: 52px;
+                height: 54px;
+                border-radius: 14px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 2px;
+                color: #98A2B3;
+                font-size: 10px;
+                font-weight: 500;
+            }
+
+            .bottom-nav-item i {
+                font-size: 20px;
+            }
+
+            .bottom-nav-item.active {
+                color: #12B76A;
+            }
+
+            .hide-mobile {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="page-bg">
+
+    <!-- =========================
+         MOBILE OVERLAY
+    ========================= -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="h-full flex flex-col">
+
+            <!-- Logo -->
+            <div class="px-5 pt-6 pb-7">
+
+                <a href="dashboard.html" class="flex items-center gap-3">
+
+                    <div class="sidebar-logo">
+                        <i class='bx bx-line-chart'></i>
+                    </div>
+
+                    <div>
+                        <div class="font-sora font-bold text-white text-[20px] tracking-tight">
+                            Optify
+                        </div>
+
+                        <div class="text-[10px] text-slate-500 uppercase tracking-[0.18em]">
+                            Rewards Platform
+                        </div>
+                    </div>
+
+                </a>
+
+            </div>
+
+            <!-- Navigation -->
+            <nav class="px-3 flex-1 overflow-y-auto">
+
+                <div class="text-[10px] uppercase tracking-[0.16em] text-slate-500 font-semibold px-3 mb-3">
+                    Main Menu
+                </div>
+
+                <div class="space-y-1">
+
+                    <a href="dashboard.html" class="nav-link">
+                        <i class='bx bx-grid-alt'></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a href="tasks.html" class="nav-link active">
+                        <i class='bx bx-task'></i>
+                        <span>Tasks</span>
+                    </a>
+
+                    <a href="streak.html" class="nav-link">
+                        <i class='bx bx-flame'></i>
+                        <span>Streak</span>
+                    </a>
+
+                    <a href="mystery-box.html" class="nav-link">
+                        <i class='bx bx-gift'></i>
+                        <span>Mystery Box</span>
+                    </a>
+
+                    <a href="quiz.html" class="nav-link">
+                        <i class='bx bx-help-circle'></i>
+                        <span>Quiz</span>
+                    </a>
+
+                    <a href="referral.html" class="nav-link">
+                        <i class='bx bx-group'></i>
+                        <span>Referral</span>
+                    </a>
+
+                    <a href="epin.html"
+                        class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-white/65 hover:text-white hover:bg-white/5">
+                        <i class='bx bx-key'></i>
+                        <span>Withdrawal E-pin</span>
+                    </a>
+
+                    <a href="withdrawal.html" class="nav-link">
+                        <i class='bx bx-wallet'></i>
+                        <span>Withdrawal</span>
+                    </a>
+
+                    <a href="transactions.html" class="nav-link">
+                        <i class='bx bx-transfer-alt'></i>
+                        <span>Transactions</span>
+                    </a>
+
+                    <a href="settings.html" class="nav-link">
+                        <i class='bx bx-cog'></i>
+                        <span>Settings</span>
+                    </a>
+
+                </div>
+
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer px-4 py-5">
+
+                <div class="rounded-2xl bg-white/[0.04] border border-white/[0.06] p-3.5 mb-4">
+
+                    <div class="flex items-center gap-2.5 mb-2">
+
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                            <i class='bx bx-shield-quarter text-emerald-400'></i>
+                        </div>
+
+                        <div>
+                            <p class="text-white text-xs font-semibold">
+                                Dashboard Validated
+                            </p>
+
+                            <p class="text-emerald-400 text-[10px]">
+                                Earning features active
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <button onclick="logoutDemo()" class="nav-link w-full" type="button">
+
+                    <i class='bx bx-log-out'></i>
+                    <span>Logout</span>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+    <!-- =========================
+         MAIN WRAPPER
+    ========================= -->
+    <main class="main-wrapper">
+
+        <!-- =========================
+             TOPBAR
+        ========================= -->
+        <header class="topbar">
+
+            <div class="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+
+                <div class="flex items-center gap-3">
+
+                    <button id="mobileMenuBtn"
+                        class="mobile-menu-btn w-10 h-10 rounded-xl bg-white border border-main items-center justify-center text-slate-600 dark:bg-[#0d1b2a] dark:text-slate-300"
+                        type="button" aria-label="Open menu">
+
+                        <i class='bx bx-menu text-2xl'></i>
+
+                    </button>
+
+                    <div class="hidden sm:block">
+
+                        <p class="text-[12px] text-muted">
+                            Optify Dashboard
+                        </p>
+
+                        <p class="font-sora font-semibold text-main text-sm">
+                            Earn More
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="flex items-center gap-2 sm:gap-4">
+
+                    <!-- Theme -->
+                    <button id="themeToggle" type="button"
+                        class="w-10 h-10 rounded-xl border border-main bg-white dark:bg-[#0d1b2a] flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-500 transition"
+                        aria-label="Toggle dark mode">
+
+                        <i class='bx bx-moon text-[20px]' id="themeIcon"></i>
+
+                    </button>
+
+                    <!-- Notification -->
+                    <button type="button"
+                        class="relative w-10 h-10 rounded-xl border border-main bg-white dark:bg-[#0d1b2a] flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-emerald-500 transition">
+
+                        <i class='bx bx-bell text-[20px]'></i>
+
+                        <span class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+
+                    </button>
+
+                    <div class="hidden sm:block h-8 w-px bg-slate-200 dark:bg-white/10"></div>
+
+                    <!-- User -->
+                    <div class="flex items-center gap-2.5">
+
+                        <div class="profile-avatar">
+                            D
+                        </div>
+
+                        <div class="hidden md:block">
+
+                            <p class="text-main text-xs font-semibold">
+                                David
+                            </p>
+
+                            <p class="text-muted text-[10px]">
+                                Optify User
+                            </p>
+
+                        </div>
+
+                        <i class='bx bx-chevron-down text-muted hidden md:block'></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- =========================
+             PAGE CONTENT
+        ========================= -->
+        <section class="page-content px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+
+            <div class="max-w-[1450px] mx-auto">
+
+                <!-- Page Header -->
+                <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-7">
+
+                    <div>
+
+                        <div class="flex items-center gap-2 mb-2">
+
+                            <span
+                                class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+                                <i class='bx bx-task text-emerald-500 text-[17px]'></i>
+                            </span>
+
+                            <span
+                                class="text-emerald-600 dark:text-emerald-400 text-xs font-semibold uppercase tracking-wide">
+                                Available Tasks
+                            </span>
+
+                        </div>
+
+                        <h1 class="font-sora text-2xl sm:text-3xl font-bold text-main tracking-tight">
+                            Earn More
+                        </h1>
+
+                        <p class="text-muted text-sm mt-2 max-w-xl">
+                            Your dashboard is validated. Complete available activities and earn rewards on Optify.
+                        </p>
+
+                    </div>
+
+                    <div class="flex items-center gap-2.5">
+
+                        <div
+                            class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-emerald-200 dark:border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10">
+
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+
+                            <span class="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                                Dashboard Validated
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- =========================
+                     SUMMARY CARDS
+                ========================= -->
+                <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-6">
+
+                    <!-- Available Balance -->
+                    <div class="stat-card surface">
+
+                        <div class="flex items-start justify-between gap-3">
+
+                            <div>
+
+                                <p class="text-muted text-xs font-medium mb-2">
+                                    Available Balance
+                                </p>
+
+                                <p id="availableBalance" class="font-sora font-bold text-lg sm:text-xl stat-number">
+                                    $0.00
+                                </p>
+
+                                <p id="availableBalanceNgn" class="text-muted text-[10px] mt-1">
+                                    ≈ ₦0
+                                </p>
+
+                            </div>
+
+                            <div class="stat-icon bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500">
+                                <i class='bx bx-wallet-alt'></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Total Earned -->
+                    <div class="stat-card surface">
+
+                        <div class="flex items-start justify-between gap-3">
+
+                            <div>
+
+                                <p class="text-muted text-xs font-medium mb-2">
+                                    Total Earned
+                                </p>
+
+                                <p id="totalEarned" class="font-sora font-bold text-lg sm:text-xl stat-number">
+                                    $0.00
+                                </p>
+
+                                <p id="totalEarnedNgn" class="text-muted text-[10px] mt-1">
+                                    ≈ ₦0
+                                </p>
+
+                            </div>
+
+                            <div class="stat-icon bg-blue-50 dark:bg-blue-500/10 text-blue-500">
+                                <i class='bx bx-trending-up'></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Pending Balance -->
+                    <div class="stat-card surface">
+
+                        <div class="flex items-start justify-between gap-3">
+
+                            <div>
+
+                                <p class="text-muted text-xs font-medium mb-2">
+                                    Pending Balance
+                                </p>
+
+                                <p id="pendingBalance" class="font-sora font-bold text-lg sm:text-xl stat-number">
+                                    $0.00
+                                </p>
+
+                                <p id="pendingBalanceNgn" class="text-muted text-[10px] mt-1">
+                                    ≈ ₦0
+                                </p>
+
+                            </div>
+
+                            <div class="stat-icon bg-amber-50 dark:bg-amber-500/10 text-amber-500">
+                                <i class='bx bx-time-five'></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Tasks Completed -->
+                    <div class="stat-card surface">
+
+                        <div class="flex items-start justify-between gap-3">
+
+                            <div>
+
+                                <p class="text-muted text-xs font-medium mb-2">
+                                    Tasks Completed
+                                </p>
+
+                                <p id="tasksCompleted" class="font-sora font-bold text-lg sm:text-xl stat-number">
+                                    0
+                                </p>
+
+                                <p class="text-muted text-[10px] mt-1">
+                                    Keep going
+                                </p>
+
+                            </div>
+
+                            <div class="stat-icon bg-purple-50 dark:bg-purple-500/10 text-purple-500">
+                                <i class='bx bx-check-circle'></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- =========================
+                     VALIDATED STATUS
+                ========================= -->
+                <div class="surface border border-emerald-200 dark:border-emerald-500/20 rounded-2xl p-4 sm:p-5 mb-7">
+
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+
+                        <div class="flex items-start gap-3">
+
+                            <div
+                                class="w-11 h-11 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex-shrink-0 flex items-center justify-center">
+                                <i class='bx bx-check-shield text-emerald-500 text-xl'></i>
+                            </div>
+
+                            <div>
+
+                                <h3 class="font-sora text-sm font-semibold text-main">
+                                    Your dashboard is validated
+                                </h3>
+
+                                <p class="text-muted text-xs leading-5 mt-1 max-w-2xl">
+                                    Your earning features are active. You can now complete available tasks and earn
+                                    eligible rewards.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold whitespace-nowrap">
+
+                            <i class='bx bx-check-circle'></i>
+                            Active
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- =========================
+                     TASK SECTION HEADER
+                ========================= -->
+                <div class="flex items-center justify-between gap-3 mb-4">
+
+                    <div>
+
+                        <h2 class="font-sora text-base sm:text-lg font-semibold text-main">
+                            Available Tasks
+                        </h2>
+
+                        <p class="text-muted text-xs mt-1">
+                            Choose an activity to start earning.
+                        </p>
+
+                    </div>
+
+                    <div class="hidden sm:flex items-center gap-2 text-xs text-muted">
+                        <i class='bx bx-info-circle'></i>
+                        Rewards are subject to task rules
+                    </div>
+
+                </div>
+
+                <!-- =========================
+                     TASK CARDS
+                ========================= -->
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+
+                    <!-- STREAK -->
+                    <article class="task-card surface cursor-pointer" onclick="goToTask('streak.html')">
+
+                        <div class="task-content relative z-10">
+
+                            <div class="flex items-start justify-between gap-3">
+
+                                <div class="task-icon bg-orange-50 dark:bg-orange-500/10 text-orange-500 mb-5">
+                                    <i class='bx bx-flame'></i>
+                                </div>
+
+                                <span
+                                    class="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold">
+                                    Available
+                                </span>
+
+                            </div>
+
+                            <h3 class="font-sora text-base font-semibold text-main">
+                                Daily Streak
+                            </h3>
+
+                            <p class="task-description text-xs leading-5 mt-2 min-h-[40px]">
+                                Claim your daily rewards in the morning, afternoon and night.
+                            </p>
+
+                            <div class="flex items-center gap-2 flex-wrap mt-4">
+
+                                <span
+                                    class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold">
+                                    Up to $4.50/day
+                                </span>
+
+                                <span class="text-[10px] text-muted">
+                                    $1.50 / claim
+                                </span>
+
+                            </div>
+
+                            <div class="flex items-center justify-between mt-6 pt-4 border-t border-main">
+
+                                <span class="text-[11px] text-muted">
+                                    3 claims daily
+                                </span>
+
+                                <span
+                                    class="task-action text-emerald-600 dark:text-emerald-400 text-xs font-semibold flex items-center gap-1">
+                                    View Streak
+                                    <i class='bx bx-right-arrow-alt'></i>
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    <!-- MYSTERY BOX -->
+                    <article class="task-card surface cursor-pointer" onclick="goToTask('mystery-box.html')">
+
+                        <div class="task-content relative z-10">
+
+                            <div class="flex items-start justify-between gap-3">
+
+                                <div class="task-icon bg-purple-50 dark:bg-purple-500/10 text-purple-500 mb-5">
+                                    <i class='bx bx-gift'></i>
+                                </div>
+
+                                <span
+                                    class="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold">
+                                    Available
+                                </span>
+
+                            </div>
+
+                            <h3 class="font-sora text-base font-semibold text-main">
+                                Mystery Box
+                            </h3>
+
+                            <p class="task-description text-xs leading-5 mt-2 min-h-[40px]">
+                                Open mystery boxes and discover your hidden reward.
+                            </p>
+
+                            <div class="flex items-center gap-2 flex-wrap mt-4">
+
+                                <span
+                                    class="px-2.5 py-1 rounded-lg bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 text-[10px] font-semibold">
+                                    $1 – $5 / box
+                                </span>
+
+                                <span class="text-[10px] text-muted">
+                                    3 boxes
+                                </span>
+
+                            </div>
+
+                            <div class="flex items-center justify-between mt-6 pt-4 border-t border-main">
+
+                                <span class="text-[11px] text-muted">
+                                    3 available
+                                </span>
+
+                                <span
+                                    class="task-action text-purple-600 dark:text-purple-400 text-xs font-semibold flex items-center gap-1">
+                                    Open Box
+                                    <i class='bx bx-right-arrow-alt'></i>
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    <!-- QUIZ -->
+                    <article class="task-card surface cursor-pointer" onclick="goToTask('quiz.html')">
+
+                        <div class="task-content relative z-10">
+
+                            <div class="flex items-start justify-between gap-3">
+
+                                <div class="task-icon bg-blue-50 dark:bg-blue-500/10 text-blue-500 mb-5">
+                                    <i class='bx bx-help-circle'></i>
+                                </div>
+
+                                <span
+                                    class="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold">
+                                    Available
+                                </span>
+
+                            </div>
+
+                            <h3 class="font-sora text-base font-semibold text-main">
+                                Quiz
+                            </h3>
+
+                            <p class="task-description text-xs leading-5 mt-2 min-h-[40px]">
+                                Answer quiz questions correctly and earn rewards.
+                            </p>
+
+                            <div class="flex items-center gap-2 flex-wrap mt-4">
+
+                                <span
+                                    class="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-semibold">
+                                    $1 – $5
+                                </span>
+
+                                <span class="text-[10px] text-muted">
+                                    5+ questions
+                                </span>
+
+                            </div>
+
+                            <div class="flex items-center justify-between mt-6 pt-4 border-t border-main">
+
+                                <span class="text-[11px] text-muted">
+                                    Knowledge reward
+                                </span>
+
+                                <span
+                                    class="task-action text-blue-600 dark:text-blue-400 text-xs font-semibold flex items-center gap-1">
+                                    Take Quiz
+                                    <i class='bx bx-right-arrow-alt'></i>
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                    <!-- REFERRAL -->
+                    <article class="task-card surface cursor-pointer" onclick="goToTask('referral.html')">
+
+                        <div class="task-content relative z-10">
+
+                            <div class="flex items-start justify-between gap-3">
+
+                                <div class="task-icon bg-teal-50 dark:bg-teal-500/10 text-teal-500 mb-5">
+                                    <i class='bx bx-group'></i>
+                                </div>
+
+                                <span
+                                    class="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-semibold">
+                                    Available
+                                </span>
+
+                            </div>
+
+                            <h3 class="font-sora text-base font-semibold text-main">
+                                Referral
+                            </h3>
+
+                            <p class="task-description text-xs leading-5 mt-2 min-h-[40px]">
+                                Invite friends and earn when an eligible referral validates their dashboard.
+                            </p>
+
+                            <div class="flex items-center gap-2 flex-wrap mt-4">
+
+                                <span
+                                    class="px-2.5 py-1 rounded-lg bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 text-[10px] font-semibold">
+                                    $5 / referral
+                                </span>
+
+                                <span class="text-[10px] text-muted">
+                                    Eligible referrals
+                                </span>
+
+                            </div>
+
+                            <div class="flex items-center justify-between mt-6 pt-4 border-t border-main">
+
+                                <span class="text-[11px] text-muted">
+                                    Validation eligible
+                                </span>
+
+                                <span
+                                    class="task-action text-teal-600 dark:text-teal-400 text-xs font-semibold flex items-center gap-1">
+                                    Invite Friends
+                                    <i class='bx bx-right-arrow-alt'></i>
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+                <!-- =========================
+                     LOWER GRID
+                ========================= -->
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+
+                    <!-- TODAY'S PROGRESS -->
+                    <div class="xl:col-span-2 surface border border-main rounded-2xl p-5 sm:p-6">
+
+                        <div class="flex items-center justify-between mb-6">
+
+                            <div>
+
+                                <h2 class="font-sora text-base font-semibold text-main">
+                                    Today's Progress
+                                </h2>
+
+                                <p class="text-muted text-xs mt-1">
+                                    Track your available activities for today.
+                                </p>
+
+                            </div>
+
+                            <div
+                                class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+                                <i class='bx bx-bar-chart-alt-2 text-emerald-500'></i>
+                            </div>
+
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                            <!-- Streak -->
+                            <div class="surface-soft border border-main rounded-2xl p-4 cursor-pointer hover:border-emerald-300 dark:hover:border-emerald-500/30 transition"
+                                onclick="goToTask('streak.html')">
+
+                                <div class="flex items-center justify-between mb-3">
+
+                                    <div class="flex items-center gap-2.5">
+
+                                        <div
+                                            class="w-9 h-9 rounded-lg bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center">
+                                            <i class='bx bx-flame text-orange-500'></i>
+                                        </div>
+
+                                        <div>
+
+                                            <p class="text-main text-xs font-semibold">
+                                                Daily Streak
+                                            </p>
+
+                                            <p class="text-muted text-[10px]">
+                                                0 of 3 claims
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                    <span class="font-sora text-xs font-semibold text-main">
+                                        0/3
+                                    </span>
+
+                                </div>
+
+                                <div class="progress-track">
+                                    <div id="streakProgress" class="progress-fill" style="width: 0%;">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Boxes -->
+                            <div class="surface-soft border border-main rounded-2xl p-4 cursor-pointer hover:border-emerald-300 dark:hover:border-emerald-500/30 transition"
+                                onclick="goToTask('mystery-box.html')">
+
+                                <div class="flex items-center justify-between mb-3">
+
+                                    <div class="flex items-center gap-2.5">
+
+                                        <div
+                                            class="w-9 h-9 rounded-lg bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center">
+                                            <i class='bx bx-gift text-purple-500'></i>
+                                        </div>
+
+                                        <div>
+
+                                            <p class="text-main text-xs font-semibold">
+                                                Mystery Boxes
+                                            </p>
+
+                                            <p class="text-muted text-[10px]">
+                                                0 of 3 opened
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                    <span class="font-sora text-xs font-semibold text-main">
+                                        0/3
+                                    </span>
+
+                                </div>
+
+                                <div class="progress-track">
+                                    <div id="boxProgress" class="progress-fill" style="width: 0%;">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Quiz -->
+                            <div class="surface-soft border border-main rounded-2xl p-4 cursor-pointer hover:border-emerald-300 dark:hover:border-emerald-500/30 transition"
+                                onclick="goToTask('quiz.html')">
+
+                                <div class="flex items-center justify-between mb-3">
+
+                                    <div class="flex items-center gap-2.5">
+
+                                        <div
+                                            class="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center">
+                                            <i class='bx bx-help-circle text-blue-500'></i>
+                                        </div>
+
+                                        <div>
+
+                                            <p class="text-main text-xs font-semibold">
+                                                Quiz
+                                            </p>
+
+                                            <p class="text-muted text-[10px]">
+                                                No quiz completed
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                    <span class="font-sora text-xs font-semibold text-main">
+                                        0
+                                    </span>
+
+                                </div>
+
+                                <div class="progress-track">
+                                    <div id="quizProgress" class="progress-fill" style="width: 0%;">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Referral -->
+                            <div class="surface-soft border border-main rounded-2xl p-4 cursor-pointer hover:border-emerald-300 dark:hover:border-emerald-500/30 transition"
+                                onclick="goToTask('referral.html')">
+
+                                <div class="flex items-center justify-between mb-3">
+
+                                    <div class="flex items-center gap-2.5">
+
+                                        <div
+                                            class="w-9 h-9 rounded-lg bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center">
+                                            <i class='bx bx-group text-teal-500'></i>
+                                        </div>
+
+                                        <div>
+
+                                            <p class="text-main text-xs font-semibold">
+                                                Referrals
+                                            </p>
+
+                                            <p class="text-muted text-[10px]">
+                                                Eligible referrals
+                                            </p>
+
+                                        </div>
+
+                                    </div>
+
+                                    <span class="font-sora text-xs font-semibold text-main">
+                                        0
+                                    </span>
+
+                                </div>
+
+                                <div class="progress-track">
+                                    <div id="referralProgress" class="progress-fill" style="width: 0%;">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- TODAY'S EARNINGS -->
+                    <div class="surface border border-main rounded-2xl p-5 sm:p-6">
+
+                        <div class="flex items-start justify-between mb-5">
+
+                            <div>
+
+                                <h2 class="font-sora text-base font-semibold text-main">
+                                    Today's Earnings
+                                </h2>
+
+                                <p class="text-muted text-xs mt-1">
+                                    Rewards earned today.
+                                </p>
+
+                            </div>
+
+                            <div
+                                class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+                                <i class='bx bx-dollar-circle text-emerald-500'></i>
+                            </div>
+
+                        </div>
+
+                        <div class="rounded-2xl bg-[#071A2B] p-5 relative overflow-hidden">
+
+                            <div class="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-emerald-500/10"></div>
+
+                            <div class="absolute -right-2 bottom-[-35px] w-24 h-24 rounded-full bg-teal-500/10"></div>
+
+                            <p class="relative text-slate-400 text-xs">
+                                Earned Today
+                            </p>
+
+                            <p id="todayEarned" class="relative font-sora text-3xl font-bold text-white mt-2">
+                                $0.00
+                            </p>
+
+                            <p id="todayEarnedNgn" class="relative text-slate-400 text-[11px] mt-1">
+                                ≈ ₦0
+                            </p>
+
+                            <div class="relative mt-5 pt-4 border-t border-white/10 flex items-center justify-between">
+
+                                <span class="text-slate-400 text-[11px]">
+                                    Available rewards
+                                </span>
+
+                                <span id="availableRewards" class="text-emerald-400 text-xs font-semibold">
+                                    $0.00
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="flex items-start gap-2.5 mt-5">
+
+                            <i class='bx bx-info-circle text-slate-400 text-base mt-0.5'></i>
+
+                            <p class="text-muted text-[11px] leading-5">
+                                Rewards are credited according to the rules of each task and may require backend
+                                verification.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- =========================
+                     HOW IT WORKS
+                ========================= -->
+                <div class="surface border border-main rounded-2xl p-5 sm:p-6 mt-5">
+
+                    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
+
+                        <div>
+
+                            <h2 class="font-sora text-base sm:text-lg font-semibold text-main">
+                                How Task Rewards Work
+                            </h2>
+
+                            <p class="text-muted text-xs mt-1">
+                                A simple overview of the Optify earning process.
+                            </p>
+
+                        </div>
+
+                        <div class="text-xs text-muted flex items-center gap-2">
+
+                            <i class='bx bx-dollar-circle text-emerald-500'></i>
+
+                            USD rewards
+
+                        </div>
+
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                        <!-- STEP 01 -->
+                        <div class="relative">
+
+                            <div class="flex items-center gap-3 mb-3">
+
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-500 font-sora font-bold text-sm">
+                                    01
+                                </div>
+
+                                <i class='bx bx-right-arrow-alt text-slate-300 hidden lg:block'></i>
+
+                            </div>
+
+                            <h3 class="font-sora text-sm font-semibold text-main">
+                                Choose an Activity
+                            </h3>
+
+                            <p class="text-muted text-xs leading-5 mt-1.5">
+                                Select a streak, mystery box, quiz or referral activity that is available to you.
+                            </p>
+
+                        </div>
+
+                        <!-- STEP 02 -->
+                        <div class="relative">
+
+                            <div class="flex items-center gap-3 mb-3">
+
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-500 font-sora font-bold text-sm">
+                                    02
+                                </div>
+
+                                <i class='bx bx-right-arrow-alt text-slate-300 hidden lg:block'></i>
+
+                            </div>
+
+                            <h3 class="font-sora text-sm font-semibold text-main">
+                                Complete the Task
+                            </h3>
+
+                            <p class="text-muted text-xs leading-5 mt-1.5">
+                                Follow the rules for the selected activity and complete the required action.
+                            </p>
+
+                        </div>
+
+                        <!-- STEP 03 -->
+                        <div class="relative">
+
+                            <div class="flex items-center gap-3 mb-3">
+
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-500 font-sora font-bold text-sm">
+                                    03
+                                </div>
+
+                                <i class='bx bx-right-arrow-alt text-slate-300 hidden lg:block'></i>
+
+                            </div>
+
+                            <h3 class="font-sora text-sm font-semibold text-main">
+                                Verification
+                            </h3>
+
+                            <p class="text-muted text-xs leading-5 mt-1.5">
+                                Optify verifies the completed activity according to the applicable task rules.
+                            </p>
+
+                        </div>
+
+                        <!-- STEP 04 -->
+                        <div>
+
+                            <div class="flex items-center gap-3 mb-3">
+
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-teal-500 font-sora font-bold text-sm">
+                                    04
+                                </div>
+
+                            </div>
+
+                            <h3 class="font-sora text-sm font-semibold text-main">
+                                Receive Eligible Reward
+                            </h3>
+
+                            <p class="text-muted text-xs leading-5 mt-1.5">
+                                Eligible rewards are credited to your balance after the platform verifies the task.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- =========================
+                     CURRENCY NOTE
+                ========================= -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-5 px-1">
+
+                    <div class="flex items-center gap-2">
+
+                        <div
+                            class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+                            <i class='bx bx-transfer-alt text-emerald-500 text-sm'></i>
+                        </div>
+
+                        <p class="text-muted text-[11px]">
+                            Optify displays earnings in USD.
+                        </p>
+
+                    </div>
+
+                    <p class="text-muted text-[11px]">
+
+                        Current display conversion:
+
+                        <span class="font-semibold text-main">
+                            $1 = ₦1,000
+                        </span>
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- =========================
+         MOBILE BOTTOM NAV
+    ========================= -->
+    <nav class="mobile-bottom-nav">
+
+        <a href="dashboard.html" class="bottom-nav-item">
+            <i class='bx bx-grid-alt'></i>
+            <span>Home</span>
+        </a>
+
+        <a href="tasks.html" class="bottom-nav-item active">
+            <i class='bx bx-task'></i>
+            <span>Tasks</span>
+        </a>
+
+        <a href="streak.html" class="bottom-nav-item">
+            <i class='bx bx-flame'></i>
+            <span>Streak</span>
+        </a>
+
+        <a href="transactions.html" class="bottom-nav-item">
+            <i class='bx bx-transfer-alt'></i>
+            <span>History</span>
+        </a>
+
+        <a href="settings.html" class="bottom-nav-item">
+            <i class='bx bx-user'></i>
+            <span>Profile</span>
+        </a>
+
+    </nav>
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            /* =========================
+               THEME
+            ========================= */
+
+            const html = document.documentElement;
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+
+            function applyTheme(theme) {
+
+                if (theme === 'dark') {
+
+                    html.classList.add('dark');
+
+                    themeIcon.className = 'bx bx-sun text-[20px]';
+
+                } else {
+
+                    html.classList.remove('dark');
+
+                    themeIcon.className = 'bx bx-moon text-[20px]';
+
+                }
+
+            }
+
+            const savedTheme = localStorage.getItem('optify-theme');
+
+            if (savedTheme) {
+
+                applyTheme(savedTheme);
+
+            } else {
+
+                const prefersDark =
+                    window.matchMedia &&
+                    window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                applyTheme(prefersDark ? 'dark' : 'light');
+
+            }
+
+            themeToggle.addEventListener('click', function () {
+
+                const nextTheme =
+                    html.classList.contains('dark')
+                        ? 'light'
+                        : 'dark';
+
+                applyTheme(nextTheme);
+
+                localStorage.setItem('optify-theme', nextTheme);
+
+            });
+
+
+            /* =========================
+               MOBILE SIDEBAR
+            ========================= */
+
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+
+            function openSidebar() {
+
+                sidebar.classList.add('open');
+
+                mobileOverlay.classList.add('show');
+
+                document.body.style.overflow = 'hidden';
+
+            }
+
+            function closeSidebar() {
+
+                sidebar.classList.remove('open');
+
+                mobileOverlay.classList.remove('show');
+
+                document.body.style.overflow = '';
+
+            }
+
+            mobileMenuBtn.addEventListener('click', openSidebar);
+
+            mobileOverlay.addEventListener('click', closeSidebar);
+
+            window.addEventListener('resize', function () {
+
+                if (window.innerWidth > 1024) {
+
+                    closeSidebar();
+
+                }
+
+            });
+
+
+            /* =========================
+               TASK NAVIGATION
+            ========================= */
+
+            window.goToTask = function (page) {
+
+                /*
+                 * Frontend navigation only.
+                 *
+                 * Backend must independently confirm:
+                 *
+                 * - authenticated user
+                 * - dashboard validation status
+                 * - task eligibility
+                 * - task limits
+                 * - reward eligibility
+                 */
+
+                window.location.href = page;
+
+            };
+
+
+            /* =========================
+               BACKEND DATA PLACEHOLDER
+            ========================= */
+
+            /*
+             * Production example:
+             *
+             * GET /api/user/tasks/summary
+             *
+             * Expected response:
+             *
+             * {
+             *   availableBalanceUsd: 0,
+             *   totalEarnedUsd: 0,
+             *   pendingBalanceUsd: 0,
+             *   tasksCompleted: 0,
+             *   todayEarnedUsd: 0,
+             *   streakClaims: 0,
+             *   mysteryBoxesOpened: 0,
+             *   quizCompleted: false,
+             *   eligibleReferrals: 0
+             * }
+             *
+             * Never trust these values from the browser when
+             * calculating or crediting rewards.
+             */
+
+            const taskSummary = {
+                availableBalanceUsd: 0,
+                totalEarnedUsd: 0,
+                pendingBalanceUsd: 0,
+                tasksCompleted: 0,
+                todayEarnedUsd: 0,
+                streakClaims: 0,
+                mysteryBoxesOpened: 0,
+                quizCompleted: false,
+                eligibleReferrals: 0
+            };
+
+
+            /* =========================
+               CURRENCY
+            ========================= */
+
+            const NAIRA_RATE = 1000;
+
+            function formatUsd(value) {
+
+                return '$' + Number(value || 0).toFixed(2);
+
+            }
+
+            function formatNaira(value) {
+
+                return '₦' + Number(value || 0).toLocaleString(
+                    'en-NG',
+                    {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 2
+                    }
+                );
+
+            }
+
+
+            /* =========================
+               UPDATE SUMMARY
+            ========================= */
+
+            function updateSummary() {
+
+                const balance =
+                    Number(taskSummary.availableBalanceUsd || 0);
+
+                const total =
+                    Number(taskSummary.totalEarnedUsd || 0);
+
+                const pending =
+                    Number(taskSummary.pendingBalanceUsd || 0);
+
+                const today =
+                    Number(taskSummary.todayEarnedUsd || 0);
+
+                document.getElementById('availableBalance').textContent =
+                    formatUsd(balance);
+
+                document.getElementById('availableBalanceNgn').textContent =
+                    '≈ ' + formatNaira(balance * NAIRA_RATE);
+
+                document.getElementById('totalEarned').textContent =
+                    formatUsd(total);
+
+                document.getElementById('totalEarnedNgn').textContent =
+                    '≈ ' + formatNaira(total * NAIRA_RATE);
+
+                document.getElementById('pendingBalance').textContent =
+                    formatUsd(pending);
+
+                document.getElementById('pendingBalanceNgn').textContent =
+                    '≈ ' + formatNaira(pending * NAIRA_RATE);
+
+                document.getElementById('tasksCompleted').textContent =
+                    Number(taskSummary.tasksCompleted || 0);
+
+                document.getElementById('todayEarned').textContent =
+                    formatUsd(today);
+
+                document.getElementById('todayEarnedNgn').textContent =
+                    '≈ ' + formatNaira(today * NAIRA_RATE);
+
+                document.getElementById('availableRewards').textContent =
+                    formatUsd(balance);
+
+            }
+
+
+            /* =========================
+               UPDATE PROGRESS
+            ========================= */
+
+            function updateProgress() {
+
+                const streakClaims =
+                    Math.min(
+                        Number(taskSummary.streakClaims || 0),
+                        3
+                    );
+
+                const boxes =
+                    Math.min(
+                        Number(taskSummary.mysteryBoxesOpened || 0),
+                        3
+                    );
+
+                const quizCompleted =
+                    taskSummary.quizCompleted ? 100 : 0;
+
+                const referrals =
+                    Number(taskSummary.eligibleReferrals || 0);
+
+                const streakPercentage =
+                    (streakClaims / 3) * 100;
+
+                const boxPercentage =
+                    (boxes / 3) * 100;
+
+                document.getElementById('streakProgress').style.width =
+                    streakPercentage + '%';
+
+                document.getElementById('boxProgress').style.width =
+                    boxPercentage + '%';
+
+                document.getElementById('quizProgress').style.width =
+                    quizCompleted + '%';
+
+                document.getElementById('referralProgress').style.width =
+                    referrals > 0 ? '100%' : '0%';
+
+            }
+
+
+            /* =========================
+               INITIAL DATA
+            ========================= */
+
+            updateSummary();
+
+            updateProgress();
+
+
+            /* =========================
+               ESCAPE KEY
+            ========================= */
+
+            document.addEventListener('keydown', function (event) {
+
+                if (event.key === 'Escape') {
+
+                    closeSidebar();
+
+                }
+
+            });
+
+
+            /* =========================
+               LOGOUT
+            ========================= */
+
+            window.logoutDemo = function () {
+
+                /*
+                 * Backend/Firebase integration placeholder.
+                 *
+                 * Production:
+                 *
+                 * await signOut(auth);
+                 * window.location.href = 'login.html';
+                 *
+                 * Do not use localStorage as proof of authentication.
+                 */
+
+                window.location.href = 'login.html';
+
+            };
+
+        });
+
+    </script>
+
+</body>
+
+</html>

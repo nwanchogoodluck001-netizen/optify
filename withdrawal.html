@@ -1,0 +1,2625 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Withdrawal — Optify</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
+
+    <style>
+        :root {
+            --navy: #071A2B;
+            --navy-2: #0B3B4A;
+            --green: #12B76A;
+            --teal: #0EA5A4;
+            --soft-green: #E8F8F0;
+            --bg: #F7F9FC;
+            --text: #101828;
+            --muted: #667085;
+            --border: #E4E7EC;
+            --warning: #F79009;
+            --danger: #F04438;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--navy);
+        }
+
+        .main-content {
+            margin-left: 250px;
+        }
+
+        .nav-item {
+            transition: .2s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, .05);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: rgba(18, 183, 106, .14);
+            color: #6EE7B7;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: 0 3px 14px rgba(16, 24, 40, .035);
+        }
+
+        .dark .card {
+            background: #0F1D2A;
+            border-color: #203141;
+            box-shadow: none;
+        }
+
+        .dark body {
+            background: #07131F;
+            color: #F8FAFC;
+        }
+
+        .dark .main-bg {
+            background: #07131F;
+        }
+
+        .dark .text-main {
+            color: #F8FAFC !important;
+        }
+
+        .dark .text-muted {
+            color: #94A3B8 !important;
+        }
+
+        .dark .input-field {
+            background: #0B1926;
+            border-color: #243648;
+            color: white;
+        }
+
+        .input-field {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            outline: none;
+            background: white;
+            color: var(--text);
+            transition: .2s ease;
+        }
+
+        .input-field:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(18, 183, 106, .10);
+        }
+
+        .btn-primary {
+            background: var(--green);
+            color: white;
+            border-radius: 12px;
+            padding: 12px 18px;
+            font-weight: 600;
+            transition: .2s ease;
+        }
+
+        .btn-primary:hover {
+            background: #0EA85F;
+        }
+
+        .btn-primary:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 11px 16px;
+            font-weight: 600;
+            transition: .2s ease;
+        }
+
+        .dark .btn-secondary {
+            background: #132333;
+            border-color: #294052;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            border-color: #CBD5E1;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #071A2B 0%, #0B3B4A 55%, #12B76A 150%);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 999px;
+            padding: 5px 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            color: #B54708;
+            background: #FFFAEB;
+        }
+
+        .status-approved,
+        .status-completed {
+            color: #067647;
+            background: #ECFDF3;
+        }
+
+        .status-processing {
+            color: #175CD3;
+            background: #EFF8FF;
+        }
+
+        .status-rejected {
+            color: #B42318;
+            background: #FEF3F2;
+        }
+
+        .dark .status-pending {
+            background: rgba(247, 144, 9, .12);
+            color: #FDB022;
+        }
+
+        .dark .status-approved,
+        .dark .status-completed {
+            background: rgba(18, 183, 106, .12);
+            color: #6EE7B7;
+        }
+
+        .dark .status-processing {
+            background: rgba(23, 92, 211, .14);
+            color: #84CAFF;
+        }
+
+        .dark .status-rejected {
+            background: rgba(240, 68, 56, .12);
+            color: #FDA29B;
+        }
+
+        .mobile-overlay {
+            display: none;
+        }
+
+        .mobile-overlay.show {
+            display: block;
+        }
+
+        @media (max-width: 1023px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: .25s ease;
+                z-index: 70;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .balance-card {
+                border-radius: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body class="main-bg">
+
+    <!-- MOBILE OVERLAY -->
+    <div id="mobileOverlay" class="mobile-overlay fixed inset-0 bg-black/50 z-[65]" onclick="closeSidebar()">
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar fixed left-0 top-0 bottom-0 z-[60] text-white overflow-y-auto">
+
+        <div class="px-5 py-6">
+
+            <!-- Logo -->
+            <div class="flex items-center gap-3 mb-8">
+
+                <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
+                    <i class='bx bx-layer text-2xl'></i>
+                </div>
+
+                <div>
+                    <div class="font-sora font-bold text-lg tracking-tight">
+                        OPTIFY
+                    </div>
+
+                    <div class="text-[10px] text-slate-400 uppercase tracking-[.18em]">
+                        User Portal
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- MAIN -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Main Menu
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="dashboard.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-grid-alt text-lg'></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a href="tasks.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-task text-lg'></i>
+                        <span>Tasks</span>
+                    </a>
+
+                    <a href="streak.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-time-five text-lg'></i>
+                        <span>Streak</span>
+                    </a>
+
+                    <a href="mystery-box.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-gift text-lg'></i>
+                        <span>Mystery Box</span>
+                    </a>
+
+                    <a href="quiz.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-help-circle text-lg'></i>
+                        <span>Quiz</span>
+                    </a>
+
+                    <a href="referral.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-share-alt text-lg'></i>
+                        <span>Referral</span>
+                    </a>
+
+                    <a href="epin.html"
+                        class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-white/65 hover:text-white hover:bg-white/5">
+                        <i class='bx bx-key'></i>
+                        <span>Withdrawal E-pin</span>
+                    </a>
+
+                    <a href="withdrawal.html"
+                        class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm">
+                        <i class='bx bx-wallet text-lg'></i>
+                        <span>Withdrawal</span>
+                    </a>
+
+                    <a href="transactions.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-transfer-alt text-lg'></i>
+                        <span>Transactions</span>
+                    </a>
+
+                    <a href="settings.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-cog text-lg'></i>
+                        <span>Settings</span>
+                    </a>
+
+                </nav>
+
+            </div>
+
+        </div>
+
+        <!-- SIDEBAR BOTTOM -->
+        <div class="absolute bottom-0 left-0 right-0 p-5 border-t border-white/10 bg-[#071A2B]">
+
+            <div class="flex items-center gap-3 mb-4">
+
+                <div class="w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center">
+                    <i class='bx bx-user text-emerald-400'></i>
+                </div>
+
+                <div class="min-w-0">
+                    <p id="sidebarUserName" class="text-sm font-medium truncate">
+                        Optify User
+                    </p>
+
+                    <p class="text-xs text-slate-500">
+                        Validated Account
+                    </p>
+                </div>
+
+            </div>
+
+            <button id="logoutBtn"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-400 hover:bg-white/5 hover:text-white transition">
+
+                <i class='bx bx-log-out text-lg'></i>
+                Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content min-h-screen">
+
+        <!-- TOPBAR -->
+        <header
+            class="sticky top-0 z-40 h-[72px] bg-white/90 dark:bg-[#07131F]/90 backdrop-blur border-b border-slate-200 dark:border-slate-800">
+
+            <div class="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+
+                <div class="flex items-center gap-3">
+
+                    <button id="menuBtn" onclick="openSidebar()"
+                        class="lg:hidden w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+
+                        <i class='bx bx-menu text-xl text-slate-700 dark:text-white'></i>
+
+                    </button>
+
+                    <div>
+                        <p class="text-[10px] uppercase tracking-[.16em] text-slate-400 font-semibold">
+                            Wallet
+                        </p>
+
+                        <h1 class="font-sora font-semibold text-lg text-main">
+                            Withdraw Funds
+                        </h1>
+                    </div>
+
+                </div>
+
+
+                <div class="flex items-center gap-3">
+
+                    <!-- VALIDATED BADGE -->
+                    <div
+                        class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-full bg-emerald-50 dark:bg-emerald-500/10">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+
+                        <span class="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                            Dashboard Validated
+                        </span>
+                    </div>
+
+                    <!-- THEME -->
+                    <button id="themeToggle"
+                        class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+
+                        <i id="themeIcon" class='bx bx-moon text-lg text-slate-600 dark:text-slate-300'></i>
+
+                    </button>
+
+                    <!-- PROFILE -->
+                    <a href="settings.html"
+                        class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+
+                        <i class='bx bx-user text-emerald-600 dark:text-emerald-400'></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE -->
+        <section class="px-4 sm:px-6 lg:px-8 py-7 max-w-[1450px] mx-auto">
+
+            <!-- PAGE HEADING -->
+            <div class="mb-7">
+
+                <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+
+                    <div>
+
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+
+                            <span
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[11px] font-semibold">
+
+                                <i class='bx bx-check-circle'></i>
+                                Dashboard Validated
+
+                            </span>
+
+                            <span
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-medium">
+
+                                <i class='bx bx-lock-open-alt'></i>
+                                Withdrawals Unlocked
+
+                            </span>
+
+                        </div>
+
+                        <h2 class="font-sora text-2xl sm:text-3xl font-bold text-main">
+                            Withdraw your earnings
+                        </h2>
+
+                        <p class="text-sm text-muted mt-2 max-w-2xl">
+                            Request a withdrawal from your available Optify balance after meeting the withdrawal
+                            requirements.
+                        </p>
+
+                    </div>
+
+                    <div class="text-left lg:text-right">
+
+                        <p class="text-xs text-muted">
+                            Currency
+                        </p>
+
+                        <p class="font-semibold text-main">
+                            USD
+                            <span class="font-normal text-muted">
+                                · $1 = ₦1,000
+                            </span>
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- VALIDATED STATUS -->
+            <div
+                class="card p-4 sm:p-5 mb-6 border-emerald-200 dark:border-emerald-500/20 bg-emerald-50/50 dark:bg-emerald-500/[.04]">
+
+                <div class="flex items-start gap-3">
+
+                    <div
+                        class="w-10 h-10 shrink-0 rounded-xl bg-emerald-100 dark:bg-emerald-500/10 flex items-center justify-center">
+
+                        <i class='bx bx-check-shield text-xl text-emerald-600 dark:text-emerald-400'></i>
+
+                    </div>
+
+                    <div class="min-w-0">
+
+                        <div class="flex flex-wrap items-center gap-2">
+
+                            <h3 class="font-sora font-semibold text-sm text-main">
+                                Your dashboard is validated
+                            </h3>
+
+                            <span
+                                class="text-[10px] uppercase tracking-wider font-bold text-emerald-600 dark:text-emerald-400">
+                                Active
+                            </span>
+
+                        </div>
+
+                        <p class="text-xs sm:text-sm text-muted mt-1">
+                            Withdrawal access is available. You still need an approved withdrawal E-pin, sufficient
+                            balance, and valid bank details before a request can be submitted.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BALANCE + REQUIREMENTS -->
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-5 mb-6">
+
+                <!-- BALANCE -->
+                <div class="xl:col-span-2 balance-card rounded-[20px] p-6 sm:p-7 text-white relative overflow-hidden">
+
+                    <div class="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-white/5"></div>
+                    <div class="absolute right-10 -bottom-24 w-56 h-56 rounded-full bg-emerald-300/5"></div>
+
+                    <div class="relative">
+
+                        <div class="flex items-center justify-between gap-3">
+
+                            <div>
+
+                                <p class="text-xs text-white/60">
+                                    Available Balance
+                                </p>
+
+                                <p id="availableBalance" class="font-sora text-3xl sm:text-4xl font-bold mt-2">
+                                    $0.00
+                                </p>
+
+                                <p id="availableBalanceNgn" class="text-sm text-white/60 mt-1">
+                                    ≈ ₦0
+                                </p>
+
+                            </div>
+
+                            <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center">
+
+                                <i class='bx bx-wallet-alt text-2xl'></i>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="mt-7 grid grid-cols-2 gap-3 max-w-md">
+
+                            <div class="rounded-xl bg-white/10 p-3">
+
+                                <p class="text-[10px] text-white/50 uppercase tracking-wider">
+                                    Minimum
+                                </p>
+
+                                <p class="font-semibold mt-1">
+                                    $10.00
+                                </p>
+
+                            </div>
+
+                            <div class="rounded-xl bg-white/10 p-3">
+
+                                <p class="text-[10px] text-white/50 uppercase tracking-wider">
+                                    E-pin
+                                </p>
+
+                                <p class="font-semibold mt-1">
+                                    $2.00
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- REQUIREMENTS -->
+                <div class="card p-5">
+
+                    <div class="flex items-center justify-between mb-5">
+
+                        <div>
+
+                            <h3 class="font-sora font-semibold text-sm text-main">
+                                Withdrawal Requirements
+                            </h3>
+
+                            <p class="text-xs text-muted mt-1">
+                                Complete these before requesting
+                            </p>
+
+                        </div>
+
+                        <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+
+                            <i class='bx bx-list-check text-lg text-slate-600 dark:text-slate-300'></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="space-y-4">
+
+                        <div class="flex items-center gap-3">
+
+                            <div id="validationCheck"
+                                class="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+
+                                <i class='bx bx-check text-emerald-600 dark:text-emerald-400'></i>
+
+                            </div>
+
+                            <div class="min-w-0">
+
+                                <p class="text-sm font-medium text-main">
+                                    Dashboard validation
+                                </p>
+
+                                <p class="text-xs text-emerald-600 dark:text-emerald-400">
+                                    Completed
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex items-center gap-3">
+
+                            <div id="epinCheck"
+                                class="w-8 h-8 rounded-full bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center">
+
+                                <i class='bx bx-time-five text-amber-600'></i>
+
+                            </div>
+
+                            <div class="min-w-0 flex-1">
+
+                                <div class="flex items-center justify-between gap-2">
+
+                                    <div>
+
+                                        <p class="text-sm font-medium text-main">
+                                            Withdrawal E-pin
+                                        </p>
+
+                                        <p id="epinStatus" class="text-xs text-amber-600 dark:text-amber-400">
+                                            Required
+                                        </p>
+
+                                    </div>
+
+                                    <a href="epin.html"
+                                        class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                                        Manage
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex items-center gap-3">
+
+                            <div id="bankCheck"
+                                class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+
+                                <i class='bx bx-bank text-slate-500'></i>
+
+                            </div>
+
+                            <div class="min-w-0 flex-1">
+
+                                <div class="flex items-center justify-between gap-2">
+
+                                    <div>
+
+                                        <p class="text-sm font-medium text-main">
+                                            Bank details
+                                        </p>
+
+                                        <p id="bankStatus" class="text-xs text-muted">
+                                            Not configured
+                                        </p>
+
+                                    </div>
+
+                                    <a href="settings.html"
+                                        class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                                        Settings
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- WITHDRAWAL FORM + BANK DETAILS -->
+            <div class="grid grid-cols-1 xl:grid-cols-5 gap-5 mb-6">
+
+                <!-- REQUEST FORM -->
+                <div class="xl:col-span-3 card p-5 sm:p-6">
+
+                    <div class="flex items-start justify-between gap-4 mb-6">
+
+                        <div>
+
+                            <h3 class="font-sora font-semibold text-base text-main">
+                                Request Withdrawal
+                            </h3>
+
+                            <p class="text-xs text-muted mt-1">
+                                Enter the amount you want to withdraw.
+                            </p>
+
+                        </div>
+
+                        <div
+                            class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+
+                            <i class='bx bx-money-withdraw text-xl text-emerald-600 dark:text-emerald-400'></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <form id="withdrawalForm">
+
+                        <div class="mb-5">
+
+                            <label for="withdrawalAmount" class="block text-sm font-medium text-main mb-2">
+
+                                Withdrawal Amount
+
+                            </label>
+
+                            <div class="relative">
+
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 font-semibold text-slate-500">
+                                    $
+                                </span>
+
+                                <input id="withdrawalAmount" type="number" min="10" step="0.01" placeholder="10.00"
+                                    class="input-field pl-9 pr-20">
+
+                                <button type="button" onclick="useMaxBalance()"
+                                    class="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-300">
+
+                                    Max
+
+                                </button>
+
+                            </div>
+
+                            <div class="flex items-center justify-between mt-2">
+
+                                <p class="text-[11px] text-muted">
+                                    Minimum withdrawal: $10.00
+                                </p>
+
+                                <p id="amountNgn" class="text-[11px] text-muted">
+                                    ≈ ₦0
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- FEE SUMMARY -->
+                        <div
+                            class="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-4 mb-5">
+
+                            <div class="flex items-center justify-between py-1.5">
+
+                                <span class="text-xs text-muted">
+                                    Requested amount
+                                </span>
+
+                                <span id="summaryAmount" class="text-sm font-medium text-main">
+                                    $0.00
+                                </span>
+
+                            </div>
+
+                            <div class="flex items-center justify-between py-1.5">
+
+                                <span class="text-xs text-muted">
+                                    Withdrawal E-pin
+                                </span>
+
+                                <span class="text-sm font-medium text-main">
+                                    $2.00
+                                </span>
+
+                            </div>
+
+                            <div class="border-t border-slate-200 dark:border-slate-700 my-2"></div>
+
+                            <div class="flex items-center justify-between py-1.5">
+
+                                <span class="text-xs font-semibold text-main">
+                                    Processing amount
+                                </span>
+
+                                <span id="summaryTotal" class="text-sm font-bold text-main">
+                                    $0.00
+                                </span>
+
+                            </div>
+
+                            <p class="text-[10px] text-muted mt-2">
+                                The $2 E-pin is purchased separately and must be approved before withdrawal eligibility
+                                is confirmed.
+                            </p>
+
+                        </div>
+
+
+                        <!-- ELIGIBILITY -->
+                        <div id="eligibilityBox"
+                            class="rounded-xl border border-amber-200 dark:border-amber-500/20 bg-amber-50/60 dark:bg-amber-500/[.05] p-4 mb-5">
+
+                            <div class="flex items-start gap-3">
+
+                                <i class='bx bx-info-circle text-lg text-amber-600 mt-0.5'></i>
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-main">
+                                        Withdrawal eligibility
+                                    </p>
+
+                                    <p id="eligibilityText" class="text-xs text-muted mt-1">
+                                        Your account is validated. An approved withdrawal E-pin and bank details are
+                                        still required.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <button id="requestWithdrawalBtn" type="submit"
+                            class="btn-primary w-full flex items-center justify-center gap-2">
+
+                            <i class='bx bx-send'></i>
+
+                            Request Withdrawal
+
+                        </button>
+
+                        <p class="text-[10px] text-muted text-center mt-3">
+                            Requests are subject to backend eligibility checks and admin processing.
+                        </p>
+
+                    </form>
+
+                </div>
+
+
+                <!-- BANK DETAILS -->
+                <div class="xl:col-span-2 card p-5 sm:p-6">
+
+                    <div class="flex items-start justify-between gap-4 mb-6">
+
+                        <div>
+
+                            <h3 class="font-sora font-semibold text-base text-main">
+                                Payment Details
+                            </h3>
+
+                            <p class="text-xs text-muted mt-1">
+                                Bank account for withdrawals
+                            </p>
+
+                        </div>
+
+                        <a href="settings.html"
+                            class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+
+                            <i class='bx bx-edit-alt text-lg text-slate-600 dark:text-slate-300'></i>
+
+                        </a>
+
+                    </div>
+
+
+                    <div id="bankDetailsEmpty" class="py-8 text-center">
+
+                        <div
+                            class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-3">
+
+                            <i class='bx bx-bank text-2xl text-slate-400'></i>
+
+                        </div>
+
+                        <h4 class="font-semibold text-sm text-main">
+                            Bank details not available
+                        </h4>
+
+                        <p class="text-xs text-muted mt-1 max-w-xs mx-auto">
+                            Add your bank details in Settings before requesting a withdrawal.
+                        </p>
+
+                        <a href="settings.html"
+                            class="inline-flex items-center gap-2 mt-4 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+
+                            Update Bank Details
+                            <i class='bx bx-right-arrow-alt'></i>
+
+                        </a>
+
+                    </div>
+
+
+                    <div id="bankDetailsCard" class="hidden">
+
+                        <div
+                            class="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-4">
+
+                            <div class="flex items-center gap-3 mb-5">
+
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-white dark:bg-slate-700 flex items-center justify-center">
+
+                                    <i class='bx bx-bank text-xl text-emerald-600 dark:text-emerald-400'></i>
+
+                                </div>
+
+                                <div>
+
+                                    <p id="bankName" class="text-sm font-semibold text-main">
+                                        —
+                                    </p>
+
+                                    <p class="text-[11px] text-muted">
+                                        Bank account
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="space-y-4">
+
+                                <div>
+
+                                    <p class="text-[10px] uppercase tracking-wider text-muted font-semibold">
+                                        Account Name
+                                    </p>
+
+                                    <p id="accountName" class="text-sm font-medium text-main mt-1">
+                                        —
+                                    </p>
+
+                                </div>
+
+
+                                <div>
+
+                                    <p class="text-[10px] uppercase tracking-wider text-muted font-semibold">
+                                        Account Number
+                                    </p>
+
+                                    <p id="accountNumber" class="text-sm font-medium text-main mt-1">
+                                        —
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex items-start gap-2 mt-4 text-[11px] text-muted">
+
+                            <i class='bx bx-shield-check text-emerald-500 text-base'></i>
+
+                            <span>
+                                Only the bank details required to process your withdrawal should be stored.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- WITHDRAWAL HISTORY -->
+            <div class="card overflow-hidden">
+
+                <div class="p-5 sm:p-6 border-b border-slate-200 dark:border-slate-700">
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+
+                        <div>
+
+                            <h3 class="font-sora font-semibold text-base text-main">
+                                Withdrawal History
+                            </h3>
+
+                            <p class="text-xs text-muted mt-1">
+                                Track your submitted withdrawal requests.
+                            </p>
+
+                        </div>
+
+                        <a href="transactions.html"
+                            class="inline-flex items-center justify-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+
+                            View Transactions
+                            <i class='bx bx-right-arrow-alt text-base'></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DESKTOP TABLE -->
+                <div class="hidden md:block overflow-x-auto">
+
+                    <table class="w-full">
+
+                        <thead>
+
+                            <tr class="bg-slate-50 dark:bg-slate-800/50 text-left">
+
+                                <th class="px-5 py-3 text-[10px] uppercase tracking-wider text-muted font-semibold">
+                                    Date
+                                </th>
+
+                                <th class="px-5 py-3 text-[10px] uppercase tracking-wider text-muted font-semibold">
+                                    Amount
+                                </th>
+
+                                <th class="px-5 py-3 text-[10px] uppercase tracking-wider text-muted font-semibold">
+                                    Method
+                                </th>
+
+                                <th class="px-5 py-3 text-[10px] uppercase tracking-wider text-muted font-semibold">
+                                    Status
+                                </th>
+
+                                <th class="px-5 py-3 text-[10px] uppercase tracking-wider text-muted font-semibold">
+                                    Reference
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="withdrawalTableBody">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- MOBILE -->
+                <div id="withdrawalMobileList" class="md:hidden">
+
+                </div>
+
+
+                <!-- EMPTY STATE -->
+                <div id="withdrawalEmpty" class="py-14 px-5 text-center">
+
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-4">
+
+                        <i class='bx bx-wallet text-2xl text-slate-400'></i>
+
+                    </div>
+
+                    <h4 class="font-sora font-semibold text-sm text-main">
+                        No withdrawal requests yet
+                    </h4>
+
+                    <p class="text-xs text-muted max-w-sm mx-auto mt-2">
+                        Your withdrawal history will appear here after you submit your first eligible request.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- WITHDRAWAL RULES -->
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                <div class="card p-5">
+
+                    <div class="flex items-center gap-3 mb-5">
+
+                        <div
+                            class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+
+                            <i class='bx bx-info-circle text-xl text-emerald-600 dark:text-emerald-400'></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3 class="font-sora font-semibold text-sm text-main">
+                                Withdrawal Rules
+                            </h3>
+
+                            <p class="text-xs text-muted mt-1">
+                                Important information
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="space-y-3">
+
+                        <div class="flex items-start gap-3">
+
+                            <i class='bx bx-check text-emerald-500 mt-0.5'></i>
+
+                            <p class="text-xs text-muted">
+                                Your dashboard must be validated before withdrawals are available.
+                            </p>
+
+                        </div>
+
+                        <div class="flex items-start gap-3">
+
+                            <i class='bx bx-check text-emerald-500 mt-0.5'></i>
+
+                            <p class="text-xs text-muted">
+                                Minimum withdrawal amount is $10.00 (≈ ₦10,000).
+                            </p>
+
+                        </div>
+
+                        <div class="flex items-start gap-3">
+
+                            <i class='bx bx-check text-emerald-500 mt-0.5'></i>
+
+                            <p class="text-xs text-muted">
+                                An approved $2.00 withdrawal E-pin is required.
+                            </p>
+
+                        </div>
+
+                        <div class="flex items-start gap-3">
+
+                            <i class='bx bx-check text-emerald-500 mt-0.5'></i>
+
+                            <p class="text-xs text-muted">
+                                Your bank details must be available and valid.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card p-5">
+
+                    <div class="flex items-center gap-3 mb-5">
+
+                        <div
+                            class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+
+                            <i class='bx bx-time-five text-xl text-slate-600 dark:text-slate-300'></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3 class="font-sora font-semibold text-sm text-main">
+                                Processing
+                            </h3>
+
+                            <p class="text-xs text-muted mt-1">
+                                What happens after you request
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="space-y-4">
+
+                        <div class="flex gap-3">
+
+                            <span
+                                class="w-7 h-7 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                                1
+                            </span>
+
+                            <div>
+
+                                <p class="text-xs font-semibold text-main">
+                                    Request submitted
+                                </p>
+
+                                <p class="text-[11px] text-muted mt-1">
+                                    Your request is recorded for review.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex gap-3">
+
+                            <span
+                                class="w-7 h-7 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-500">
+                                2
+                            </span>
+
+                            <div>
+
+                                <p class="text-xs font-semibold text-main">
+                                    Eligibility reviewed
+                                </p>
+
+                                <p class="text-[11px] text-muted mt-1">
+                                    The backend verifies your balance, E-pin, validation and bank details.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex gap-3">
+
+                            <span
+                                class="w-7 h-7 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-500">
+                                3
+                            </span>
+
+                            <div>
+
+                                <p class="text-xs font-semibold text-main">
+                                    Withdrawal processed
+                                </p>
+
+                                <p class="text-[11px] text-muted mt-1">
+                                    Approved requests move through the processing workflow.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CURRENCY NOTE -->
+            <div class="mt-6 text-center">
+
+                <p class="text-[11px] text-muted">
+                    Optify displays earnings and withdrawals in USD.
+                    Local currency values are shown using the fixed reference rate
+                    <span class="font-semibold text-main">
+                        $1 = ₦1,000
+                    </span>.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav
+        class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-[#0B1926] border-t border-slate-200 dark:border-slate-800">
+
+        <div class="grid grid-cols-5 h-[64px]">
+
+            <a href="dashboard.html" class="flex flex-col items-center justify-center text-slate-400 text-[10px] gap-1">
+
+                <i class='bx bx-home-alt text-xl'></i>
+                Home
+
+            </a>
+
+            <a href="tasks.html" class="flex flex-col items-center justify-center text-slate-400 text-[10px] gap-1">
+
+                <i class='bx bx-task text-xl'></i>
+                Tasks
+
+            </a>
+
+            <a href="withdrawal.html"
+                class="flex flex-col items-center justify-center text-emerald-600 dark:text-emerald-400 text-[10px] gap-1">
+
+                <i class='bx bx-wallet text-xl'></i>
+                Wallet
+
+            </a>
+
+            <a href="transactions.html"
+                class="flex flex-col items-center justify-center text-slate-400 text-[10px] gap-1">
+
+                <i class='bx bx-transfer-alt text-xl'></i>
+                History
+
+            </a>
+
+            <a href="settings.html" class="flex flex-col items-center justify-center text-slate-400 text-[10px] gap-1">
+
+                <i class='bx bx-user text-xl'></i>
+                Profile
+
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- CONFIRM WITHDRAWAL MODAL -->
+    <div id="confirmModal"
+        class="hidden fixed inset-0 z-[100] bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+
+        <div class="card w-full max-w-md p-6">
+
+            <div class="flex items-start justify-between gap-4 mb-5">
+
+                <div class="flex items-center gap-3">
+
+                    <div
+                        class="w-11 h-11 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+
+                        <i class='bx bx-send text-xl text-emerald-600 dark:text-emerald-400'></i>
+
+                    </div>
+
+                    <div>
+
+                        <h3 class="font-sora font-semibold text-base text-main">
+                            Confirm Withdrawal
+                        </h3>
+
+                        <p class="text-xs text-muted mt-1">
+                            Review your request
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <button onclick="closeConfirmModal()"
+                    class="w-9 h-9 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
+
+                    <i class='bx bx-x text-xl text-slate-500'></i>
+
+                </button>
+
+            </div>
+
+
+            <div
+                class="rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-4 mb-5">
+
+                <div class="flex items-center justify-between py-2">
+
+                    <span class="text-xs text-muted">
+                        Amount
+                    </span>
+
+                    <span id="confirmAmount" class="font-sora font-bold text-main">
+                        $0.00
+                    </span>
+
+                </div>
+
+                <div class="flex items-center justify-between py-2">
+
+                    <span class="text-xs text-muted">
+                        Local equivalent
+                    </span>
+
+                    <span id="confirmNgn" class="text-sm font-semibold text-main">
+                        ₦0
+                    </span>
+
+                </div>
+
+                <div class="border-t border-slate-200 dark:border-slate-700 my-2"></div>
+
+                <div class="flex items-center justify-between py-2">
+
+                    <span class="text-xs text-muted">
+                        Destination
+                    </span>
+
+                    <span id="confirmBank" class="text-sm font-semibold text-main">
+                        Not configured
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="flex items-start gap-2 p-3 rounded-xl bg-amber-50 dark:bg-amber-500/[.06] border border-amber-200 dark:border-amber-500/20 mb-5">
+
+                <i class='bx bx-info-circle text-amber-600 mt-0.5'></i>
+
+                <p class="text-[11px] text-muted">
+                    Submitting this request does not guarantee approval. The backend will verify your withdrawal
+                    eligibility before processing.
+                </p>
+
+            </div>
+
+
+            <div class="grid grid-cols-2 gap-3">
+
+                <button onclick="closeConfirmModal()" class="btn-secondary">
+                    Cancel
+                </button>
+
+                <button id="confirmWithdrawalBtn" onclick="submitWithdrawal()" class="btn-primary">
+
+                    Confirm Request
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOAST -->
+    <div id="toast"
+        class="fixed right-4 bottom-20 lg:bottom-6 z-[120] translate-y-5 opacity-0 pointer-events-none transition-all duration-300">
+
+        <div
+            class="bg-[#071A2B] text-white rounded-xl shadow-xl px-4 py-3 flex items-center gap-3 min-w-[280px] max-w-sm">
+
+            <div id="toastIcon" class="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center">
+
+                <i class='bx bx-check text-emerald-400'></i>
+
+            </div>
+
+            <div>
+
+                <p id="toastTitle" class="text-sm font-semibold">
+                    Success
+                </p>
+
+                <p id="toastMessage" class="text-xs text-slate-400 mt-0.5">
+                    Done.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+        /*
+        ============================================================
+        OPTIFY — VALIDATED WITHDRAWAL PAGE
+        ============================================================
+
+        IMPORTANT PRODUCTION ARCHITECTURE
+
+        This page represents the state where the user's dashboard
+        validation has already been completed.
+
+        The frontend must NEVER be the authority for:
+
+        - user validation
+        - account balance
+        - E-pin approval
+        - withdrawal eligibility
+        - withdrawal amount availability
+        - bank-account ownership
+        - withdrawal approval
+        - balance deduction
+        - transaction creation
+
+        All financial state must be verified by the backend.
+
+        Suggested endpoints:
+
+        GET  /api/user/withdrawal/summary
+        GET  /api/user/withdrawals
+        GET  /api/user/bank-details
+        GET  /api/user/epin/status
+        POST /api/user/withdrawals
+
+        Backend must verify:
+
+        1. Authenticated user
+        2. User validation status
+        3. Available balance
+        4. Minimum withdrawal amount
+        5. Approved withdrawal E-pin
+        6. Valid bank details
+        7. Duplicate/pending withdrawal protection
+        8. Transaction integrity
+        9. Atomic balance handling
+        10. Audit logging
+
+        $1 = ₦1,000
+
+        Minimum withdrawal:
+        $10 = ₦10,000
+
+        Withdrawal E-pin:
+        $2 = ₦2,000
+
+        The values below are UI defaults only and must be replaced
+        with trusted backend data in production.
+        ============================================================
+        */
+
+
+        /* ==========================================================
+           DEMO / EMPTY STATE
+        ========================================================== */
+
+        const user = {
+            validated: true,
+            availableBalanceUsd: 0
+        };
+
+
+        const withdrawalSettings = {
+            minimumUsd: 10,
+            epinFeeUsd: 2,
+            nairaRate: 1000
+        };
+
+
+        const epin = {
+            approved: false
+        };
+
+
+        const bankDetails = {
+            configured: false,
+            bankName: '',
+            accountName: '',
+            accountNumber: ''
+        };
+
+
+        /*
+        Backend should populate this array.
+
+        Example structure:
+
+        {
+            id: "WD-XXXXXXXX",
+            amountUsd: 10,
+            method: "Bank Transfer",
+            status: "pending",
+            createdAt: "...",
+            reference: "..."
+        }
+        */
+
+        const withdrawals = [];
+
+
+        /* ==========================================================
+           DOM
+        ========================================================== */
+
+        const withdrawalAmount =
+            document.getElementById('withdrawalAmount');
+
+        const amountNgn =
+            document.getElementById('amountNgn');
+
+        const summaryAmount =
+            document.getElementById('summaryAmount');
+
+        const summaryTotal =
+            document.getElementById('summaryTotal');
+
+        const availableBalance =
+            document.getElementById('availableBalance');
+
+        const availableBalanceNgn =
+            document.getElementById('availableBalanceNgn');
+
+        const bankDetailsEmpty =
+            document.getElementById('bankDetailsEmpty');
+
+        const bankDetailsCard =
+            document.getElementById('bankDetailsCard');
+
+        const bankName =
+            document.getElementById('bankName');
+
+        const accountName =
+            document.getElementById('accountName');
+
+        const accountNumber =
+            document.getElementById('accountNumber');
+
+        const bankStatus =
+            document.getElementById('bankStatus');
+
+        const epinStatus =
+            document.getElementById('epinStatus');
+
+        const eligibilityText =
+            document.getElementById('eligibilityText');
+
+
+        /* ==========================================================
+           FORMATTERS
+        ========================================================== */
+
+        function formatUsd(value) {
+
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2
+            }).format(Number(value) || 0);
+
+        }
+
+
+        function formatNgn(value) {
+
+            return new Intl.NumberFormat('en-NG', {
+                style: 'currency',
+                currency: 'NGN',
+                maximumFractionDigits: 0
+            }).format(Number(value) || 0);
+
+        }
+
+
+        function escapeHtml(value) {
+
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+
+        }
+
+
+        function maskAccountNumber(value) {
+
+            if (!value) return 'Not configured';
+
+            const clean = String(value);
+
+            if (clean.length <= 4) {
+                return clean;
+            }
+
+            return '•••• ' + clean.slice(-4);
+
+        }
+
+
+        /* ==========================================================
+           BALANCE
+        ========================================================== */
+
+        function renderBalance() {
+
+            const balance =
+                Number(user.availableBalanceUsd) || 0;
+
+            availableBalance.textContent =
+                formatUsd(balance);
+
+            availableBalanceNgn.textContent =
+                '≈ ' + formatNgn(balance * withdrawalSettings.nairaRate);
+
+        }
+
+
+        /* ==========================================================
+           BANK DETAILS
+        ========================================================== */
+
+        function renderBankDetails() {
+
+            if (
+                bankDetails.configured &&
+                bankDetails.bankName &&
+                bankDetails.accountName &&
+                bankDetails.accountNumber
+            ) {
+
+                bankDetailsEmpty.classList.add('hidden');
+                bankDetailsCard.classList.remove('hidden');
+
+                bankName.textContent =
+                    bankDetails.bankName;
+
+                accountName.textContent =
+                    bankDetails.accountName;
+
+                accountNumber.textContent =
+                    maskAccountNumber(bankDetails.accountNumber);
+
+                bankStatus.textContent =
+                    'Configured';
+
+                bankStatus.className =
+                    'text-xs text-emerald-600 dark:text-emerald-400';
+
+                document.getElementById('bankCheck').className =
+                    'w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center';
+
+                document.getElementById('bankCheck').innerHTML =
+                    '<i class="bx bx-check text-emerald-600 dark:text-emerald-400"></i>';
+
+            } else {
+
+                bankDetailsEmpty.classList.remove('hidden');
+                bankDetailsCard.classList.add('hidden');
+
+                bankStatus.textContent =
+                    'Not configured';
+
+                bankStatus.className =
+                    'text-xs text-muted';
+
+            }
+
+        }
+
+
+        /* ==========================================================
+           EPIN
+        ========================================================== */
+
+        function renderEpinStatus() {
+
+            if (epin.approved) {
+
+                epinStatus.textContent =
+                    'Approved';
+
+                epinStatus.className =
+                    'text-xs text-emerald-600 dark:text-emerald-400';
+
+                document.getElementById('epinCheck').className =
+                    'w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center';
+
+                document.getElementById('epinCheck').innerHTML =
+                    '<i class="bx bx-check text-emerald-600 dark:text-emerald-400"></i>';
+
+            } else {
+
+                epinStatus.textContent =
+                    'Required';
+
+                epinStatus.className =
+                    'text-xs text-amber-600 dark:text-amber-400';
+
+            }
+
+        }
+
+
+        /* ==========================================================
+           AMOUNT CALCULATIONS
+        ========================================================== */
+
+        function updateAmountSummary() {
+
+            const amount =
+                Number(withdrawalAmount.value) || 0;
+
+            const ngn =
+                amount * withdrawalSettings.nairaRate;
+
+            amountNgn.textContent =
+                '≈ ' + formatNgn(ngn);
+
+            summaryAmount.textContent =
+                formatUsd(amount);
+
+            summaryTotal.textContent =
+                formatUsd(amount);
+
+            document.getElementById('confirmAmount').textContent =
+                formatUsd(amount);
+
+            document.getElementById('confirmNgn').textContent =
+                formatNgn(ngn);
+
+            if (bankDetails.configured) {
+
+                document.getElementById('confirmBank').textContent =
+                    bankDetails.bankName + ' · ' +
+                    maskAccountNumber(bankDetails.accountNumber);
+
+            } else {
+
+                document.getElementById('confirmBank').textContent =
+                    'Not configured';
+
+            }
+
+        }
+
+
+        withdrawalAmount.addEventListener(
+            'input',
+            updateAmountSummary
+        );
+
+
+        function useMaxBalance() {
+
+            const balance =
+                Number(user.availableBalanceUsd) || 0;
+
+            if (balance <= 0) {
+
+                showToast(
+                    'Unavailable',
+                    'There is no available balance to withdraw yet.',
+                    'info'
+                );
+
+                return;
+            }
+
+            withdrawalAmount.value =
+                balance.toFixed(2);
+
+            updateAmountSummary();
+
+        }
+
+
+        /* ==========================================================
+           ELIGIBILITY
+        ========================================================== */
+
+        function checkFrontendEligibility() {
+
+            if (!user.validated) {
+
+                return {
+                    eligible: false,
+                    message: 'Dashboard validation is required before withdrawals are available.'
+                };
+
+            }
+
+            if (!epin.approved) {
+
+                return {
+                    eligible: false,
+                    message: 'An approved withdrawal E-pin is required before you can submit a withdrawal request.'
+                };
+
+            }
+
+            if (!bankDetails.configured) {
+
+                return {
+                    eligible: false,
+                    message: 'Add valid bank details in Settings before submitting a withdrawal request.'
+                };
+
+            }
+
+            const amount =
+                Number(withdrawalAmount.value) || 0;
+
+            if (amount < withdrawalSettings.minimumUsd) {
+
+                return {
+                    eligible: false,
+                    message: 'The minimum withdrawal amount is $10.00.'
+                };
+
+            }
+
+            if (amount > Number(user.availableBalanceUsd)) {
+
+                return {
+                    eligible: false,
+                    message: 'The requested amount exceeds your available balance.'
+                };
+
+            }
+
+            return {
+                eligible: true,
+                message: 'Your frontend checks are complete. The backend will perform the final eligibility verification.'
+            };
+
+        }
+
+
+        function updateEligibilityText() {
+
+            const result =
+                checkFrontendEligibility();
+
+            eligibilityText.textContent =
+                result.message;
+
+        }
+
+
+        /* ==========================================================
+           FORM
+        ========================================================== */
+
+        document.getElementById('withdrawalForm')
+            .addEventListener('submit', function (event) {
+
+                event.preventDefault();
+
+                const amount =
+                    Number(withdrawalAmount.value) || 0;
+
+                if (amount <= 0) {
+
+                    showToast(
+                        'Enter an amount',
+                        'Enter the amount you want to withdraw.',
+                        'error'
+                    );
+
+                    return;
+                }
+
+                const eligibility =
+                    checkFrontendEligibility();
+
+                if (!eligibility.eligible) {
+
+                    showToast(
+                        'Withdrawal not ready',
+                        eligibility.message,
+                        'error'
+                    );
+
+                    return;
+                }
+
+                document.getElementById('confirmModal')
+                    .classList.remove('hidden');
+
+                updateAmountSummary();
+
+            });
+
+
+        function closeConfirmModal() {
+
+            document.getElementById('confirmModal')
+                .classList.add('hidden');
+
+        }
+
+
+        async function submitWithdrawal() {
+
+            const button =
+                document.getElementById('confirmWithdrawalBtn');
+
+            const amount =
+                Number(withdrawalAmount.value) || 0;
+
+            /*
+            ========================================================
+            PRODUCTION
+
+            Replace this demo function with:
+
+            POST /api/user/withdrawals
+
+            Example body:
+
+            {
+                amountUsd: amount
+            }
+
+            The backend must independently verify:
+
+            - authenticated user
+            - validation
+            - balance
+            - minimum amount
+            - approved E-pin
+            - bank details
+            - duplicate requests
+            - withdrawal limits
+            - account status
+
+            The frontend must NEVER deduct the balance itself.
+
+            ========================================================
+            */
+
+            button.disabled = true;
+            button.innerHTML =
+                '<i class="bx bx-loader-alt bx-spin"></i> Submitting...';
+
+            try {
+
+                /*
+                const response = await fetch('/api/user/withdrawals', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        amountUsd: amount
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Unable to submit withdrawal.');
+                }
+
+                const result = await response.json();
+                */
+
+                await new Promise(resolve =>
+                    setTimeout(resolve, 500)
+                );
+
+                /*
+                Do NOT show a fake success message in production.
+
+                Because the backend is not connected here, this demo
+                intentionally stops without pretending that a real
+                withdrawal was created.
+                */
+
+                closeConfirmModal();
+
+                showToast(
+                    'Backend not connected',
+                    'Withdrawal submission is ready for backend integration.',
+                    'info'
+                );
+
+            } catch (error) {
+
+                showToast(
+                    'Unable to submit',
+                    error.message || 'Please try again.',
+                    'error'
+                );
+
+            } finally {
+
+                button.disabled = false;
+
+                button.innerHTML =
+                    'Confirm Request';
+
+            }
+
+        }
+
+
+        /* ==========================================================
+           WITHDRAWAL HISTORY
+        ========================================================== */
+
+        function renderWithdrawals() {
+
+            const tableBody =
+                document.getElementById('withdrawalTableBody');
+
+            const mobileList =
+                document.getElementById('withdrawalMobileList');
+
+            const emptyState =
+                document.getElementById('withdrawalEmpty');
+
+            if (!withdrawals.length) {
+
+                tableBody.innerHTML = '';
+                mobileList.innerHTML = '';
+
+                emptyState.classList.remove('hidden');
+
+                return;
+
+            }
+
+            emptyState.classList.add('hidden');
+
+
+            tableBody.innerHTML =
+                withdrawals.map(withdrawal => {
+
+                    return `
+                        <tr class="border-b border-slate-100 dark:border-slate-800 last:border-0">
+
+                            <td class="px-5 py-4 text-xs text-muted">
+                                ${escapeHtml(withdrawal.createdAt || '—')}
+                            </td>
+
+                            <td class="px-5 py-4">
+                                <p class="text-sm font-semibold text-main">
+                                    ${formatUsd(withdrawal.amountUsd)}
+                                </p>
+                            </td>
+
+                            <td class="px-5 py-4 text-xs text-muted">
+                                ${escapeHtml(withdrawal.method || 'Bank Transfer')}
+                            </td>
+
+                            <td class="px-5 py-4">
+                                ${statusBadge(withdrawal.status)}
+                            </td>
+
+                            <td class="px-5 py-4 text-xs font-medium text-main">
+                                ${escapeHtml(withdrawal.reference || withdrawal.id || '—')}
+                            </td>
+
+                        </tr>
+                    `;
+
+                }).join('');
+
+
+            mobileList.innerHTML =
+                withdrawals.map(withdrawal => {
+
+                    return `
+                        <div class="p-5 border-b border-slate-100 dark:border-slate-800 last:border-0">
+
+                            <div class="flex items-start justify-between gap-3">
+
+                                <div>
+
+                                    <p class="font-semibold text-sm text-main">
+                                        ${formatUsd(withdrawal.amountUsd)}
+                                    </p>
+
+                                    <p class="text-[11px] text-muted mt-1">
+                                        ${escapeHtml(withdrawal.createdAt || '—')}
+                                    </p>
+
+                                </div>
+
+                                ${statusBadge(withdrawal.status)}
+
+                            </div>
+
+                            <div class="flex items-center justify-between mt-4">
+
+                                <span class="text-xs text-muted">
+                                    ${escapeHtml(withdrawal.method || 'Bank Transfer')}
+                                </span>
+
+                                <span class="text-[11px] font-medium text-main">
+                                    ${escapeHtml(withdrawal.reference || withdrawal.id || '—')}
+                                </span>
+
+                            </div>
+
+                        </div>
+                    `;
+
+                }).join('');
+
+        }
+
+
+        function statusBadge(status) {
+
+            const value =
+                String(status || 'pending').toLowerCase();
+
+            const config = {
+
+                pending: {
+                    className: 'status-pending',
+                    icon: 'bx-time-five',
+                    text: 'Pending'
+                },
+
+                processing: {
+                    className: 'status-processing',
+                    icon: 'bx-loader-circle',
+                    text: 'Processing'
+                },
+
+                approved: {
+                    className: 'status-approved',
+                    icon: 'bx-check-circle',
+                    text: 'Approved'
+                },
+
+                completed: {
+                    className: 'status-completed',
+                    icon: 'bx-check-circle',
+                    text: 'Completed'
+                },
+
+                rejected: {
+                    className: 'status-rejected',
+                    icon: 'bx-x-circle',
+                    text: 'Rejected'
+                }
+
+            };
+
+            const item =
+                config[value] || config.pending;
+
+            return `
+                <span class="status-pill ${item.className}">
+                    <i class="bx ${item.icon}"></i>
+                    ${item.text}
+                </span>
+            `;
+
+        }
+
+
+        /* ==========================================================
+           BACKEND DATA
+        ========================================================== */
+
+        async function loadWithdrawalData() {
+
+            /*
+            ========================================================
+            PRODUCTION BACKEND
+
+            Example:
+
+            const response = await fetch(
+                '/api/user/withdrawal/summary',
+                {
+                    credentials: 'include'
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('Unable to load withdrawal data.');
+            }
+
+            const data = await response.json();
+
+            user.availableBalanceUsd =
+                data.availableBalanceUsd;
+
+            epin.approved =
+                data.epinApproved;
+
+            Object.assign(
+                bankDetails,
+                data.bankDetails
+            );
+
+            withdrawals.splice(
+                0,
+                withdrawals.length,
+                ...data.withdrawals
+            );
+
+            ========================================================
+            */
+
+            renderBalance();
+            renderBankDetails();
+            renderEpinStatus();
+            renderWithdrawals();
+            updateAmountSummary();
+            updateEligibilityText();
+
+        }
+
+
+        /* ==========================================================
+           SIDEBAR
+        ========================================================== */
+
+        function openSidebar() {
+
+            document.getElementById('sidebar')
+                .classList.add('open');
+
+            document.getElementById('mobileOverlay')
+                .classList.add('show');
+
+        }
+
+
+        function closeSidebar() {
+
+            document.getElementById('sidebar')
+                .classList.remove('open');
+
+            document.getElementById('mobileOverlay')
+                .classList.remove('show');
+
+        }
+
+
+        /* ==========================================================
+           THEME
+        ========================================================== */
+
+        const themeToggle =
+            document.getElementById('themeToggle');
+
+        const themeIcon =
+            document.getElementById('themeIcon');
+
+
+        function updateThemeIcon() {
+
+            if (document.documentElement.classList.contains('dark')) {
+
+                themeIcon.className =
+                    'bx bx-sun text-lg text-slate-300';
+
+            } else {
+
+                themeIcon.className =
+                    'bx bx-moon text-lg text-slate-600';
+
+            }
+
+        }
+
+
+        function loadTheme() {
+
+            const savedTheme =
+                localStorage.getItem('optify-theme');
+
+            if (savedTheme === 'dark') {
+
+                document.documentElement.classList.add('dark');
+
+            }
+
+            updateThemeIcon();
+
+        }
+
+
+        themeToggle.addEventListener('click', function () {
+
+            document.documentElement.classList.toggle('dark');
+
+            const dark =
+                document.documentElement.classList.contains('dark');
+
+            localStorage.setItem(
+                'optify-theme',
+                dark ? 'dark' : 'light'
+            );
+
+            updateThemeIcon();
+
+        });
+
+
+        /* ==========================================================
+           TOAST
+        ========================================================== */
+
+        let toastTimer;
+
+
+        function showToast(title, message, type = 'success') {
+
+            const toast =
+                document.getElementById('toast');
+
+            const toastTitle =
+                document.getElementById('toastTitle');
+
+            const toastMessage =
+                document.getElementById('toastMessage');
+
+            const toastIcon =
+                document.getElementById('toastIcon');
+
+
+            toastTitle.textContent =
+                title;
+
+            toastMessage.textContent =
+                message;
+
+
+            if (type === 'error') {
+
+                toastIcon.innerHTML =
+                    '<i class="bx bx-error-circle text-red-400"></i>';
+
+            } else if (type === 'info') {
+
+                toastIcon.innerHTML =
+                    '<i class="bx bx-info-circle text-sky-400"></i>';
+
+            } else {
+
+                toastIcon.innerHTML =
+                    '<i class="bx bx-check text-emerald-400"></i>';
+
+            }
+
+
+            toast.classList.remove(
+                'translate-y-5',
+                'opacity-0'
+            );
+
+            toast.classList.add(
+                'translate-y-0',
+                'opacity-100'
+            );
+
+
+            clearTimeout(toastTimer);
+
+            toastTimer =
+                setTimeout(() => {
+
+                    toast.classList.add(
+                        'translate-y-5',
+                        'opacity-0'
+                    );
+
+                    toast.classList.remove(
+                        'translate-y-0',
+                        'opacity-100'
+                    );
+
+                }, 3500);
+
+        }
+
+
+        /* ==========================================================
+           LOGOUT
+        ========================================================== */
+
+        document.getElementById('logoutBtn')
+            .addEventListener('click', async function () {
+
+                /*
+                Production:
+
+                await Firebase signOut(auth);
+
+                or:
+
+                await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+
+                The backend/auth provider must invalidate the
+                authenticated session.
+                */
+
+                window.location.href =
+                    'login.html';
+
+            });
+
+
+        /* ==========================================================
+           USER DATA
+        ========================================================== */
+
+        async function loadUserProfile() {
+
+            /*
+            Production:
+
+            GET /api/user/profile
+
+            Expected:
+
+            {
+                name: "...",
+                validated: true
+            }
+
+            Do not trust localStorage for validation status.
+            */
+
+            const name =
+                'Optify User';
+
+            document.getElementById('sidebarUserName')
+                .textContent = name;
+
+        }
+
+
+        /* ==========================================================
+           INITIALIZE
+        ========================================================== */
+
+        loadTheme();
+
+        loadUserProfile();
+
+        loadWithdrawalData();
+
+    </script>
+
+</body>
+
+</html>

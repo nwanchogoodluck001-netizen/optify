@@ -1,0 +1,2486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Daily Streak | Optify</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Boxicons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
+
+    <style>
+        :root {
+            --navy: #071A2B;
+            --navy-2: #0B3041;
+            --green: #12B76A;
+            --teal: #0EA5A4;
+            --soft-green: #E8F8F0;
+            --background: #F7F9FC;
+            --white: #FFFFFF;
+            --text: #101828;
+            --muted: #667085;
+            --border: #E4E7EC;
+            --warning: #F79009;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            transition: background .25s ease, color .25s ease;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        button,
+        a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .sidebar {
+            width: 250px;
+            position: fixed;
+            inset: 0 auto 0 0;
+            z-index: 50;
+            background: var(--navy);
+            transition: transform .25s ease;
+        }
+
+        .main-wrapper {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            margin-bottom: 4px;
+            border-radius: 10px;
+            color: #B7C4D1;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all .2s ease;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, .07);
+        }
+
+        .nav-link.active {
+            color: white;
+            background: rgba(18, 183, 106, .15);
+        }
+
+        .nav-link.active i {
+            color: var(--green);
+        }
+
+        .nav-link i {
+            font-size: 20px;
+            color: #8EA1B3;
+        }
+
+        .topbar {
+            height: 76px;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(255, 255, 255, .88);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dark .topbar {
+            background: rgba(10, 22, 34, .88);
+            border-color: #1E3445;
+        }
+
+        .dark body {
+            background: #08131E;
+            color: #F2F4F7;
+        }
+
+        .dark .surface {
+            background: #0D1D2A !important;
+            border-color: #1E3445 !important;
+        }
+
+        .dark .muted {
+            color: #98A7B5 !important;
+        }
+
+        .dark .border-soft {
+            border-color: #1E3445 !important;
+        }
+
+        .dark .soft-bg {
+            background: #102534 !important;
+        }
+
+        .dark .progress-track {
+            background: #1A3343 !important;
+        }
+
+        .surface {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            transition: background .25s ease, border .25s ease;
+        }
+
+        .green-button {
+            background: var(--green);
+            color: white;
+            transition: all .2s ease;
+        }
+
+        .green-button:hover {
+            background: #0FA760;
+            transform: translateY(-1px);
+        }
+
+        .outline-button {
+            border: 1px solid var(--border);
+            transition: all .2s ease;
+        }
+
+        .outline-button:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        .task-card {
+            transition: transform .2s ease, border .2s ease, box-shadow .2s ease;
+        }
+
+        .task-card:hover {
+            transform: translateY(-2px);
+            border-color: #B9E8D1;
+            box-shadow: 0 12px 30px rgba(16, 24, 40, .06);
+        }
+
+        .dark .task-card:hover {
+            border-color: #225C4A;
+            box-shadow: none;
+        }
+
+        .progress-track {
+            height: 8px;
+            background: #EAECF0;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-value {
+            height: 100%;
+            background: var(--green);
+            border-radius: inherit;
+            transition: width .35s ease;
+        }
+
+        .period-dot {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .period-dot.completed {
+            background: var(--green);
+            color: white;
+        }
+
+        .period-dot.current {
+            background: var(--soft-green);
+            color: var(--green);
+            border: 1px solid #B7E8D0;
+        }
+
+        .period-dot.locked {
+            background: #F2F4F7;
+            color: #98A2B3;
+        }
+
+        .dark .period-dot.locked {
+            background: #162A38;
+            color: #718096;
+        }
+
+        .calendar-day {
+            min-width: 48px;
+            height: 72px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .calendar-day.completed {
+            background: var(--soft-green);
+            border-color: #B7E8D0;
+            color: #087443;
+        }
+
+        .dark .calendar-day.completed {
+            background: #103427;
+            border-color: #245B45;
+            color: #6EE7B7;
+        }
+
+        .calendar-day.today {
+            border-color: var(--green);
+        }
+
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 45;
+            background: rgba(0, 0, 0, .45);
+        }
+
+        .bottom-nav {
+            display: none;
+        }
+
+        @media (max-width: 1024px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+            }
+
+            .mobile-overlay.show {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .topbar {
+                height: 68px;
+            }
+
+            .main-content {
+                padding-bottom: 90px !important;
+            }
+
+            .bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 70px;
+                background: rgba(255, 255, 255, .95);
+                backdrop-filter: blur(15px);
+                border-top: 1px solid var(--border);
+                z-index: 60;
+                align-items: center;
+                justify-content: space-around;
+            }
+
+            .dark .bottom-nav {
+                background: rgba(9, 24, 35, .96);
+                border-color: #1E3445;
+            }
+
+            .bottom-nav a {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 3px;
+                color: #98A2B3;
+                font-size: 10px;
+            }
+
+            .bottom-nav a i {
+                font-size: 21px;
+            }
+
+            .bottom-nav a.active {
+                color: var(--green);
+            }
+
+            .calendar-scroll {
+                overflow-x: auto;
+                padding-bottom: 4px;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .main-content {
+                padding: 18px !important;
+            }
+
+            .period-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .calendar-day {
+                min-width: 45px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Mobile Overlay -->
+    <div id="mobileOverlay" class="mobile-overlay"></div>
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside id="sidebar" class="sidebar px-4 py-5">
+
+        <div class="flex items-center gap-3 px-2 mb-8">
+
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: var(--green);">
+                <i class='bx bx-shape-triangle text-white text-2xl'></i>
+            </div>
+
+            <div>
+                <h1 class="text-white font-sora text-lg font-bold">
+                    OPTIFY
+                </h1>
+
+                <p class="text-[10px] text-slate-400 tracking-widest">
+                    REWARDS PLATFORM
+                </p>
+            </div>
+
+        </div>
+
+
+        <p class="text-[10px] uppercase tracking-widest text-slate-500 px-3 mb-3">
+            Main Menu
+        </p>
+
+
+        <nav>
+
+            <a href="dashboard.html" class="nav-link">
+                <i class='bx bx-grid-alt'></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="tasks.html" class="nav-link">
+                <i class='bx bx-task'></i>
+                <span>Tasks</span>
+            </a>
+
+            <a href="streak.html" class="nav-link active">
+                <i class='bx bx-calendar-check'></i>
+                <span>Streak</span>
+            </a>
+
+            <a href="mystery-box.html" class="nav-link">
+                <i class='bx bx-gift'></i>
+                <span>Mystery Box</span>
+            </a>
+
+            <a href="quiz.html" class="nav-link">
+                <i class='bx bx-help-circle'></i>
+                <span>Quiz</span>
+            </a>
+
+            <a href="referral.html" class="nav-link">
+                <i class='bx bx-group'></i>
+                <span>Referral</span>
+            </a>
+
+            <a href="epin.html"
+                class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-white/65 hover:text-white hover:bg-white/5">
+                <i class='bx bx-key'></i>
+                <span>Withdrawal E-pin</span>
+            </a>
+
+            <a href="withdrawal.html" class="nav-link">
+                <i class='bx bx-wallet'></i>
+                <span>Withdrawal</span>
+            </a>
+
+            <a href="transactions.html" class="nav-link">
+                <i class='bx bx-transfer-alt'></i>
+                <span>Transactions</span>
+            </a>
+
+            <a href="settings.html" class="nav-link">
+                <i class='bx bx-cog'></i>
+                <span>Settings</span>
+            </a>
+
+        </nav>
+
+
+        <!-- Sidebar Footer -->
+
+        <div class="absolute bottom-5 left-4 right-4">
+
+            <div class="rounded-xl p-3 bg-white/5 border border-white/10 mb-3">
+
+                <div class="flex items-center gap-2">
+
+                    <i class='bx bx-shield-check text-emerald-400 text-xl'></i>
+
+                    <div>
+                        <p class="text-xs font-semibold text-white">
+                            Optify Secure
+                        </p>
+
+                        <p class="text-[10px] text-slate-400">
+                            Your account is protected
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button id="logoutBtn"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-white/5 transition">
+                <i class='bx bx-log-out text-lg'></i>
+                Logout
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <div class="main-wrapper">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar flex items-center justify-between px-5 md:px-7">
+
+            <div class="flex items-center gap-3">
+
+                <button id="menuBtn"
+                    class="lg:hidden w-10 h-10 rounded-xl border border-soft flex items-center justify-center">
+                    <i class='bx bx-menu text-xl'></i>
+                </button>
+
+                <div>
+
+                    <p class="text-xs muted text-slate-500">
+                        Daily Rewards
+                    </p>
+
+                    <h2 class="font-sora font-semibold text-sm md:text-base">
+                        Daily Streak
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="flex items-center gap-2 md:gap-4">
+
+                <!-- Validated Status -->
+
+                <div
+                    class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10">
+
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+
+                    <span class="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                        Dashboard Validated
+                    </span>
+
+                </div>
+
+
+                <!-- Theme -->
+
+                <button id="themeBtn" class="w-10 h-10 rounded-xl border border-soft flex items-center justify-center">
+                    <i id="themeIcon" class='bx bx-moon text-lg'></i>
+                </button>
+
+
+                <!-- Notification -->
+
+                <button class="w-10 h-10 rounded-xl border border-soft flex items-center justify-center relative">
+                    <i class='bx bx-bell text-lg'></i>
+
+                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500"></span>
+                </button>
+
+
+                <!-- Profile -->
+
+                <div class="hidden sm:flex items-center gap-2">
+
+                    <div id="profileInitial"
+                        class="w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold"
+                        style="background: var(--navy);">
+                        U
+                    </div>
+
+                    <div class="hidden md:block">
+
+                        <p id="profileName" class="text-xs font-semibold">
+                            User
+                        </p>
+
+                        <p class="text-[10px] muted text-slate-500">
+                            Validated Member
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <main class="main-content p-5 md:p-7">
+
+
+            <!-- PAGE HEADER -->
+
+            <section class="mb-6">
+
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+
+                    <div>
+
+                        <div class="flex items-center gap-2 mb-2">
+
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+
+                            <span class="text-xs font-medium text-emerald-600">
+                                Dashboard validated
+                            </span>
+
+                        </div>
+
+                        <h1 class="font-sora text-2xl md:text-3xl font-bold mb-2">
+                            Daily Streak
+                        </h1>
+
+                        <p class="text-sm muted text-slate-500">
+                            Stay consistent and claim your rewards throughout the day.
+                        </p>
+
+                    </div>
+
+
+                    <!-- Maximum Reward -->
+
+                    <div class="surface px-4 py-3 flex items-center gap-3">
+
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                            style="background: var(--soft-green);">
+                            <i class='bx bx-gift text-xl' style="color: var(--green);"></i>
+                        </div>
+
+                        <div>
+
+                            <p class="text-xs muted text-slate-500">
+                                Maximum today
+                            </p>
+
+                            <p class="font-sora font-bold">
+
+                                $4.50
+
+                                <span class="text-xs font-medium text-slate-400">
+                                    ≈ ₦4,500
+                                </span>
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= VALIDATED STATUS ================= -->
+
+            <section class="mb-6">
+
+                <div class="rounded-2xl overflow-hidden" style="background: linear-gradient(135deg, #071A2B, #0B3B4A);">
+
+                    <div class="p-5 md:p-6">
+
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
+
+                            <div class="flex items-center gap-4">
+
+                                <div
+                                    class="w-12 h-12 rounded-xl bg-emerald-500/15 flex items-center justify-center shrink-0">
+                                    <i class='bx bx-shield-check text-emerald-400 text-2xl'></i>
+                                </div>
+
+                                <div>
+
+                                    <p class="text-xs uppercase tracking-widest text-emerald-300 mb-1">
+                                        Account Status
+                                    </p>
+
+                                    <h2 class="font-sora text-lg md:text-xl font-bold text-white">
+                                        Your dashboard is validated
+                                    </h2>
+
+                                    <p class="text-xs text-slate-300 mt-1">
+                                        Daily earning activities are available to your account.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="flex items-center gap-2">
+
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+
+                                <span class="text-sm font-medium text-emerald-300">
+                                    Active
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= TODAY SUMMARY ================= -->
+
+            <section class="surface p-5 md:p-6 mb-6">
+
+                <div class="flex flex-col lg:flex-row lg:items-center gap-6">
+
+                    <div class="flex-1">
+
+                        <div class="flex items-center justify-between mb-3">
+
+                            <div>
+
+                                <p class="text-xs muted text-slate-500 mb-1">
+                                    Today's Streak
+                                </p>
+
+                                <h2 class="font-sora text-3xl font-bold">
+                                    $<span id="todayEarnings">0.00</span>
+                                </h2>
+
+                                <p class="text-xs text-slate-400 mt-1">
+                                    ≈ ₦<span id="todayNaira">0</span>
+                                </p>
+
+                            </div>
+
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center"
+                                style="background: var(--soft-green);">
+                                <i class='bx bx-trending-up text-2xl' style="color: var(--green);"></i>
+                            </div>
+
+                        </div>
+
+
+                        <div class="progress-track mb-2">
+
+                            <div id="streakProgress" class="progress-value" style="width: 0%;"></div>
+
+                        </div>
+
+
+                        <div class="flex items-center justify-between">
+
+                            <p class="text-xs muted text-slate-500">
+                                <span id="claimCount">0</span>/3 claims completed
+                            </p>
+
+                            <p class="text-xs font-medium" style="color: var(--green);">
+                                Earn up to $4.50 today
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STEP INDICATOR -->
+
+                    <div class="lg:w-80">
+
+                        <div class="flex items-center justify-between">
+
+                            <div class="flex flex-col items-center gap-2">
+
+                                <div id="morningIndicator" class="period-dot current">
+                                    1
+                                </div>
+
+                                <span class="text-[11px] muted">
+                                    Morning
+                                </span>
+
+                            </div>
+
+
+                            <div class="h-px flex-1 bg-slate-200 dark:bg-slate-700 mx-3"></div>
+
+
+                            <div class="flex flex-col items-center gap-2">
+
+                                <div id="afternoonIndicator" class="period-dot locked">
+                                    2
+                                </div>
+
+                                <span class="text-[11px] muted">
+                                    Afternoon
+                                </span>
+
+                            </div>
+
+
+                            <div class="h-px flex-1 bg-slate-200 dark:bg-slate-700 mx-3"></div>
+
+
+                            <div class="flex flex-col items-center gap-2">
+
+                                <div id="nightIndicator" class="period-dot locked">
+                                    3
+                                </div>
+
+                                <span class="text-[11px] muted">
+                                    Night
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= TODAY'S CLAIMS ================= -->
+
+            <section>
+
+                <div class="flex items-center justify-between mb-4">
+
+                    <div>
+
+                        <h2 class="font-sora text-lg font-semibold">
+                            Today's Claims
+                        </h2>
+
+                        <p class="text-xs muted text-slate-500 mt-1">
+                            Complete each available period to maximize your daily reward.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-7">
+
+
+                    <!-- MORNING -->
+
+                    <div class="surface task-card p-5">
+
+                        <div class="flex items-start justify-between mb-5">
+
+                            <div class="w-11 h-11 rounded-xl flex items-center justify-center"
+                                style="background: #FFF7E8;">
+                                <i class='bx bx-sun text-xl' style="color: var(--warning);"></i>
+                            </div>
+
+                            <span id="morningStatus" class="text-[11px] font-medium px-2.5 py-1 rounded-full"
+                                style="background: var(--soft-green); color: #087443;">
+                                Available
+                            </span>
+
+                        </div>
+
+
+                        <p class="text-xs muted text-slate-500 mb-1">
+                            Morning Streak
+                        </p>
+
+                        <h3 class="font-sora text-xl font-bold mb-2">
+                            $1.50
+                        </h3>
+
+                        <p class="text-xs muted text-slate-500 leading-5 mb-5">
+                            Claim your morning reward and start today's streak.
+                        </p>
+
+                        <button class="claim-btn w-full py-2.5 rounded-xl green-button text-sm font-semibold"
+                            data-period="morning" data-reward="1.50">
+                            Claim $1.50
+                        </button>
+
+                    </div>
+
+
+                    <!-- AFTERNOON -->
+
+                    <div class="surface task-card p-5">
+
+                        <div class="flex items-start justify-between mb-5">
+
+                            <div class="w-11 h-11 rounded-xl flex items-center justify-center"
+                                style="background: #EAF7FF;">
+                                <i class='bx bx-sun text-xl text-sky-500'></i>
+                            </div>
+
+                            <span id="afternoonStatus"
+                                class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-500">
+                                Locked
+                            </span>
+
+                        </div>
+
+
+                        <p class="text-xs muted text-slate-500 mb-1">
+                            Afternoon Streak
+                        </p>
+
+                        <h3 class="font-sora text-xl font-bold mb-2">
+                            $1.50
+                        </h3>
+
+                        <p class="text-xs muted text-slate-500 leading-5 mb-5">
+                            Return later during the afternoon claim period.
+                        </p>
+
+                        <button
+                            class="claim-btn w-full py-2.5 rounded-xl outline-button text-sm font-semibold text-slate-500"
+                            data-period="afternoon" data-reward="1.50" disabled>
+                            Locked
+                        </button>
+
+                    </div>
+
+
+                    <!-- NIGHT -->
+
+                    <div class="surface task-card p-5">
+
+                        <div class="flex items-start justify-between mb-5">
+
+                            <div class="w-11 h-11 rounded-xl flex items-center justify-center"
+                                style="background: #EEF0FF;">
+                                <i class='bx bx-moon text-xl text-indigo-500'></i>
+                            </div>
+
+                            <span id="nightStatus"
+                                class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-500">
+                                Locked
+                            </span>
+
+                        </div>
+
+
+                        <p class="text-xs muted text-slate-500 mb-1">
+                            Night Streak
+                        </p>
+
+                        <h3 class="font-sora text-xl font-bold mb-2">
+                            $1.50
+                        </h3>
+
+                        <p class="text-xs muted text-slate-500 leading-5 mb-5">
+                            Complete your final claim and finish today's streak.
+                        </p>
+
+                        <button
+                            class="claim-btn w-full py-2.5 rounded-xl outline-button text-sm font-semibold text-slate-500"
+                            data-period="night" data-reward="1.50" disabled>
+                            Locked
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= STREAK STATS ================= -->
+
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-7">
+
+
+                <!-- CURRENT -->
+
+                <div class="surface p-5">
+
+                    <div class="flex items-center justify-between mb-4">
+
+                        <div>
+
+                            <p class="text-xs muted text-slate-500">
+                                Current Streak
+                            </p>
+
+                            <h3 class="font-sora text-2xl font-bold mt-1">
+
+                                <span id="currentStreak">
+                                    0
+                                </span>
+
+                                <span class="text-sm font-medium text-slate-400">
+                                    days
+                                </span>
+
+                            </h3>
+
+                        </div>
+
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                            style="background: var(--soft-green);">
+                            <i class='bx bx-flame text-xl' style="color: var(--green);"></i>
+                        </div>
+
+                    </div>
+
+                    <p class="text-xs muted text-slate-500">
+                        Keep completing your daily streak to build consistency.
+                    </p>
+
+                </div>
+
+
+                <!-- LONGEST -->
+
+                <div class="surface p-5">
+
+                    <div class="flex items-center justify-between mb-4">
+
+                        <div>
+
+                            <p class="text-xs muted text-slate-500">
+                                Longest Streak
+                            </p>
+
+                            <h3 class="font-sora text-2xl font-bold mt-1">
+
+                                <span id="longestStreak">
+                                    0
+                                </span>
+
+                                <span class="text-sm font-medium text-slate-400">
+                                    days
+                                </span>
+
+                            </h3>
+
+                        </div>
+
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: #FFF7E8;">
+                            <i class='bx bx-trophy text-xl' style="color: var(--warning);"></i>
+                        </div>
+
+                    </div>
+
+                    <p class="text-xs muted text-slate-500">
+                        Your highest completed streak period.
+                    </p>
+
+                </div>
+
+
+                <!-- CLAIMS -->
+
+                <div class="surface p-5">
+
+                    <div class="flex items-center justify-between mb-4">
+
+                        <div>
+
+                            <p class="text-xs muted text-slate-500">
+                                Total Claims
+                            </p>
+
+                            <h3 class="font-sora text-2xl font-bold mt-1">
+
+                                <span id="totalClaims">
+                                    0
+                                </span>
+
+                            </h3>
+
+                        </div>
+
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: #EEF0FF;">
+                            <i class='bx bx-check-double text-xl text-indigo-500'></i>
+                        </div>
+
+                    </div>
+
+                    <p class="text-xs muted text-slate-500">
+                        Total daily streak claims completed.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= WEEKLY CALENDAR ================= -->
+
+            <section class="surface p-5 md:p-6 mb-7">
+
+                <div class="flex items-center justify-between mb-5">
+
+                    <div>
+
+                        <h2 class="font-sora text-lg font-semibold">
+                            Weekly Streak
+                        </h2>
+
+                        <p class="text-xs muted text-slate-500 mt-1">
+                            Your recent streak activity.
+                        </p>
+
+                    </div>
+
+                    <div class="w-9 h-9 rounded-lg flex items-center justify-center"
+                        style="background: var(--soft-green);">
+                        <i class='bx bx-calendar text-lg' style="color: var(--green);"></i>
+                    </div>
+
+                </div>
+
+
+                <div class="calendar-scroll">
+
+                    <div class="flex justify-between gap-2 min-w-[360px]">
+
+                        <div class="calendar-day" data-day="MON">
+                            <span class="text-[10px] font-medium">
+                                MON
+                            </span>
+
+                            <i class='bx bx-minus text-lg text-slate-300'></i>
+                        </div>
+
+
+                        <div class="calendar-day" data-day="TUE">
+                            <span class="text-[10px] font-medium">
+                                TUE
+                            </span>
+
+                            <i class='bx bx-minus text-lg text-slate-300'></i>
+                        </div>
+
+
+                        <div class="calendar-day" data-day="WED">
+                            <span class="text-[10px] font-medium">
+                                WED
+                            </span>
+
+                            <i class='bx bx-minus text-lg text-slate-300'></i>
+                        </div>
+
+
+                        <div class="calendar-day today" data-day="THU">
+
+                            <span class="text-[10px] font-semibold">
+                                THU
+                            </span>
+
+                            <span class="text-sm font-bold">
+                                Today
+                            </span>
+
+                        </div>
+
+
+                        <div class="calendar-day" data-day="FRI">
+
+                            <span class="text-[10px] text-slate-400">
+                                FRI
+                            </span>
+
+                            <i class='bx bx-minus text-lg text-slate-300'></i>
+
+                        </div>
+
+
+                        <div class="calendar-day" data-day="SAT">
+
+                            <span class="text-[10px] text-slate-400">
+                                SAT
+                            </span>
+
+                            <i class='bx bx-minus text-lg text-slate-300'></i>
+
+                        </div>
+
+
+                        <div class="calendar-day" data-day="SUN">
+
+                            <span class="text-[10px] text-slate-400">
+                                SUN
+                            </span>
+
+                            <i class='bx bx-minus text-lg text-slate-300'></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= LOWER GRID ================= -->
+
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-7">
+
+
+                <!-- REWARD BREAKDOWN -->
+
+                <div class="surface p-5 md:p-6">
+
+                    <div class="mb-5">
+
+                        <h2 class="font-sora text-lg font-semibold">
+                            Reward Breakdown
+                        </h2>
+
+                        <p class="text-xs muted text-slate-500 mt-1">
+                            Today's available streak rewards.
+                        </p>
+
+                    </div>
+
+
+                    <div class="space-y-3">
+
+
+                        <div class="flex items-center justify-between py-3 border-b border-soft">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center">
+                                    <i class='bx bx-sun text-orange-500'></i>
+                                </div>
+
+                                <span class="text-sm">
+                                    Morning
+                                </span>
+
+                            </div>
+
+                            <span class="font-semibold text-sm">
+                                $1.50
+                            </span>
+
+                        </div>
+
+
+                        <div class="flex items-center justify-between py-3 border-b border-soft">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center">
+                                    <i class='bx bx-sun text-sky-500'></i>
+                                </div>
+
+                                <span class="text-sm">
+                                    Afternoon
+                                </span>
+
+                            </div>
+
+                            <span class="font-semibold text-sm">
+                                $1.50
+                            </span>
+
+                        </div>
+
+
+                        <div class="flex items-center justify-between py-3 border-b border-soft">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center">
+                                    <i class='bx bx-moon text-indigo-500'></i>
+                                </div>
+
+                                <span class="text-sm">
+                                    Night
+                                </span>
+
+                            </div>
+
+                            <span class="font-semibold text-sm">
+                                $1.50
+                            </span>
+
+                        </div>
+
+
+                        <div class="flex items-center justify-between pt-2">
+
+                            <span class="font-semibold text-sm">
+                                Maximum Daily Reward
+                            </span>
+
+                            <span class="font-sora font-bold" style="color: var(--green);">
+                                $4.50
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- HOW IT WORKS -->
+
+                <div class="surface p-5 md:p-6">
+
+                    <div class="mb-5">
+
+                        <h2 class="font-sora text-lg font-semibold">
+                            How Daily Streak Works
+                        </h2>
+
+                        <p class="text-xs muted text-slate-500 mt-1">
+                            Complete the three daily claim periods.
+                        </p>
+
+                    </div>
+
+
+                    <div class="space-y-4">
+
+
+                        <div class="flex gap-3">
+
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm font-bold"
+                                style="background: var(--soft-green); color: var(--green);">
+                                1
+                            </div>
+
+                            <div>
+
+                                <p class="text-sm font-semibold">
+                                    Open Streak
+                                </p>
+
+                                <p class="text-xs muted text-slate-500 mt-1">
+                                    Visit the streak page during an available period.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex gap-3">
+
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm font-bold"
+                                style="background: var(--soft-green); color: var(--green);">
+                                2
+                            </div>
+
+                            <div>
+
+                                <p class="text-sm font-semibold">
+                                    Claim
+                                </p>
+
+                                <p class="text-xs muted text-slate-500 mt-1">
+                                    Claim the available $1.50 reward.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex gap-3">
+
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm font-bold"
+                                style="background: var(--soft-green); color: var(--green);">
+                                3
+                            </div>
+
+                            <div>
+
+                                <p class="text-sm font-semibold">
+                                    Complete All 3
+                                </p>
+
+                                <p class="text-xs muted text-slate-500 mt-1">
+                                    Complete morning, afternoon and night claims.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex gap-3">
+
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm font-bold"
+                                style="background: var(--soft-green); color: var(--green);">
+                                4
+                            </div>
+
+                            <div>
+
+                                <p class="text-sm font-semibold">
+                                    Keep Your Streak
+                                </p>
+
+                                <p class="text-xs muted text-slate-500 mt-1">
+                                    Return each day and continue your streak.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= RULES ================= -->
+
+            <section class="surface p-5 md:p-6">
+
+                <div class="flex items-start gap-3 mb-5">
+
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: #FFF7E8;">
+                        <i class='bx bx-info-circle text-xl' style="color: var(--warning);"></i>
+                    </div>
+
+                    <div>
+
+                        <h2 class="font-sora text-lg font-semibold">
+                            Daily Streak Rules
+                        </h2>
+
+                        <p class="text-xs muted text-slate-500 mt-1">
+                            Please keep these rules in mind when using the streak feature.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+
+
+                    <div class="flex items-start gap-2">
+
+                        <i class='bx bx-check text-emerald-500 mt-0.5'></i>
+
+                        <p class="text-xs muted text-slate-500">
+                            There are three claim periods every day.
+                        </p>
+
+                    </div>
+
+
+                    <div class="flex items-start gap-2">
+
+                        <i class='bx bx-check text-emerald-500 mt-0.5'></i>
+
+                        <p class="text-xs muted text-slate-500">
+                            Each completed claim rewards $1.50.
+                        </p>
+
+                    </div>
+
+
+                    <div class="flex items-start gap-2">
+
+                        <i class='bx bx-check text-emerald-500 mt-0.5'></i>
+
+                        <p class="text-xs muted text-slate-500">
+                            Maximum daily streak reward is $4.50.
+                        </p>
+
+                    </div>
+
+
+                    <div class="flex items-start gap-2">
+
+                        <i class='bx bx-check text-emerald-500 mt-0.5'></i>
+
+                        <p class="text-xs muted text-slate-500">
+                            Each claim can only be completed once per period.
+                        </p>
+
+                    </div>
+
+
+                    <div class="flex items-start gap-2">
+
+                        <i class='bx bx-check text-emerald-500 mt-0.5'></i>
+
+                        <p class="text-xs muted text-slate-500">
+                            Claim availability and timing are controlled by the backend.
+                        </p>
+
+                    </div>
+
+
+                    <div class="flex items-start gap-2">
+
+                        <i class='bx bx-check text-emerald-500 mt-0.5'></i>
+
+                        <p class="text-xs muted text-slate-500">
+                            Rewards are credited only after successful verification.
+                        </p>
+
+                    </div>
+
+
+                    <div class="flex items-start gap-2">
+
+                        <i class='bx bx-check text-emerald-500 mt-0.5'></i>
+
+                        <p class="text-xs muted text-slate-500">
+                            Daily streaks reset according to the platform's configured timezone.
+                        </p>
+
+                    </div>
+
+
+                    <div class="flex items-start gap-2">
+
+                        <i class='bx bx-check text-emerald-500 mt-0.5'></i>
+
+                        <p class="text-xs muted text-slate-500">
+                            The backend prevents duplicate or replayed claims.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Currency -->
+
+            <div class="mt-5 text-center">
+
+                <p class="text-xs muted text-slate-500">
+                    Current display conversion:
+                    <span class="font-semibold">
+                        $1 = ₦1,000
+                    </span>
+                </p>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <!-- ================= MOBILE NAV ================= -->
+
+    <nav class="bottom-nav">
+
+        <a href="dashboard.html">
+
+            <i class='bx bx-grid-alt'></i>
+
+            <span>
+                Home
+            </span>
+
+        </a>
+
+
+        <a href="tasks.html">
+
+            <i class='bx bx-task'></i>
+
+            <span>
+                Tasks
+            </span>
+
+        </a>
+
+
+        <a href="streak.html" class="active">
+
+            <i class='bx bx-calendar-check'></i>
+
+            <span>
+                Streak
+            </span>
+
+        </a>
+
+
+        <a href="withdrawal.html">
+
+            <i class='bx bx-wallet'></i>
+
+            <span>
+                Wallet
+            </span>
+
+        </a>
+
+
+        <a href="settings.html">
+
+            <i class='bx bx-user'></i>
+
+            <span>
+                Profile
+            </span>
+
+        </a>
+
+    </nav>
+
+
+    <!-- ================= CLAIM CONFIRMATION MODAL ================= -->
+
+    <div id="claimModal"
+        class="fixed inset-0 z-[100] bg-slate-950/60 backdrop-blur-sm hidden items-center justify-center p-5">
+
+        <div class="surface w-full max-w-[430px] p-6 rounded-2xl">
+
+            <div class="flex items-start justify-between mb-5">
+
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center"
+                    style="background: var(--soft-green);">
+                    <i class='bx bx-gift text-xl' style="color: var(--green);"></i>
+                </div>
+
+                <button id="closeClaimModal"
+                    class="w-9 h-9 rounded-lg flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i class='bx bx-x text-xl'></i>
+                </button>
+
+            </div>
+
+
+            <p class="text-xs uppercase tracking-wider text-emerald-600 mb-2">
+                Streak Reward
+            </p>
+
+
+            <h2 id="claimModalTitle" class="font-sora text-xl font-bold mb-2">
+                Claim Morning Reward
+            </h2>
+
+
+            <p class="text-sm muted text-slate-500 leading-6 mb-5">
+                Confirm that you want to claim today's available streak reward.
+            </p>
+
+
+            <div class="rounded-xl p-4 mb-5 text-center" style="background: var(--soft-green);">
+
+                <p class="text-xs muted text-slate-500">
+                    Reward
+                </p>
+
+                <p id="claimModalReward" class="font-sora text-3xl font-bold mt-1" style="color: var(--green);">
+                    $1.50
+                </p>
+
+                <p id="claimModalNaira" class="text-xs muted text-slate-500 mt-1">
+                    ≈ ₦1,500
+                </p>
+
+            </div>
+
+
+            <div class="flex gap-3">
+
+                <button id="cancelClaimBtn" class="flex-1 py-3 rounded-xl outline-button text-sm font-semibold">
+                    Cancel
+                </button>
+
+                <button id="confirmClaimBtn" class="flex-1 py-3 rounded-xl green-button text-sm font-semibold">
+                    Confirm Claim
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script>
+
+        /*
+        ==========================================================
+        OPTIFY VALIDATED STREAK PAGE
+        ==========================================================
+
+        IMPORTANT:
+
+        The user is already validated on this page.
+
+        The frontend should NOT decide whether the account is
+        validated. The backend must provide the authenticated
+        user's authoritative state.
+
+        Recommended endpoint:
+
+        GET /api/user/streak
+
+        Example response:
+
+        {
+            "validated": true,
+            "today": {
+                "earningsUsd": 0,
+                "claimCount": 0,
+                "availablePeriod": "morning"
+            },
+            "currentStreak": 0,
+            "longestStreak": 0,
+            "totalClaims": 0,
+            "claims": {
+                "morning": {
+                    "claimed": false,
+                    "available": true
+                },
+                "afternoon": {
+                    "claimed": false,
+                    "available": false
+                },
+                "night": {
+                    "claimed": false,
+                    "available": false
+                }
+            }
+        }
+
+        Claim endpoint:
+
+        POST /api/user/streak/claim
+
+        Body:
+
+        {
+            "period": "morning"
+        }
+
+        Backend must verify:
+
+        - authenticated user
+        - dashboard validation
+        - correct claim period
+        - server time
+        - claim availability
+        - claim has not already been used
+        - daily reward limit
+        - duplicate/replay protection
+
+        The frontend must never directly credit money.
+        */
+
+
+        const user = {
+
+            validated: true,
+
+            balance: 0,
+
+            currentStreak: 0,
+
+            longestStreak: 0,
+
+            totalStreakClaims: 0
+
+        };
+
+
+        /*
+        Demo interface state.
+
+        Replace this object with the response returned
+        by the backend when the API is connected.
+        */
+
+        const streak = {
+
+            morning: {
+                reward: 1.50,
+                claimed: false,
+                available: true
+            },
+
+            afternoon: {
+                reward: 1.50,
+                claimed: false,
+                available: false
+            },
+
+            night: {
+                reward: 1.50,
+                claimed: false,
+                available: false
+            }
+
+        };
+
+
+        let selectedPeriod = null;
+
+
+        /* =========================
+           ELEMENTS
+        ========================= */
+
+        const html = document.documentElement;
+
+        const themeBtn =
+            document.getElementById('themeBtn');
+
+        const themeIcon =
+            document.getElementById('themeIcon');
+
+        const sidebar =
+            document.getElementById('sidebar');
+
+        const menuBtn =
+            document.getElementById('menuBtn');
+
+        const mobileOverlay =
+            document.getElementById('mobileOverlay');
+
+        const claimModal =
+            document.getElementById('claimModal');
+
+
+        /* =========================
+           THEME
+        ========================= */
+
+        function applyTheme(theme) {
+
+            if (theme === 'dark') {
+
+                html.classList.add('dark');
+
+                themeIcon.className =
+                    'bx bx-sun text-lg';
+
+            } else {
+
+                html.classList.remove('dark');
+
+                themeIcon.className =
+                    'bx bx-moon text-lg';
+
+            }
+
+        }
+
+
+        const savedTheme =
+            localStorage.getItem('optify-theme') || 'light';
+
+        applyTheme(savedTheme);
+
+
+        themeBtn.addEventListener('click', () => {
+
+            const newTheme =
+                html.classList.contains('dark')
+                    ? 'light'
+                    : 'dark';
+
+            localStorage.setItem(
+                'optify-theme',
+                newTheme
+            );
+
+            applyTheme(newTheme);
+
+        });
+
+
+        /* =========================
+           MOBILE SIDEBAR
+        ========================= */
+
+        function openSidebar() {
+
+            sidebar.classList.add('open');
+
+            mobileOverlay.classList.add('show');
+
+            document.body.style.overflow = 'hidden';
+
+        }
+
+
+        function closeSidebar() {
+
+            sidebar.classList.remove('open');
+
+            mobileOverlay.classList.remove('show');
+
+            document.body.style.overflow = '';
+
+        }
+
+
+        menuBtn.addEventListener(
+            'click',
+            openSidebar
+        );
+
+
+        mobileOverlay.addEventListener(
+            'click',
+            closeSidebar
+        );
+
+
+        window.addEventListener(
+            'resize',
+            () => {
+
+                if (window.innerWidth > 1024) {
+                    closeSidebar();
+                }
+
+            }
+        );
+
+
+        /* =========================
+           RENDER STREAK DATA
+        ========================= */
+
+        function renderStreakData() {
+
+            let completed = 0;
+
+            let earnings = 0;
+
+
+            Object.keys(streak).forEach(period => {
+
+                const data = streak[period];
+
+                if (data.claimed) {
+
+                    completed++;
+
+                    earnings += data.reward;
+
+                }
+
+            });
+
+
+            document.getElementById(
+                'todayEarnings'
+            ).textContent =
+                earnings.toFixed(2);
+
+
+            document.getElementById(
+                'todayNaira'
+            ).textContent =
+                (earnings * 1000).toLocaleString();
+
+
+            document.getElementById(
+                'claimCount'
+            ).textContent =
+                completed;
+
+
+            document.getElementById(
+                'streakProgress'
+            ).style.width =
+                `${(completed / 3) * 100}%`;
+
+
+            document.getElementById(
+                'currentStreak'
+            ).textContent =
+                user.currentStreak;
+
+
+            document.getElementById(
+                'longestStreak'
+            ).textContent =
+                user.longestStreak;
+
+
+            document.getElementById(
+                'totalClaims'
+            ).textContent =
+                user.totalStreakClaims;
+
+
+            updatePeriod(
+                'morning',
+                document.getElementById('morningStatus'),
+                document.querySelector('[data-period="morning"]'),
+                document.getElementById('morningIndicator')
+            );
+
+
+            updatePeriod(
+                'afternoon',
+                document.getElementById('afternoonStatus'),
+                document.querySelector('[data-period="afternoon"]'),
+                document.getElementById('afternoonIndicator')
+            );
+
+
+            updatePeriod(
+                'night',
+                document.getElementById('nightStatus'),
+                document.querySelector('[data-period="night"]'),
+                document.getElementById('nightIndicator')
+            );
+
+        }
+
+
+        /* =========================
+           UPDATE CLAIM PERIOD
+        ========================= */
+
+        function updatePeriod(
+            period,
+            statusElement,
+            button,
+            indicator
+        ) {
+
+            const data = streak[period];
+
+
+            if (data.claimed) {
+
+                statusElement.textContent =
+                    'Completed';
+
+                statusElement.style.background =
+                    'var(--soft-green)';
+
+                statusElement.style.color =
+                    '#087443';
+
+
+                button.textContent =
+                    'Claimed';
+
+                button.disabled = true;
+
+
+                button.className =
+                    'claim-btn w-full py-2.5 rounded-xl text-sm font-semibold bg-emerald-50 text-emerald-600 cursor-not-allowed';
+
+
+                indicator.className =
+                    'period-dot completed';
+
+
+                indicator.innerHTML =
+                    "<i class='bx bx-check'></i>";
+
+            }
+
+            else if (data.available) {
+
+                statusElement.textContent =
+                    'Available';
+
+                statusElement.style.background =
+                    'var(--soft-green)';
+
+                statusElement.style.color =
+                    '#087443';
+
+
+                button.textContent =
+                    `Claim $${data.reward.toFixed(2)}`;
+
+                button.disabled = false;
+
+
+                button.className =
+                    'claim-btn w-full py-2.5 rounded-xl green-button text-sm font-semibold';
+
+
+                indicator.className =
+                    'period-dot current';
+
+
+                indicator.textContent =
+                    period === 'morning'
+                        ? '1'
+                        : period === 'afternoon'
+                            ? '2'
+                            : '3';
+
+            }
+
+            else {
+
+                statusElement.textContent =
+                    'Locked';
+
+
+                statusElement.style.background = '';
+
+                statusElement.style.color = '';
+
+
+                button.textContent =
+                    'Locked';
+
+                button.disabled = true;
+
+
+                button.className =
+                    'claim-btn w-full py-2.5 rounded-xl outline-button text-sm font-semibold text-slate-500';
+
+
+                indicator.className =
+                    'period-dot locked';
+
+
+                indicator.textContent =
+                    period === 'morning'
+                        ? '1'
+                        : period === 'afternoon'
+                            ? '2'
+                            : '3';
+
+            }
+
+        }
+
+
+        /* =========================
+           CLAIM BUTTONS
+        ========================= */
+
+        document
+            .querySelectorAll('.claim-btn')
+            .forEach(button => {
+
+                button.addEventListener(
+                    'click',
+                    () => {
+
+                        const period =
+                            button.dataset.period;
+
+                        const reward =
+                            parseFloat(
+                                button.dataset.reward
+                            );
+
+
+                        if (
+                            !streak[period].available ||
+                            streak[period].claimed
+                        ) {
+                            return;
+                        }
+
+
+                        selectedPeriod =
+                            period;
+
+
+                        const periodName =
+                            period.charAt(0).toUpperCase()
+                            + period.slice(1);
+
+
+                        document.getElementById(
+                            'claimModalTitle'
+                        ).textContent =
+                            `Claim ${periodName} Reward`;
+
+
+                        document.getElementById(
+                            'claimModalReward'
+                        ).textContent =
+                            `$${reward.toFixed(2)}`;
+
+
+                        document.getElementById(
+                            'claimModalNaira'
+                        ).textContent =
+                            `≈ ₦${(
+                                reward * 1000
+                            ).toLocaleString()}`;
+
+
+                        claimModal.classList.remove('hidden');
+
+                        claimModal.classList.add('flex');
+
+                        document.body.style.overflow =
+                            'hidden';
+
+                    }
+                );
+
+            });
+
+
+        /* =========================
+           CLOSE CLAIM MODAL
+        ========================= */
+
+        function closeClaimModal() {
+
+            claimModal.classList.add('hidden');
+
+            claimModal.classList.remove('flex');
+
+            selectedPeriod = null;
+
+            document.body.style.overflow = '';
+
+        }
+
+
+        document
+            .getElementById('closeClaimModal')
+            .addEventListener(
+                'click',
+                closeClaimModal
+            );
+
+
+        document
+            .getElementById('cancelClaimBtn')
+            .addEventListener(
+                'click',
+                closeClaimModal
+            );
+
+
+        /* =========================
+           CONFIRM CLAIM
+        ========================= */
+
+        document
+            .getElementById('confirmClaimBtn')
+            .addEventListener(
+                'click',
+                async () => {
+
+                    if (!selectedPeriod) {
+                        return;
+                    }
+
+
+                    const confirmButton =
+                        document.getElementById(
+                            'confirmClaimBtn'
+                        );
+
+
+                    const period =
+                        selectedPeriod;
+
+
+                    /*
+                    ==================================================
+                    PRODUCTION BACKEND FLOW
+
+                    Replace the demo logic below with:
+
+                    POST /api/user/streak/claim
+
+                    Example:
+
+                    const response = await fetch(
+                        '/api/user/streak/claim',
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type':
+                                    'application/json'
+                            },
+                            body: JSON.stringify({
+                                period
+                            })
+                        }
+                    );
+
+                    const result = await response.json();
+
+                    The backend must decide whether the
+                    claim is actually valid.
+
+                    Never trust the reward amount sent
+                    from the frontend.
+                    ==================================================
+                    */
+
+
+                    confirmButton.disabled = true;
+
+                    confirmButton.textContent =
+                        'Processing...';
+
+
+                    /*
+                    DEMO ONLY.
+
+                    This simulates the interface state.
+
+                    Remove this block when the backend
+                    endpoint is connected.
+                    */
+
+                    setTimeout(() => {
+
+                        const data =
+                            streak[period];
+
+
+                        if (
+                            !data ||
+                            data.claimed ||
+                            !data.available
+                        ) {
+
+                            confirmButton.disabled = false;
+
+                            confirmButton.textContent =
+                                'Confirm Claim';
+
+                            closeClaimModal();
+
+                            return;
+
+                        }
+
+
+                        data.claimed = true;
+
+
+                        /*
+                        Demo progression.
+
+                        The real backend should determine
+                        the next available period based
+                        on server time.
+                        */
+
+                        if (period === 'morning') {
+
+                            streak.afternoon.available =
+                                true;
+
+                        }
+
+                        else if (period === 'afternoon') {
+
+                            streak.night.available =
+                                true;
+
+                        }
+
+
+                        user.totalStreakClaims += 1;
+
+
+                        closeClaimModal();
+
+
+                        confirmButton.disabled =
+                            false;
+
+                        confirmButton.textContent =
+                            'Confirm Claim';
+
+
+                        renderStreakData();
+
+                    }, 500);
+
+                }
+            );
+
+
+        /* =========================
+           MODAL BACKDROP
+        ========================= */
+
+        claimModal.addEventListener(
+            'click',
+            event => {
+
+                if (
+                    event.target === claimModal
+                ) {
+
+                    closeClaimModal();
+
+                }
+
+            }
+        );
+
+
+        /* =========================
+           ESCAPE KEY
+        ========================= */
+
+        document.addEventListener(
+            'keydown',
+            event => {
+
+                if (event.key === 'Escape') {
+
+                    closeClaimModal();
+
+                    closeSidebar();
+
+                }
+
+            }
+        );
+
+
+        /* =========================
+           LOGOUT
+        ========================= */
+
+        document
+            .getElementById('logoutBtn')
+            .addEventListener(
+                'click',
+                () => {
+
+                    /*
+                    Replace with Firebase/backend
+                    authentication sign-out.
+
+                    Example:
+
+                    await signOut(auth);
+
+                    Then redirect:
+
+                    window.location.href = 'login.html';
+                    */
+
+                    window.location.href =
+                        'login.html';
+
+                }
+            );
+
+
+        /* =========================
+           INITIALIZE
+        ========================= */
+
+        renderStreakData();
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,3908 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Quiz Management — Optify Admin</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sora: ['Sora', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        :root {
+            --navy: #071A2B;
+            --navy-2: #0B2638;
+            --emerald: #12B76A;
+            --emerald-dark: #079455;
+            --bg: #F7F9FC;
+            --text: #101828;
+            --muted: #667085;
+            --border: #E4E7EC;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+        }
+
+        body.dark {
+            --bg: #07111D;
+            --text: #F8FAFC;
+            --muted: #98A2B3;
+            --border: rgba(255, 255, 255, .08);
+        }
+
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--navy);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        .nav-item {
+            transition: .2s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, .055);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: rgba(18, 183, 106, .13);
+            color: #34D399;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+        }
+
+        body.dark .card {
+            background: #0D1B29;
+        }
+
+        .input-control {
+            width: 100%;
+            height: 44px;
+            padding: 0 13px;
+            border-radius: 11px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--text);
+            outline: none;
+            transition: .2s ease;
+        }
+
+        body.dark .input-control {
+            background: #0A1724;
+        }
+
+        .input-control:focus {
+            border-color: var(--emerald);
+            box-shadow: 0 0 0 3px rgba(18, 183, 106, .10);
+        }
+
+        textarea.input-control {
+            height: auto;
+            min-height: 110px;
+            padding-top: 12px;
+            resize: vertical;
+        }
+
+        select.input-control {
+            cursor: pointer;
+        }
+
+        .primary-btn {
+            background: var(--emerald);
+            color: #fff;
+            transition: .2s ease;
+        }
+
+        .primary-btn:hover {
+            background: var(--emerald-dark);
+        }
+
+        .secondary-btn {
+            background: #fff;
+            border: 1px solid var(--border);
+            color: var(--text);
+            transition: .2s ease;
+        }
+
+        body.dark .secondary-btn {
+            background: #0D1B29;
+        }
+
+        .secondary-btn:hover {
+            border-color: #CBD5E1;
+            background: #F8FAFC;
+        }
+
+        body.dark .secondary-btn:hover {
+            background: #132536;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            background: #E8F8F0;
+            color: var(--emerald);
+            flex-shrink: 0;
+        }
+
+        body.dark .stat-icon {
+            background: rgba(18, 183, 106, .10);
+        }
+
+        .table-row {
+            transition: .15s ease;
+        }
+
+        .table-row:hover {
+            background: #F8FAFC;
+        }
+
+        body.dark .table-row:hover {
+            background: rgba(255, 255, 255, .025);
+        }
+
+        .modal-backdrop {
+            background: rgba(3, 10, 18, .62);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal {
+            max-height: calc(100vh - 32px);
+            overflow-y: auto;
+        }
+
+        .toggle {
+            position: relative;
+            width: 46px;
+            height: 26px;
+            border-radius: 999px;
+            background: #D0D5DD;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .toggle span {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 3px;
+            left: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: .2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+        }
+
+        .toggle.active {
+            background: var(--emerald);
+        }
+
+        .toggle.active span {
+            transform: translateX(20px);
+        }
+
+        .option-radio {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--emerald);
+        }
+
+        .skeleton {
+            position: relative;
+            overflow: hidden;
+            background: #EAECF0;
+        }
+
+        body.dark .skeleton {
+            background: #182838;
+        }
+
+        .skeleton::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, .45),
+                transparent
+            );
+            animation: shimmer 1.4s infinite;
+        }
+
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .toast {
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: .25s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-overlay {
+            background: rgba(0, 0, 0, .45);
+            backdrop-filter: blur(2px);
+        }
+
+        .chart-bar {
+            width: 100%;
+            border-radius: 7px 7px 2px 2px;
+            background: #12B76A;
+            min-height: 4px;
+        }
+
+        .chart-grid {
+            background-image: linear-gradient(
+                to bottom,
+                rgba(148, 163, 184, .14) 1px,
+                transparent 1px
+            );
+            background-size: 100% 25%;
+        }
+
+        .dropdown-menu {
+            box-shadow: 0 15px 35px rgba(16, 24, 40, .14);
+        }
+
+        body.dark .dropdown-menu {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, .35);
+        }
+
+        @media (max-width: 1023px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .modal {
+                max-height: calc(100vh - 20px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- MOBILE OVERLAY -->
+    <div id="mobileOverlay"
+         class="mobile-overlay fixed inset-0 z-50 hidden lg:hidden"></div>
+
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar"
+           class="sidebar fixed left-0 top-0 bottom-0 z-[60] text-white overflow-y-auto">
+
+        <div class="px-5 py-6">
+
+            <!-- Logo -->
+            <div class="flex items-center gap-3 mb-8">
+
+                <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
+                    <i class='bx bx-layer text-2xl'></i>
+                </div>
+
+                <div>
+                    <div class="font-sora font-bold text-lg tracking-tight">
+                        OPTIFY
+                    </div>
+
+                    <div class="text-[10px] text-slate-400 uppercase tracking-[.18em]">
+                        Admin Portal
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- Main Menu -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Main Menu
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="admin.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-grid-alt text-lg'></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a href="users.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-group text-lg'></i>
+                        <span>Users</span>
+                    </a>
+
+                    <a href="quizzes.html"
+                       class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm">
+                        <i class='bx bx-help-circle text-lg'></i>
+                        <span>Quiz</span>
+                    </a>
+
+                    <a href="referrals.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-share-alt text-lg'></i>
+                        <span>Referrals</span>
+                    </a>
+
+                </nav>
+            </div>
+
+
+            <!-- Finance -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Finance
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="epins.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-key text-lg'></i>
+                        <span>E-pins</span>
+                    </a>
+
+                    <a href="withdrawals.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-money-withdraw text-lg'></i>
+                        <span>Withdrawals</span>
+                    </a>
+
+                    <!-- <a href="transactions.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-transfer-alt text-lg'></i>
+                        <span>Transactions</span>
+                    </a> -->
+
+                </nav>
+            </div>
+
+
+            <!-- Platform -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Platform
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="community-settings.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-link text-lg'></i>
+                        <span>Community Settings</span>
+                    </a>
+
+                    <a href="platform-settings.html"
+                       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-cog text-lg'></i>
+                        <span>Platform Settings</span>
+                    </a>
+
+                </nav>
+            </div>
+
+        </div>
+
+
+        <!-- Sidebar Bottom -->
+        <div class="absolute bottom-0 left-0 right-0 p-5 border-t border-white/10 bg-[#071A2B]">
+
+            <a href="admin-profile.html"
+               class="flex items-center gap-3 mb-4">
+
+                <div class="w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center">
+                    <i class='bx bx-user text-emerald-400'></i>
+                </div>
+
+                <div class="min-w-0">
+                    <p id="sidebarAdminName" class="text-sm font-medium truncate">
+                        Optify Admin
+                    </p>
+
+                    <p class="text-xs text-slate-500">
+                        Administrator
+                    </p>
+                </div>
+
+            </a>
+
+            <button
+                id="logoutBtn"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-400 hover:bg-white/5 hover:text-white transition">
+
+                <i class='bx bx-log-out text-lg'></i>
+                Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="sticky top-0 z-40 h-[72px] border-b border-slate-200 dark:border-white/10 bg-white/90 dark:bg-[#07111D]/90 backdrop-blur">
+
+            <div class="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+
+                <div class="flex items-center gap-3">
+
+                    <button id="menuBtn"
+                            class="lg:hidden w-10 h-10 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-600 dark:text-slate-300">
+                        <i class='bx bx-menu text-2xl'></i>
+                    </button>
+
+                    <div class="hidden sm:block">
+                        <p class="text-xs text-slate-400">
+                            Admin Portal
+                        </p>
+
+                        <p class="font-sora font-semibold text-sm">
+                            Quiz Management
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="flex items-center gap-2">
+
+                    <!-- Theme -->
+                    <button id="themeBtn"
+                            aria-label="Toggle theme"
+                            class="w-10 h-10 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 transition">
+                        <i id="themeIcon" class='bx bx-moon text-lg'></i>
+                    </button>
+
+
+                    <!-- Notifications -->
+                    <button
+                        aria-label="Notifications"
+                        class="relative w-10 h-10 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 transition">
+
+                        <i class='bx bx-bell text-lg'></i>
+
+                        <span class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+
+                    </button>
+
+
+                    <!-- Admin -->
+                    <a href="admin-profile.html"
+                       class="hidden sm:flex items-center gap-2.5 ml-1">
+
+                        <div class="w-9 h-9 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+                            <i class='bx bx-user text-emerald-600 dark:text-emerald-400'></i>
+                        </div>
+
+                        <div class="hidden md:block">
+                            <p class="text-sm font-medium leading-tight">
+                                Optify Admin
+                            </p>
+                            <p class="text-[11px] text-slate-400">
+                                Administrator
+                            </p>
+                        </div>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+        <div class="px-4 sm:px-6 lg:px-8 py-7 max-w-[1600px] mx-auto">
+
+
+            <!-- PAGE HEADER -->
+            <section class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-5 mb-7">
+
+                <div>
+
+                    <p class="text-[11px] font-semibold tracking-[.18em] text-emerald-600 dark:text-emerald-400 uppercase mb-2">
+                        Quiz Management
+                    </p>
+
+                    <h1 class="font-sora text-2xl sm:text-3xl font-bold tracking-tight">
+                        Quiz
+                    </h1>
+
+                    <p class="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
+                        Create, manage and monitor quiz questions and rewards across the Optify platform.
+                    </p>
+
+                </div>
+
+
+                <button id="createQuestionBtn"
+                        class="primary-btn inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm">
+
+                    <i class='bx bx-plus text-xl'></i>
+                    Create Question
+
+                </button>
+
+            </section>
+
+
+            <!-- STATS -->
+            <section id="statsSection" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-7">
+
+                <div class="card p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                Total Questions
+                            </p>
+                            <p id="totalQuestions" class="font-sora text-2xl font-bold mt-2">
+                                0
+                            </p>
+                        </div>
+
+                        <div class="stat-icon">
+                            <i class='bx bx-help-circle text-xl'></i>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                Active Questions
+                            </p>
+                            <p id="activeQuestions" class="font-sora text-2xl font-bold mt-2">
+                                0
+                            </p>
+                        </div>
+
+                        <div class="stat-icon">
+                            <i class='bx bx-check-circle text-xl'></i>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                Inactive Questions
+                            </p>
+                            <p id="inactiveQuestions" class="font-sora text-2xl font-bold mt-2">
+                                0
+                            </p>
+                        </div>
+
+                        <div class="stat-icon">
+                            <i class='bx bx-pause-circle text-xl'></i>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                Questions Answered
+                            </p>
+                            <p id="questionsAnswered" class="font-sora text-2xl font-bold mt-2">
+                                0
+                            </p>
+                        </div>
+
+                        <div class="stat-icon">
+                            <i class='bx bx-bar-chart-alt-2 text-xl'></i>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                Total Quiz Rewards
+                            </p>
+
+                            <p id="totalRewards" class="font-sora text-2xl font-bold mt-2">
+                                $0.00
+                            </p>
+
+                            <p id="totalRewardsNgn" class="text-xs text-slate-400 mt-1">
+                                ≈ ₦0
+                            </p>
+                        </div>
+
+                        <div class="stat-icon">
+                            <i class='bx bx-dollar-circle text-xl'></i>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+
+            <!-- QUIZ SETTINGS -->
+            <section class="card p-5 sm:p-6 mb-7">
+
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-6">
+
+                    <div>
+                        <h2 class="font-sora text-lg font-semibold">
+                            Quiz Settings
+                        </h2>
+
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                            Control the general rules used by the Optify quiz system.
+                        </p>
+                    </div>
+
+                    <span class="inline-flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 w-fit">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        Backend Controlled
+                    </span>
+
+                </div>
+
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-6 gap-4">
+
+                    <div>
+                        <label class="block text-xs font-medium mb-2">
+                            Minimum Questions
+                        </label>
+                        <input id="minimumQuestions"
+                               type="number"
+                               min="1"
+                               value="5"
+                               class="input-control">
+                    </div>
+
+
+                    <div>
+                        <label class="block text-xs font-medium mb-2">
+                            Maximum Questions
+                        </label>
+                        <input id="maximumQuestions"
+                               type="number"
+                               min="1"
+                               value="10"
+                               class="input-control">
+                    </div>
+
+
+                    <div>
+                        <label class="block text-xs font-medium mb-2">
+                            Minimum Reward
+                        </label>
+
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+                                $
+                            </span>
+
+                            <input id="minimumReward"
+                                   type="number"
+                                   min="0"
+                                   step="0.01"
+                                   value="1.00"
+                                   class="input-control pl-7">
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <label class="block text-xs font-medium mb-2">
+                            Maximum Reward
+                        </label>
+
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+                                $
+                            </span>
+
+                            <input id="maximumReward"
+                                   type="number"
+                                   min="0"
+                                   step="0.01"
+                                   value="5.00"
+                                   class="input-control pl-7">
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <label class="block text-xs font-medium mb-2">
+                            Daily Quiz Attempts
+                        </label>
+
+                        <input id="dailyAttempts"
+                               type="number"
+                               min="1"
+                               value="1"
+                               class="input-control">
+                    </div>
+
+
+                    <div>
+                        <label class="block text-xs font-medium mb-2">
+                            Quiz Status
+                        </label>
+
+                        <button id="quizStatusToggle"
+                                type="button"
+                                class="toggle active mt-2"
+                                aria-label="Toggle quiz status">
+                            <span></span>
+                        </button>
+
+                        <span id="quizStatusText"
+                              class="ml-2 text-sm text-emerald-600 dark:text-emerald-400">
+                            Active
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="mt-5 pt-5 border-t border-slate-100 dark:border-white/10 flex justify-end">
+
+                    <button id="saveSettingsBtn"
+                            class="primary-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold">
+
+                        <i class='bx bx-save'></i>
+                        Save Quiz Settings
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- QUESTIONS -->
+            <section class="card overflow-hidden mb-7">
+
+                <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-white/10">
+
+                    <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-5">
+
+                        <div>
+                            <h2 class="font-sora text-lg font-semibold">
+                                Quiz Questions
+                            </h2>
+
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                Manage the questions available to users during quizzes.
+                            </p>
+                        </div>
+
+
+                        <button id="refreshQuestionsBtn"
+                                class="secondary-btn inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-sm font-medium">
+
+                            <i class='bx bx-refresh text-lg'></i>
+                            Refresh
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- FILTERS -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3 mt-6">
+
+                        <div class="relative xl:col-span-2">
+
+                            <i class='bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400'></i>
+
+                            <input id="searchInput"
+                                   type="search"
+                                   placeholder="Search question..."
+                                   class="input-control pl-10">
+
+                        </div>
+
+
+                        <select id="statusFilter" class="input-control">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+
+
+                        <select id="categoryFilter" class="input-control">
+                            <option value="">All Categories</option>
+                            <option value="General Knowledge">General Knowledge</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Business">Business</option>
+                            <option value="Science">Science</option>
+                            <option value="Sports">Sports</option>
+                            <option value="History">History</option>
+                            <option value="Other">Other</option>
+                        </select>
+
+
+                        <select id="difficultyFilter" class="input-control">
+                            <option value="">All Difficulty</option>
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+
+                    </div>
+
+
+                    <div class="flex justify-end mt-3">
+
+                        <button id="clearFiltersBtn"
+                                class="text-sm text-slate-500 hover:text-emerald-600 transition inline-flex items-center gap-1.5">
+
+                            <i class='bx bx-x'></i>
+                            Clear filters
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- LOADING -->
+                <div id="questionsLoading" class="hidden p-5">
+
+                    <div class="space-y-3">
+
+                        <div class="skeleton h-14 rounded-xl"></div>
+                        <div class="skeleton h-14 rounded-xl"></div>
+                        <div class="skeleton h-14 rounded-xl"></div>
+                        <div class="skeleton h-14 rounded-xl"></div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ERROR -->
+                <div id="questionsError" class="hidden p-10 text-center">
+
+                    <div class="w-12 h-12 mx-auto rounded-2xl bg-red-50 dark:bg-red-500/10 text-red-500 flex items-center justify-center">
+                        <i class='bx bx-error-circle text-2xl'></i>
+                    </div>
+
+                    <h3 class="font-sora font-semibold mt-4">
+                        Unable to load quiz data
+                    </h3>
+
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                        Something went wrong while loading the quiz management data.
+                    </p>
+
+                    <button id="retryQuestionsBtn"
+                            class="primary-btn mt-5 px-4 py-2.5 rounded-xl text-sm font-semibold">
+                        Try Again
+                    </button>
+
+                </div>
+
+
+                <!-- EMPTY -->
+                <div id="questionsEmpty" class="p-12 text-center">
+
+                    <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                        <i class='bx bx-help-circle text-3xl'></i>
+                    </div>
+
+                    <h3 class="font-sora font-semibold mt-5">
+                        No quiz questions yet
+                    </h3>
+
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-md mx-auto">
+                        Create your first quiz question to make it available to users.
+                    </p>
+
+                    <button id="emptyCreateBtn"
+                            class="primary-btn mt-5 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold">
+
+                        <i class='bx bx-plus'></i>
+                        Create Question
+
+                    </button>
+
+                </div>
+
+
+                <!-- TABLE -->
+                <div id="questionsTableWrap" class="hidden">
+
+                    <div class="overflow-x-auto">
+
+                        <table class="w-full min-w-[1050px]">
+
+                            <thead>
+                                <tr class="border-b border-slate-100 dark:border-white/10 text-left">
+
+                                    <th class="px-5 py-4 text-[11px] uppercase tracking-wider font-semibold text-slate-400">
+                                        Question
+                                    </th>
+
+                                    <th class="px-5 py-4 text-[11px] uppercase tracking-wider font-semibold text-slate-400">
+                                        Category
+                                    </th>
+
+                                    <th class="px-5 py-4 text-[11px] uppercase tracking-wider font-semibold text-slate-400">
+                                        Difficulty
+                                    </th>
+
+                                    <th class="px-5 py-4 text-[11px] uppercase tracking-wider font-semibold text-slate-400">
+                                        Options
+                                    </th>
+
+                                    <th class="px-5 py-4 text-[11px] uppercase tracking-wider font-semibold text-slate-400">
+                                        Correct Answer
+                                    </th>
+
+                                    <th class="px-5 py-4 text-[11px] uppercase tracking-wider font-semibold text-slate-400">
+                                        Status
+                                    </th>
+
+                                    <th class="px-5 py-4 text-[11px] uppercase tracking-wider font-semibold text-slate-400">
+                                        Created
+                                    </th>
+
+                                    <th class="px-5 py-4 text-[11px] uppercase tracking-wider font-semibold text-slate-400 text-right">
+                                        Actions
+                                    </th>
+
+                                </tr>
+                            </thead>
+
+                            <tbody id="questionsTableBody"></tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <!-- PAGINATION -->
+                    <div class="px-5 py-4 border-t border-slate-100 dark:border-white/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+                        <div class="flex items-center gap-2">
+
+                            <span class="text-xs text-slate-500 dark:text-slate-400">
+                                Rows:
+                            </span>
+
+                            <select id="pageSize"
+                                    class="h-9 px-2.5 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0A1724] text-sm outline-none">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+
+                        </div>
+
+
+                        <div class="text-xs text-slate-500 dark:text-slate-400">
+                            Showing <span id="showingCount">0</span> of <span id="totalCount">0</span> questions
+                        </div>
+
+
+                        <div class="flex items-center gap-1">
+
+                            <button id="prevPageBtn"
+                                    class="w-9 h-9 rounded-lg border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 disabled:opacity-40"
+                                    disabled>
+
+                                <i class='bx bx-chevron-left'></i>
+
+                            </button>
+
+                            <div id="pageNumbers" class="flex items-center gap-1"></div>
+
+                            <button id="nextPageBtn"
+                                    class="w-9 h-9 rounded-lg border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 disabled:opacity-40"
+                                    disabled>
+
+                                <i class='bx bx-chevron-right'></i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MOBILE QUESTION CARDS -->
+                <div id="mobileQuestionsWrap" class="hidden p-4 space-y-3"></div>
+
+            </section>
+
+
+            <!-- QUIZ PERFORMANCE -->
+            <section class="card p-5 sm:p-6 mb-7">
+
+                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
+
+                    <div>
+                        <h2 class="font-sora text-lg font-semibold">
+                            Quiz Performance
+                        </h2>
+
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                            Monitor quiz activity and reward distribution.
+                        </p>
+                    </div>
+
+                    <span class="text-xs text-slate-400">
+                        Backend data
+                    </span>
+
+                </div>
+
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-7">
+
+                    <div class="rounded-2xl bg-slate-50 dark:bg-white/[.03] p-4">
+                        <p class="text-xs text-slate-500 dark:text-slate-400">
+                            Total Quiz Attempts
+                        </p>
+
+                        <p id="totalAttempts"
+                           class="font-sora text-2xl font-bold mt-2">
+                            0
+                        </p>
+                    </div>
+
+
+                    <div class="rounded-2xl bg-slate-50 dark:bg-white/[.03] p-4">
+                        <p class="text-xs text-slate-500 dark:text-slate-400">
+                            Completed Quizzes
+                        </p>
+
+                        <p id="completedQuizzes"
+                           class="font-sora text-2xl font-bold mt-2">
+                            0
+                        </p>
+                    </div>
+
+
+                    <div class="rounded-2xl bg-slate-50 dark:bg-white/[.03] p-4">
+                        <p class="text-xs text-slate-500 dark:text-slate-400">
+                            Average Score
+                        </p>
+
+                        <p id="averageScore"
+                           class="font-sora text-2xl font-bold mt-2">
+                            0%
+                        </p>
+                    </div>
+
+
+                    <div class="rounded-2xl bg-slate-50 dark:bg-white/[.03] p-4">
+                        <p class="text-xs text-slate-500 dark:text-slate-400">
+                            Total Rewards Issued
+                        </p>
+
+                        <p id="performanceRewards"
+                           class="font-sora text-2xl font-bold mt-2">
+                            $0.00
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <!-- SIMPLE CHART -->
+                <div>
+
+                    <div class="flex items-center justify-between mb-4">
+
+                        <div>
+                            <h3 class="font-semibold text-sm">
+                                Quiz Activity
+                            </h3>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Attempts, completed quizzes and rewards
+                            </p>
+                        </div>
+
+                        <div class="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400">
+
+                            <span class="flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                Attempts
+                            </span>
+
+                            <span class="flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                                Completed
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="chart"
+                         class="chart-grid h-56 rounded-2xl border border-slate-100 dark:border-white/10 p-5 flex items-end gap-3">
+
+                        <div class="flex-1 h-full flex items-end gap-2">
+                            <div class="chart-bar opacity-20" style="height: 10%;"></div>
+                            <div class="chart-bar opacity-30" style="height: 16%;"></div>
+                            <div class="chart-bar opacity-40" style="height: 24%;"></div>
+                            <div class="chart-bar opacity-50" style="height: 18%;"></div>
+                            <div class="chart-bar opacity-60" style="height: 30%;"></div>
+                            <div class="chart-bar opacity-70" style="height: 22%;"></div>
+                            <div class="chart-bar opacity-80" style="height: 34%;"></div>
+                            <div class="chart-bar opacity-90" style="height: 28%;"></div>
+                            <div class="chart-bar" style="height: 38%;"></div>
+                            <div class="chart-bar opacity-70" style="height: 26%;"></div>
+                            <div class="chart-bar opacity-50" style="height: 20%;"></div>
+                            <div class="chart-bar opacity-40" style="height: 15%;"></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- REWARD RULES + SECURITY -->
+            <section class="grid grid-cols-1 xl:grid-cols-2 gap-5 mb-8">
+
+
+                <!-- REWARD RULES -->
+                <div class="card p-5 sm:p-6">
+
+                    <div class="flex items-center gap-3 mb-5">
+
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                            <i class='bx bx-gift text-xl'></i>
+                        </div>
+
+                        <div>
+                            <h2 class="font-sora font-semibold">
+                                Quiz Reward Rules
+                            </h2>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Current configured reward boundaries
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="grid grid-cols-2 gap-3">
+
+                        <div class="rounded-xl bg-slate-50 dark:bg-white/[.03] p-4">
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                Minimum Reward
+                            </p>
+
+                            <p id="ruleMinReward"
+                               class="font-sora font-semibold mt-1">
+                                $1.00
+                            </p>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                ≈ ₦1,000
+                            </p>
+                        </div>
+
+
+                        <div class="rounded-xl bg-slate-50 dark:bg-white/[.03] p-4">
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                Maximum Reward
+                            </p>
+
+                            <p id="ruleMaxReward"
+                               class="font-sora font-semibold mt-1">
+                                $5.00
+                            </p>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                ≈ ₦5,000
+                            </p>
+                        </div>
+
+
+                        <div class="rounded-xl bg-slate-50 dark:bg-white/[.03] p-4">
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                Minimum Questions
+                            </p>
+
+                            <p id="ruleMinQuestions"
+                               class="font-sora font-semibold mt-1">
+                                5
+                            </p>
+                        </div>
+
+
+                        <div class="rounded-xl bg-slate-50 dark:bg-white/[.03] p-4">
+                            <p class="text-xs text-slate-500 dark:text-slate-400">
+                                Maximum Questions
+                            </p>
+
+                            <p id="ruleMaxQuestions"
+                               class="font-sora font-semibold mt-1">
+                                10
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="mt-4 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-500/[.07] border border-emerald-100 dark:border-emerald-500/10">
+
+                        <p class="text-xs leading-5 text-emerald-800 dark:text-emerald-300">
+                            Quiz rewards are determined by backend rules and are credited only after successful quiz completion and verification.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SECURITY -->
+                <div class="card p-5 sm:p-6">
+
+                    <div class="flex items-center gap-3 mb-5">
+
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/[.05] flex items-center justify-center text-slate-700 dark:text-slate-300">
+                            <i class='bx bx-shield-quarter text-xl'></i>
+                        </div>
+
+                        <div>
+                            <h2 class="font-sora font-semibold">
+                                Quiz Security
+                            </h2>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Important implementation requirements
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="space-y-3">
+
+                        <div class="flex gap-3">
+
+                            <i class='bx bx-check-circle text-emerald-500 text-lg mt-0.5'></i>
+
+                            <p class="text-sm text-slate-600 dark:text-slate-300 leading-6">
+                                Quiz questions, correct answers, attempt limits and rewards must be controlled by the backend.
+                            </p>
+
+                        </div>
+
+
+                        <div class="flex gap-3">
+
+                            <i class='bx bx-check-circle text-emerald-500 text-lg mt-0.5'></i>
+
+                            <p class="text-sm text-slate-600 dark:text-slate-300 leading-6">
+                                Correct answers should never be exposed through production frontend code.
+                            </p>
+
+                        </div>
+
+
+                        <div class="flex gap-3">
+
+                            <i class='bx bx-check-circle text-emerald-500 text-lg mt-0.5'></i>
+
+                            <p class="text-sm text-slate-600 dark:text-slate-300 leading-6">
+                                Reward calculations and balance updates must be performed and verified server-side.
+                            </p>
+
+                        </div>
+
+
+                        <div class="flex gap-3">
+
+                            <i class='bx bx-check-circle text-emerald-500 text-lg mt-0.5'></i>
+
+                            <p class="text-sm text-slate-600 dark:text-slate-300 leading-6">
+                                Admin actions should be authenticated, authorized and recorded in audit logs.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- CREATE / EDIT QUESTION MODAL -->
+    <div id="questionModal"
+         class="fixed inset-0 z-[100] hidden items-center justify-center p-4 modal-backdrop">
+
+        <div class="modal card w-full max-w-2xl">
+
+            <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
+
+                <div>
+
+                    <p id="questionModalLabel"
+                       class="text-[10px] uppercase tracking-[.16em] text-emerald-600 dark:text-emerald-400 font-semibold">
+                        Quiz Management
+                    </p>
+
+                    <h2 id="questionModalTitle"
+                        class="font-sora text-xl font-semibold mt-1">
+                        Create Quiz Question
+                    </h2>
+
+                </div>
+
+
+                <button id="closeQuestionModal"
+                        class="w-9 h-9 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition">
+
+                    <i class='bx bx-x text-xl'></i>
+
+                </button>
+
+            </div>
+
+
+            <form id="questionForm" class="p-5 sm:p-6">
+
+                <div class="space-y-5">
+
+                    <!-- Question -->
+                    <div>
+
+                        <label for="questionText"
+                               class="block text-sm font-medium mb-2">
+                            Question
+                        </label>
+
+                        <textarea id="questionText"
+                                  class="input-control"
+                                  placeholder="Enter your quiz question..."
+                                  required></textarea>
+
+                    </div>
+
+
+                    <!-- Category + Difficulty -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                        <div>
+
+                            <label for="questionCategory"
+                                   class="block text-sm font-medium mb-2">
+                                Category
+                            </label>
+
+                            <select id="questionCategory"
+                                    class="input-control"
+                                    required>
+
+                                <option value="">Select category</option>
+                                <option value="General Knowledge">General Knowledge</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Business">Business</option>
+                                <option value="Science">Science</option>
+                                <option value="Sports">Sports</option>
+                                <option value="History">History</option>
+                                <option value="Other">Other</option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div>
+
+                            <label for="questionDifficulty"
+                                   class="block text-sm font-medium mb-2">
+                                Difficulty
+                            </label>
+
+                            <select id="questionDifficulty"
+                                    class="input-control"
+                                    required>
+
+                                <option value="">Select difficulty</option>
+                                <option value="Easy">Easy</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Hard">Hard</option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Options -->
+                    <div>
+
+                        <div class="flex items-center justify-between mb-3">
+
+                            <label class="block text-sm font-medium">
+                                Answer Options
+                            </label>
+
+                            <span class="text-xs text-slate-400">
+                                Select the correct answer
+                            </span>
+
+                        </div>
+
+
+                        <div class="space-y-3">
+
+                            <label class="flex items-center gap-3">
+
+                                <input type="radio"
+                                       name="correctAnswer"
+                                       value="A"
+                                       class="option-radio"
+                                       required>
+
+                                <input id="optionA"
+                                       type="text"
+                                       class="input-control"
+                                       placeholder="Option A"
+                                       required>
+
+                            </label>
+
+
+                            <label class="flex items-center gap-3">
+
+                                <input type="radio"
+                                       name="correctAnswer"
+                                       value="B"
+                                       class="option-radio">
+
+                                <input id="optionB"
+                                       type="text"
+                                       class="input-control"
+                                       placeholder="Option B"
+                                       required>
+
+                            </label>
+
+
+                            <label class="flex items-center gap-3">
+
+                                <input type="radio"
+                                       name="correctAnswer"
+                                       value="C"
+                                       class="option-radio">
+
+                                <input id="optionC"
+                                       type="text"
+                                       class="input-control"
+                                       placeholder="Option C"
+                                       required>
+
+                            </label>
+
+
+                            <label class="flex items-center gap-3">
+
+                                <input type="radio"
+                                       name="correctAnswer"
+                                       value="D"
+                                       class="option-radio">
+
+                                <input id="optionD"
+                                       type="text"
+                                       class="input-control"
+                                       placeholder="Option D"
+                                       required>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Status -->
+                    <div class="flex items-center justify-between rounded-xl border border-slate-200 dark:border-white/10 p-4">
+
+                        <div>
+
+                            <p class="text-sm font-medium">
+                                Question Status
+                            </p>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Active questions can be selected for user quizzes.
+                            </p>
+
+                        </div>
+
+
+                        <button id="questionStatusToggle"
+                                type="button"
+                                class="toggle active"
+                                aria-label="Toggle question status">
+
+                            <span></span>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-7">
+
+                    <button type="button"
+                            id="cancelQuestionBtn"
+                            class="secondary-btn px-4 py-2.5 rounded-xl text-sm font-semibold">
+
+                        Cancel
+
+                    </button>
+
+
+                    <button type="submit"
+                            id="submitQuestionBtn"
+                            class="primary-btn px-4 py-2.5 rounded-xl text-sm font-semibold inline-flex items-center justify-center gap-2">
+
+                        <i class='bx bx-plus'></i>
+                        Create Question
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- VIEW QUESTION MODAL -->
+    <div id="viewModal"
+         class="fixed inset-0 z-[110] hidden items-center justify-center p-4 modal-backdrop">
+
+        <div class="modal card w-full max-w-2xl">
+
+            <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
+
+                <div>
+                    <p class="text-[10px] uppercase tracking-[.16em] text-emerald-600 dark:text-emerald-400 font-semibold">
+                        Question Details
+                    </p>
+
+                    <h2 class="font-sora text-xl font-semibold mt-1">
+                        View Question
+                    </h2>
+                </div>
+
+
+                <button id="closeViewModal"
+                        class="w-9 h-9 rounded-xl border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500">
+
+                    <i class='bx bx-x text-xl'></i>
+
+                </button>
+
+            </div>
+
+
+            <div class="p-5 sm:p-6 space-y-5">
+
+                <div>
+                    <p class="text-xs text-slate-400 mb-2">
+                        Question
+                    </p>
+
+                    <p id="viewQuestionText"
+                       class="font-medium leading-6">
+                        —
+                    </p>
+                </div>
+
+
+                <div class="grid grid-cols-2 gap-3">
+
+                    <div class="rounded-xl bg-slate-50 dark:bg-white/[.03] p-4">
+                        <p class="text-xs text-slate-400">
+                            Category
+                        </p>
+                        <p id="viewCategory" class="text-sm font-medium mt-1">
+                            —
+                        </p>
+                    </div>
+
+
+                    <div class="rounded-xl bg-slate-50 dark:bg-white/[.03] p-4">
+                        <p class="text-xs text-slate-400">
+                            Difficulty
+                        </p>
+                        <p id="viewDifficulty" class="text-sm font-medium mt-1">
+                            —
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <p class="text-xs text-slate-400 mb-3">
+                        Answer Options
+                    </p>
+
+                    <div id="viewOptions" class="space-y-2"></div>
+
+                </div>
+
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                    <div class="rounded-xl bg-slate-50 dark:bg-white/[.03] p-4">
+                        <p class="text-xs text-slate-400">
+                            Times Answered
+                        </p>
+                        <p id="viewTimesAnswered" class="font-sora font-semibold mt-1">
+                            0
+                        </p>
+                    </div>
+
+
+                    <div class="rounded-xl bg-slate-50 dark:bg-white/[.03] p-4">
+                        <p class="text-xs text-slate-400">
+                            Correct Answers
+                        </p>
+                        <p id="viewCorrectAnswers" class="font-sora font-semibold mt-1">
+                            0
+                        </p>
+                    </div>
+
+
+                    <div class="rounded-xl bg-slate-50 dark:bg-white/[.03] p-4">
+                        <p class="text-xs text-slate-400">
+                            Incorrect Answers
+                        </p>
+                        <p id="viewIncorrectAnswers" class="font-sora font-semibold mt-1">
+                            0
+                        </p>
+                    </div>
+
+
+                    <div class="rounded-xl bg-slate-50 dark:bg-white/[.03] p-4">
+                        <p class="text-xs text-slate-400">
+                            Status
+                        </p>
+                        <p id="viewStatus" class="font-medium mt-1">
+                            —
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+                    <div>
+                        <p class="text-xs text-slate-400">
+                            Created
+                        </p>
+                        <p id="viewCreatedAt" class="text-sm mt-1">
+                            —
+                        </p>
+                    </div>
+
+
+                    <div>
+                        <p class="text-xs text-slate-400">
+                            Updated
+                        </p>
+                        <p id="viewUpdatedAt" class="text-sm mt-1">
+                            —
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CONFIRMATION MODAL -->
+    <div id="confirmModal"
+         class="fixed inset-0 z-[120] hidden items-center justify-center p-4 modal-backdrop">
+
+        <div class="modal card w-full max-w-md">
+
+            <div class="p-6">
+
+                <div id="confirmIcon"
+                     class="w-12 h-12 rounded-2xl bg-red-50 dark:bg-red-500/10 text-red-500 flex items-center justify-center mb-5">
+
+                    <i class='bx bx-trash text-2xl'></i>
+
+                </div>
+
+
+                <h2 id="confirmTitle"
+                    class="font-sora text-lg font-semibold">
+                    Delete Quiz Question?
+                </h2>
+
+
+                <p id="confirmMessage"
+                   class="text-sm text-slate-500 dark:text-slate-400 leading-6 mt-2">
+                    This action will permanently remove this question from the quiz question bank. This cannot be undone.
+                </p>
+
+
+                <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-7">
+
+                    <button id="cancelConfirmBtn"
+                            class="secondary-btn px-4 py-2.5 rounded-xl text-sm font-semibold">
+                        Cancel
+                    </button>
+
+
+                    <button id="confirmActionBtn"
+                            class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-red-500 text-white hover:bg-red-600 transition">
+                        Delete Question
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOAST -->
+    <div id="toast"
+         class="toast fixed bottom-5 right-5 z-[200] w-[calc(100%-40px)] max-w-sm">
+
+        <div class="card p-4 shadow-xl flex items-start gap-3">
+
+            <div id="toastIcon"
+                 class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0">
+
+                <i class='bx bx-check text-lg'></i>
+
+            </div>
+
+            <div class="min-w-0">
+
+                <p id="toastTitle"
+                   class="text-sm font-semibold">
+                    Success
+                </p>
+
+                <p id="toastMessage"
+                   class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Operation completed successfully.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+        /* =========================================================
+           OPTIFY ADMIN — QUIZ MANAGEMENT
+           Frontend prototype / backend-ready structure
+        ========================================================= */
+
+
+        const USD_TO_NGN = 1000;
+
+
+        /* =========================================================
+           DATA STRUCTURES
+        ========================================================= */
+
+        const quizStats = {
+            totalQuestions: 0,
+            activeQuestions: 0,
+            inactiveQuestions: 0,
+            questionsAnswered: 0,
+            totalRewards: 0
+        };
+
+
+        const quizSettings = {
+            minimumQuestions: 5,
+            maximumQuestions: 10,
+            minimumReward: 1,
+            maximumReward: 5,
+            dailyAttempts: 1,
+            active: true
+        };
+
+
+        const performance = {
+            totalAttempts: 0,
+            completedQuizzes: 0,
+            averageScore: 0,
+            totalRewardsIssued: 0
+        };
+
+
+        const questions = [];
+
+
+        let currentPage = 1;
+        let pageSize = 10;
+        let editingQuestionId = null;
+        let confirmAction = null;
+
+
+        /* =========================================================
+           ELEMENTS
+        ========================================================= */
+
+        const sidebar = document.getElementById('sidebar');
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        const themeBtn = document.getElementById('themeBtn');
+        const themeIcon = document.getElementById('themeIcon');
+
+        const questionModal = document.getElementById('questionModal');
+        const viewModal = document.getElementById('viewModal');
+        const confirmModal = document.getElementById('confirmModal');
+
+
+        /* =========================================================
+           THEME
+        ========================================================= */
+
+        function applyTheme(theme) {
+
+            if (theme === 'dark') {
+                document.body.classList.add('dark');
+                document.documentElement.classList.add('dark');
+                themeIcon.className = 'bx bx-sun text-lg';
+            } else {
+                document.body.classList.remove('dark');
+                document.documentElement.classList.remove('dark');
+                themeIcon.className = 'bx bx-moon text-lg';
+            }
+        }
+
+
+        const savedTheme = localStorage.getItem('optify-theme');
+
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        } else {
+            applyTheme('light');
+        }
+
+
+        themeBtn.addEventListener('click', () => {
+
+            const nextTheme = document.body.classList.contains('dark')
+                ? 'light'
+                : 'dark';
+
+            localStorage.setItem('optify-theme', nextTheme);
+
+            applyTheme(nextTheme);
+
+        });
+
+
+        /* =========================================================
+           MOBILE SIDEBAR
+        ========================================================= */
+
+        function openSidebar() {
+
+            sidebar.classList.add('open');
+            mobileOverlay.classList.remove('hidden');
+
+        }
+
+
+        function closeSidebar() {
+
+            sidebar.classList.remove('open');
+            mobileOverlay.classList.add('hidden');
+
+        }
+
+
+        menuBtn.addEventListener('click', openSidebar);
+        mobileOverlay.addEventListener('click', closeSidebar);
+
+
+        window.addEventListener('resize', () => {
+
+            if (window.innerWidth >= 1024) {
+                closeSidebar();
+            }
+
+        });
+
+
+        /* =========================================================
+           TOAST
+        ========================================================= */
+
+        let toastTimer;
+
+
+        function showToast(message, type = 'success') {
+
+            const toast = document.getElementById('toast');
+            const title = document.getElementById('toastTitle');
+            const messageEl = document.getElementById('toastMessage');
+            const icon = document.getElementById('toastIcon');
+
+            clearTimeout(toastTimer);
+
+            messageEl.textContent = message;
+
+            if (type === 'error') {
+
+                title.textContent = 'Something went wrong';
+
+                icon.className =
+                    'w-9 h-9 rounded-xl bg-red-50 dark:bg-red-500/10 text-red-500 flex items-center justify-center flex-shrink-0';
+
+                icon.innerHTML = "<i class='bx bx-error-circle text-lg'></i>";
+
+            } else {
+
+                title.textContent = 'Success';
+
+                icon.className =
+                    'w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center flex-shrink-0';
+
+                icon.innerHTML = "<i class='bx bx-check text-lg'></i>";
+
+            }
+
+            toast.classList.add('show');
+
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+
+        }
+
+
+        /* =========================================================
+           FORMATTING
+        ========================================================= */
+
+        function formatUSD(amount) {
+
+            return '$' + Number(amount || 0).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+        }
+
+
+        function formatNGN(amount) {
+
+            return '₦' + Number(amount || 0).toLocaleString('en-NG', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            });
+
+        }
+
+
+        function formatDate(value) {
+
+            if (!value) {
+                return '—';
+            }
+
+            const date = new Date(value);
+
+            if (Number.isNaN(date.getTime())) {
+                return '—';
+            }
+
+            return date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+
+        }
+
+
+        /* =========================================================
+           STATS
+        ========================================================= */
+
+        function renderStats() {
+
+            document.getElementById('totalQuestions').textContent =
+                quizStats.totalQuestions;
+
+            document.getElementById('activeQuestions').textContent =
+                quizStats.activeQuestions;
+
+            document.getElementById('inactiveQuestions').textContent =
+                quizStats.inactiveQuestions;
+
+            document.getElementById('questionsAnswered').textContent =
+                quizStats.questionsAnswered;
+
+            document.getElementById('totalRewards').textContent =
+                formatUSD(quizStats.totalRewards);
+
+            document.getElementById('totalRewardsNgn').textContent =
+                '≈ ' + formatNGN(quizStats.totalRewards * USD_TO_NGN);
+
+        }
+
+
+        /* =========================================================
+           QUIZ SETTINGS
+        ========================================================= */
+
+        function renderQuizSettings() {
+
+            document.getElementById('minimumQuestions').value =
+                quizSettings.minimumQuestions;
+
+            document.getElementById('maximumQuestions').value =
+                quizSettings.maximumQuestions;
+
+            document.getElementById('minimumReward').value =
+                Number(quizSettings.minimumReward).toFixed(2);
+
+            document.getElementById('maximumReward').value =
+                Number(quizSettings.maximumReward).toFixed(2);
+
+            document.getElementById('dailyAttempts').value =
+                quizSettings.dailyAttempts;
+
+            updateQuizStatusUI();
+
+            document.getElementById('ruleMinReward').textContent =
+                formatUSD(quizSettings.minimumReward);
+
+            document.getElementById('ruleMaxReward').textContent =
+                formatUSD(quizSettings.maximumReward);
+
+            document.getElementById('ruleMinQuestions').textContent =
+                quizSettings.minimumQuestions;
+
+            document.getElementById('ruleMaxQuestions').textContent =
+                quizSettings.maximumQuestions;
+
+        }
+
+
+        function updateQuizStatusUI() {
+
+            const toggle = document.getElementById('quizStatusToggle');
+            const text = document.getElementById('quizStatusText');
+
+            toggle.classList.toggle('active', quizSettings.active);
+
+            text.textContent = quizSettings.active
+                ? 'Active'
+                : 'Inactive';
+
+            text.className = quizSettings.active
+                ? 'ml-2 text-sm text-emerald-600 dark:text-emerald-400'
+                : 'ml-2 text-sm text-slate-500 dark:text-slate-400';
+
+        }
+
+
+        document.getElementById('quizStatusToggle').addEventListener('click', () => {
+
+            quizSettings.active = !quizSettings.active;
+
+            updateQuizStatusUI();
+
+        });
+
+
+        document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+
+            const button = document.getElementById('saveSettingsBtn');
+
+            const minimumQuestions =
+                Number(document.getElementById('minimumQuestions').value);
+
+            const maximumQuestions =
+                Number(document.getElementById('maximumQuestions').value);
+
+            const minimumReward =
+                Number(document.getElementById('minimumReward').value);
+
+            const maximumReward =
+                Number(document.getElementById('maximumReward').value);
+
+            const dailyAttempts =
+                Number(document.getElementById('dailyAttempts').value);
+
+
+            if (
+                minimumQuestions < 1 ||
+                maximumQuestions < minimumQuestions ||
+                minimumReward < 0 ||
+                maximumReward < minimumReward ||
+                dailyAttempts < 1
+            ) {
+
+                showToast('Please check the quiz settings values.', 'error');
+                return;
+
+            }
+
+
+            button.disabled = true;
+
+            button.innerHTML =
+                "<i class='bx bx-loader-alt bx-spin'></i> Saving...";
+
+
+            const result = await saveQuizSettings({
+                minimumQuestions,
+                maximumQuestions,
+                minimumReward,
+                maximumReward,
+                dailyAttempts,
+                active: quizSettings.active
+            });
+
+
+            button.disabled = false;
+
+            button.innerHTML =
+                "<i class='bx bx-save'></i> Save Quiz Settings";
+
+
+            if (!result.success) {
+                showToast(result.message, 'error');
+                return;
+            }
+
+
+            quizSettings.minimumQuestions = minimumQuestions;
+            quizSettings.maximumQuestions = maximumQuestions;
+            quizSettings.minimumReward = minimumReward;
+            quizSettings.maximumReward = maximumReward;
+            quizSettings.dailyAttempts = dailyAttempts;
+
+            renderQuizSettings();
+
+            showToast('Quiz settings saved');
+
+        });
+
+
+        /* =========================================================
+           FILTERING
+        ========================================================= */
+
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const difficultyFilter = document.getElementById('difficultyFilter');
+
+
+        function getFilteredQuestions() {
+
+            const search =
+                searchInput.value.trim().toLowerCase();
+
+            const status =
+                statusFilter.value;
+
+            const category =
+                categoryFilter.value;
+
+            const difficulty =
+                difficultyFilter.value;
+
+
+            return questions.filter(question => {
+
+                const matchesSearch =
+                    !search ||
+                    question.question.toLowerCase().includes(search);
+
+                const matchesStatus =
+                    !status ||
+                    question.status === status;
+
+                const matchesCategory =
+                    !category ||
+                    question.category === category;
+
+                const matchesDifficulty =
+                    !difficulty ||
+                    question.difficulty === difficulty;
+
+                return (
+                    matchesSearch &&
+                    matchesStatus &&
+                    matchesCategory &&
+                    matchesDifficulty
+                );
+
+            });
+
+        }
+
+
+        function handleFilterChange() {
+
+            currentPage = 1;
+            renderQuestions();
+
+        }
+
+
+        searchInput.addEventListener('input', handleFilterChange);
+        statusFilter.addEventListener('change', handleFilterChange);
+        categoryFilter.addEventListener('change', handleFilterChange);
+        difficultyFilter.addEventListener('change', handleFilterChange);
+
+
+        document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+
+            searchInput.value = '';
+            statusFilter.value = '';
+            categoryFilter.value = '';
+            difficultyFilter.value = '';
+
+            currentPage = 1;
+
+            renderQuestions();
+
+        });
+
+
+        /* =========================================================
+           QUESTION TABLE
+        ========================================================= */
+
+        function renderQuestions() {
+
+            const filtered = getFilteredQuestions();
+
+            const total = filtered.length;
+
+            const start = (currentPage - 1) * pageSize;
+
+            const end = Math.min(start + pageSize, total);
+
+            const paginated = filtered.slice(start, end);
+
+
+            const empty = document.getElementById('questionsEmpty');
+            const tableWrap = document.getElementById('questionsTableWrap');
+            const mobileWrap = document.getElementById('mobileQuestionsWrap');
+
+
+            if (total === 0) {
+
+                empty.classList.remove('hidden');
+                tableWrap.classList.add('hidden');
+                mobileWrap.classList.add('hidden');
+
+                document.getElementById('showingCount').textContent = '0';
+                document.getElementById('totalCount').textContent = '0';
+
+                renderPagination(0);
+
+                return;
+
+            }
+
+
+            empty.classList.add('hidden');
+            tableWrap.classList.remove('hidden');
+
+
+            const tbody = document.getElementById('questionsTableBody');
+
+            tbody.innerHTML = paginated.map(question => {
+
+                const statusClass = question.status === 'active'
+                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400'
+                    : 'bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-slate-400';
+
+
+                return `
+                    <tr class="table-row border-b border-slate-100 dark:border-white/10">
+
+                        <td class="px-5 py-4 max-w-[340px]">
+                            <p class="text-sm font-medium line-clamp-2">
+                                ${escapeHTML(question.question)}
+                            </p>
+                        </td>
+
+                        <td class="px-5 py-4">
+                            <span class="text-xs text-slate-500 dark:text-slate-400">
+                                ${escapeHTML(question.category || '—')}
+                            </span>
+                        </td>
+
+                        <td class="px-5 py-4">
+                            <span class="text-xs font-medium">
+                                ${escapeHTML(question.difficulty || '—')}
+                            </span>
+                        </td>
+
+                        <td class="px-5 py-4">
+                            <span class="text-xs text-slate-500 dark:text-slate-400">
+                                ${Array.isArray(question.options) ? question.options.length : 0}
+                            </span>
+                        </td>
+
+                        <td class="px-5 py-4">
+                            <span class="text-xs font-medium">
+                                ${escapeHTML(question.correctAnswer || '—')}
+                            </span>
+                        </td>
+
+                        <td class="px-5 py-4">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold ${statusClass}">
+                                <span class="w-1.5 h-1.5 rounded-full ${question.status === 'active' ? 'bg-emerald-500' : 'bg-slate-400'}"></span>
+                                ${question.status === 'active' ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+
+                        <td class="px-5 py-4 text-xs text-slate-500 dark:text-slate-400">
+                            ${formatDate(question.createdAt)}
+                        </td>
+
+                        <td class="px-5 py-4 text-right">
+                            <div class="relative inline-block">
+
+                                <button
+                                    class="question-action-btn w-9 h-9 rounded-lg border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                                    data-question-id="${escapeAttribute(question.id)}"
+                                    aria-label="Question actions">
+
+                                    <i class='bx bx-dots-vertical-rounded text-lg'></i>
+
+                                </button>
+
+                                <div
+                                    class="question-dropdown dropdown-menu hidden absolute right-0 top-11 z-30 w-44 card p-1.5">
+
+                                    <button
+                                        class="question-action w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm hover:bg-slate-50 dark:hover:bg-white/5"
+                                        data-action="view"
+                                        data-id="${escapeAttribute(question.id)}">
+                                        <i class='bx bx-show text-lg'></i>
+                                        View
+                                    </button>
+
+                                    <button
+                                        class="question-action w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm hover:bg-slate-50 dark:hover:bg-white/5"
+                                        data-action="edit"
+                                        data-id="${escapeAttribute(question.id)}">
+                                        <i class='bx bx-edit text-lg'></i>
+                                        Edit
+                                    </button>
+
+                                    <button
+                                        class="question-action w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm hover:bg-slate-50 dark:hover:bg-white/5"
+                                        data-action="status"
+                                        data-id="${escapeAttribute(question.id)}">
+                                        <i class='bx bx-power-off text-lg'></i>
+                                        ${question.status === 'active' ? 'Deactivate' : 'Activate'}
+                                    </button>
+
+                                    <button
+                                        class="question-action w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
+                                        data-action="delete"
+                                        data-id="${escapeAttribute(question.id)}">
+                                        <i class='bx bx-trash text-lg'></i>
+                                        Delete
+                                    </button>
+
+                                </div>
+
+                            </div>
+                        </td>
+
+                    </tr>
+                `;
+
+            }).join('');
+
+
+            mobileWrap.innerHTML = paginated.map(question => {
+
+                const statusClass = question.status === 'active'
+                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400'
+                    : 'bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-slate-400';
+
+
+                return `
+                    <div class="card p-4">
+
+                        <div class="flex items-start justify-between gap-3">
+
+                            <div class="min-w-0">
+
+                                <p class="text-sm font-medium leading-6">
+                                    ${escapeHTML(question.question)}
+                                </p>
+
+                                <div class="flex flex-wrap gap-2 mt-3">
+
+                                    <span class="text-[11px] px-2 py-1 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400">
+                                        ${escapeHTML(question.category || '—')}
+                                    </span>
+
+                                    <span class="text-[11px] px-2 py-1 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400">
+                                        ${escapeHTML(question.difficulty || '—')}
+                                    </span>
+
+                                    <span class="text-[11px] px-2 py-1 rounded-lg ${statusClass}">
+                                        ${question.status === 'active' ? 'Active' : 'Inactive'}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <button
+                                class="mobile-question-action w-9 h-9 rounded-lg border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-500 flex-shrink-0"
+                                data-id="${escapeAttribute(question.id)}">
+
+                                <i class='bx bx-dots-vertical-rounded'></i>
+
+                            </button>
+
+                        </div>
+
+
+                        <div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-100 dark:border-white/10">
+
+                            <div>
+                                <p class="text-[11px] text-slate-400">
+                                    Options
+                                </p>
+
+                                <p class="text-sm font-medium mt-1">
+                                    ${Array.isArray(question.options) ? question.options.length : 0}
+                                </p>
+                            </div>
+
+
+                            <div>
+                                <p class="text-[11px] text-slate-400">
+                                    Created
+                                </p>
+
+                                <p class="text-sm font-medium mt-1">
+                                    ${formatDate(question.createdAt)}
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+                `;
+
+            }).join('');
+
+
+            document.getElementById('showingCount').textContent =
+                `${start + 1}-${end}`;
+
+            document.getElementById('totalCount').textContent =
+                total;
+
+
+            renderPagination(total);
+
+            bindQuestionActions();
+
+        }
+
+
+        function bindQuestionActions() {
+
+            document.querySelectorAll('.question-action-btn').forEach(button => {
+
+                button.addEventListener('click', event => {
+
+                    event.stopPropagation();
+
+                    document.querySelectorAll('.question-dropdown').forEach(menu => {
+                        menu.classList.add('hidden');
+                    });
+
+                    const menu = button.parentElement.querySelector('.question-dropdown');
+
+                    menu.classList.toggle('hidden');
+
+                });
+
+            });
+
+
+            document.querySelectorAll('.question-action').forEach(button => {
+
+                button.addEventListener('click', event => {
+
+                    event.stopPropagation();
+
+                    const action = button.dataset.action;
+                    const id = button.dataset.id;
+
+                    document.querySelectorAll('.question-dropdown').forEach(menu => {
+                        menu.classList.add('hidden');
+                    });
+
+                    handleQuestionAction(action, id);
+
+                });
+
+            });
+
+
+            document.querySelectorAll('.mobile-question-action').forEach(button => {
+
+                button.addEventListener('click', () => {
+
+                    const id = button.dataset.id;
+
+                    const question = questions.find(item => item.id === id);
+
+                    if (!question) return;
+
+                    openViewModal(question);
+
+                });
+
+            });
+
+        }
+
+
+        document.addEventListener('click', () => {
+
+            document.querySelectorAll('.question-dropdown').forEach(menu => {
+                menu.classList.add('hidden');
+            });
+
+        });
+
+
+        /* =========================================================
+           PAGINATION
+        ========================================================= */
+
+        function renderPagination(total) {
+
+            const pageNumbers = document.getElementById('pageNumbers');
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+            if (currentPage > totalPages) {
+                currentPage = totalPages;
+            }
+
+            document.getElementById('prevPageBtn').disabled =
+                currentPage <= 1;
+
+            document.getElementById('nextPageBtn').disabled =
+                currentPage >= totalPages;
+
+            pageNumbers.innerHTML = '';
+
+            if (total === 0) {
+                return;
+            }
+
+
+            const maxVisible = 5;
+
+            let startPage =
+                Math.max(1, currentPage - Math.floor(maxVisible / 2));
+
+            let endPage =
+                Math.min(totalPages, startPage + maxVisible - 1);
+
+            if (endPage - startPage < maxVisible - 1) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+
+
+            for (let page = startPage; page <= endPage; page++) {
+
+                const button = document.createElement('button');
+
+                button.className =
+                    `w-9 h-9 rounded-lg text-xs font-medium border transition ${
+                        page === currentPage
+                            ? 'bg-emerald-500 border-emerald-500 text-white'
+                            : 'border-slate-200 dark:border-white/10 text-slate-500 hover:bg-slate-50 dark:hover:bg-white/5'
+                    }`;
+
+                button.textContent = page;
+
+                button.addEventListener('click', () => {
+
+                    currentPage = page;
+
+                    renderQuestions();
+
+                });
+
+                pageNumbers.appendChild(button);
+
+            }
+
+        }
+
+
+        document.getElementById('prevPageBtn').addEventListener('click', () => {
+
+            if (currentPage > 1) {
+
+                currentPage--;
+
+                renderQuestions();
+
+            }
+
+        });
+
+
+        document.getElementById('nextPageBtn').addEventListener('click', () => {
+
+            const totalPages =
+                Math.ceil(getFilteredQuestions().length / pageSize);
+
+            if (currentPage < totalPages) {
+
+                currentPage++;
+
+                renderQuestions();
+
+            }
+
+        });
+
+
+        document.getElementById('pageSize').addEventListener('change', event => {
+
+            pageSize = Number(event.target.value);
+
+            currentPage = 1;
+
+            renderQuestions();
+
+        });
+
+
+        /* =========================================================
+           QUESTION ACTION HANDLER
+        ========================================================= */
+
+        function handleQuestionAction(action, id) {
+
+            const question = questions.find(item => item.id === id);
+
+            if (!question) {
+                showToast('Question could not be found.', 'error');
+                return;
+            }
+
+
+            if (action === 'view') {
+
+                openViewModal(question);
+
+            }
+
+
+            if (action === 'edit') {
+
+                openEditQuestionModal(question);
+
+            }
+
+
+            if (action === 'status') {
+
+                openStatusConfirmation(question);
+
+            }
+
+
+            if (action === 'delete') {
+
+                openDeleteConfirmation(question);
+
+            }
+
+        }
+
+
+        /* =========================================================
+           QUESTION MODAL
+        ========================================================= */
+
+        function openQuestionModal(mode = 'create', question = null) {
+
+            editingQuestionId =
+                mode === 'edit' && question
+                    ? question.id
+                    : null;
+
+
+            document.getElementById('questionModalTitle').textContent =
+                mode === 'edit'
+                    ? 'Edit Quiz Question'
+                    : 'Create Quiz Question';
+
+
+            document.getElementById('submitQuestionBtn').innerHTML =
+                mode === 'edit'
+                    ? "<i class='bx bx-save'></i> Save Changes"
+                    : "<i class='bx bx-plus'></i> Create Question";
+
+
+            const form = document.getElementById('questionForm');
+
+            form.reset();
+
+
+            setQuestionStatus(true);
+
+
+            if (question) {
+
+                document.getElementById('questionText').value =
+                    question.question || '';
+
+                document.getElementById('questionCategory').value =
+                    question.category || '';
+
+                document.getElementById('questionDifficulty').value =
+                    question.difficulty || '';
+
+                const options = question.options || [];
+
+                document.getElementById('optionA').value =
+                    options[0] || '';
+
+                document.getElementById('optionB').value =
+                    options[1] || '';
+
+                document.getElementById('optionC').value =
+                    options[2] || '';
+
+                document.getElementById('optionD').value =
+                    options[3] || '';
+
+
+                const correct = String(question.correctAnswer || '');
+
+                const radio = document.querySelector(
+                    `input[name="correctAnswer"][value="${CSS.escape(correct)}"]`
+                );
+
+                if (radio) {
+                    radio.checked = true;
+                }
+
+
+                setQuestionStatus(question.status === 'active');
+
+            }
+
+
+            questionModal.classList.remove('hidden');
+            questionModal.classList.add('flex');
+
+            document.body.style.overflow = 'hidden';
+
+            setTimeout(() => {
+                document.getElementById('questionText').focus();
+            }, 50);
+
+        }
+
+
+        function openEditQuestionModal(question) {
+
+            openQuestionModal('edit', question);
+
+        }
+
+
+        function closeQuestionModal() {
+
+            questionModal.classList.add('hidden');
+            questionModal.classList.remove('flex');
+
+            document.body.style.overflow = '';
+
+            editingQuestionId = null;
+
+        }
+
+
+        function setQuestionStatus(active) {
+
+            const toggle =
+                document.getElementById('questionStatusToggle');
+
+            toggle.classList.toggle('active', active);
+
+            toggle.dataset.active = active ? 'true' : 'false';
+
+        }
+
+
+        document.getElementById('questionStatusToggle').addEventListener('click', () => {
+
+            const toggle =
+                document.getElementById('questionStatusToggle');
+
+            const active =
+                toggle.dataset.active !== 'true';
+
+            setQuestionStatus(active);
+
+        });
+
+
+        document.getElementById('createQuestionBtn').addEventListener('click', () => {
+
+            openQuestionModal('create');
+
+        });
+
+
+        document.getElementById('emptyCreateBtn').addEventListener('click', () => {
+
+            openQuestionModal('create');
+
+        });
+
+
+        document.getElementById('closeQuestionModal').addEventListener('click', closeQuestionModal);
+        document.getElementById('cancelQuestionBtn').addEventListener('click', closeQuestionModal);
+
+
+        /* =========================================================
+           CREATE / EDIT SUBMIT
+        ========================================================= */
+
+        document.getElementById('questionForm').addEventListener('submit', async event => {
+
+            event.preventDefault();
+
+
+            const button =
+                document.getElementById('submitQuestionBtn');
+
+
+            const correctRadio =
+                document.querySelector('input[name="correctAnswer"]:checked');
+
+
+            if (!correctRadio) {
+
+                showToast('Please select the correct answer.', 'error');
+                return;
+
+            }
+
+
+            const questionData = {
+
+                question:
+                    document.getElementById('questionText').value.trim(),
+
+                category:
+                    document.getElementById('questionCategory').value,
+
+                difficulty:
+                    document.getElementById('questionDifficulty').value,
+
+                options: [
+                    document.getElementById('optionA').value.trim(),
+                    document.getElementById('optionB').value.trim(),
+                    document.getElementById('optionC').value.trim(),
+                    document.getElementById('optionD').value.trim()
+                ],
+
+                correctAnswer:
+                    correctRadio.value,
+
+                status:
+                    document.getElementById('questionStatusToggle').dataset.active === 'true'
+                        ? 'active'
+                        : 'inactive'
+
+            };
+
+
+            if (!questionData.question) {
+
+                showToast('Enter a quiz question.', 'error');
+                return;
+
+            }
+
+
+            if (questionData.options.some(option => !option)) {
+
+                showToast('Complete all answer options.', 'error');
+                return;
+
+            }
+
+
+            button.disabled = true;
+
+            button.innerHTML =
+                "<i class='bx bx-loader-alt bx-spin'></i> Saving...";
+
+
+            let result;
+
+
+            if (editingQuestionId) {
+
+                result =
+                    await updateQuestion(editingQuestionId, questionData);
+
+            } else {
+
+                result =
+                    await createQuestion(questionData);
+
+            }
+
+
+            button.disabled = false;
+
+            button.innerHTML =
+                editingQuestionId
+                    ? "<i class='bx bx-save'></i> Save Changes"
+                    : "<i class='bx bx-plus'></i> Create Question";
+
+
+            if (!result.success) {
+
+                showToast(result.message, 'error');
+                return;
+
+            }
+
+
+            closeQuestionModal();
+
+            await loadQuestions();
+
+            showToast(
+                editingQuestionId
+                    ? 'Question updated successfully'
+                    : 'Question created successfully'
+            );
+
+        });
+
+
+        /* =========================================================
+           VIEW MODAL
+        ========================================================= */
+
+        function openViewModal(question) {
+
+            document.getElementById('viewQuestionText').textContent =
+                question.question || '—';
+
+            document.getElementById('viewCategory').textContent =
+                question.category || '—';
+
+            document.getElementById('viewDifficulty').textContent =
+                question.difficulty || '—';
+
+
+            const optionsWrap =
+                document.getElementById('viewOptions');
+
+            optionsWrap.innerHTML = '';
+
+            const options = Array.isArray(question.options)
+                ? question.options
+                : [];
+
+
+            options.forEach((option, index) => {
+
+                const letter =
+                    ['A', 'B', 'C', 'D'][index];
+
+                const isCorrect =
+                    question.correctAnswer === letter;
+
+
+                const div =
+                    document.createElement('div');
+
+                div.className =
+                    `flex items-center justify-between gap-3 rounded-xl border p-3 ${
+                        isCorrect
+                            ? 'border-emerald-200 bg-emerald-50 dark:border-emerald-500/20 dark:bg-emerald-500/10'
+                            : 'border-slate-200 dark:border-white/10'
+                    }`;
+
+
+                div.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-0">
+
+                        <span class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center justify-center text-xs font-semibold">
+                            ${letter}
+                        </span>
+
+                        <span class="text-sm truncate">
+                            ${escapeHTML(option)}
+                        </span>
+
+                    </div>
+
+                    ${
+                        isCorrect
+                            ? `
+                                <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                                    <i class='bx bx-check-circle'></i>
+                                    Correct
+                                </span>
+                            `
+                            : ''
+                    }
+                `;
+
+
+                optionsWrap.appendChild(div);
+
+            });
+
+
+            document.getElementById('viewTimesAnswered').textContent =
+                question.timesAnswered || 0;
+
+            document.getElementById('viewCorrectAnswers').textContent =
+                question.correctAnswers || 0;
+
+            document.getElementById('viewIncorrectAnswers').textContent =
+                question.incorrectAnswers || 0;
+
+            document.getElementById('viewStatus').textContent =
+                question.status === 'active'
+                    ? 'Active'
+                    : 'Inactive';
+
+            document.getElementById('viewCreatedAt').textContent =
+                formatDate(question.createdAt);
+
+            document.getElementById('viewUpdatedAt').textContent =
+                formatDate(question.updatedAt);
+
+
+            viewModal.classList.remove('hidden');
+            viewModal.classList.add('flex');
+
+            document.body.style.overflow = 'hidden';
+
+        }
+
+
+        function closeViewModal() {
+
+            viewModal.classList.add('hidden');
+            viewModal.classList.remove('flex');
+
+            document.body.style.overflow = '';
+
+        }
+
+
+        document.getElementById('closeViewModal').addEventListener('click', closeViewModal);
+
+
+        /* =========================================================
+           DELETE CONFIRMATION
+        ========================================================= */
+
+        function openDeleteConfirmation(question) {
+
+            document.getElementById('confirmTitle').textContent =
+                'Delete Quiz Question?';
+
+            document.getElementById('confirmMessage').textContent =
+                'This action will permanently remove this question from the quiz question bank. This cannot be undone.';
+
+            document.getElementById('confirmActionBtn').textContent =
+                'Delete Question';
+
+            confirmAction = async () => {
+
+                const result =
+                    await deleteQuestion(question.id);
+
+                if (!result.success) {
+
+                    showToast(result.message, 'error');
+                    return;
+
+                }
+
+                closeConfirmModal();
+
+                await loadQuestions();
+
+                showToast('Question deleted successfully');
+
+            };
+
+            confirmModal.classList.remove('hidden');
+            confirmModal.classList.add('flex');
+
+            document.body.style.overflow = 'hidden';
+
+        }
+
+
+        /* =========================================================
+           STATUS CONFIRMATION
+        ========================================================= */
+
+        function openStatusConfirmation(question) {
+
+            const activating =
+                question.status !== 'active';
+
+
+            document.getElementById('confirmTitle').textContent =
+                activating
+                    ? 'Activate Question?'
+                    : 'Deactivate Question?';
+
+
+            document.getElementById('confirmMessage').textContent =
+                activating
+                    ? 'This question will become available for new quizzes.'
+                    : 'This question will no longer be selected for new quizzes.';
+
+
+            document.getElementById('confirmActionBtn').textContent =
+                activating
+                    ? 'Activate Question'
+                    : 'Deactivate Question';
+
+
+            const icon =
+                document.getElementById('confirmIcon');
+
+
+            if (activating) {
+
+                icon.className =
+                    'w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-5';
+
+                icon.innerHTML =
+                    "<i class='bx bx-check-circle text-2xl'></i>";
+
+                document.getElementById('confirmActionBtn').className =
+                    'px-4 py-2.5 rounded-xl text-sm font-semibold bg-emerald-500 text-white hover:bg-emerald-600 transition';
+
+            } else {
+
+                icon.className =
+                    'w-12 h-12 rounded-2xl bg-orange-50 dark:bg-orange-500/10 text-orange-500 flex items-center justify-center mb-5';
+
+                icon.innerHTML =
+                    "<i class='bx bx-pause-circle text-2xl'></i>";
+
+                document.getElementById('confirmActionBtn').className =
+                    'px-4 py-2.5 rounded-xl text-sm font-semibold bg-orange-500 text-white hover:bg-orange-600 transition';
+
+            }
+
+
+            confirmAction = async () => {
+
+                const result =
+                    await toggleQuestionStatus(
+                        question.id,
+                        activating
+                    );
+
+
+                if (!result.success) {
+
+                    showToast(result.message, 'error');
+                    return;
+
+                }
+
+
+                closeConfirmModal();
+
+                await loadQuestions();
+
+                showToast('Question status updated');
+
+            };
+
+
+            confirmModal.classList.remove('hidden');
+            confirmModal.classList.add('flex');
+
+            document.body.style.overflow = 'hidden';
+
+        }
+
+
+        function closeConfirmModal() {
+
+            confirmModal.classList.add('hidden');
+            confirmModal.classList.remove('flex');
+
+            document.body.style.overflow = '';
+
+            confirmAction = null;
+
+        }
+
+
+        document.getElementById('cancelConfirmBtn').addEventListener('click', closeConfirmModal);
+
+
+        document.getElementById('confirmActionBtn').addEventListener('click', async () => {
+
+            if (typeof confirmAction === 'function') {
+
+                const action = confirmAction;
+
+                const button =
+                    document.getElementById('confirmActionBtn');
+
+                button.disabled = true;
+
+                button.innerHTML =
+                    "<i class='bx bx-loader-alt bx-spin'></i> Processing...";
+
+
+                try {
+
+                    await action();
+
+                } finally {
+
+                    button.disabled = false;
+
+                    button.textContent = 'Confirm';
+
+                }
+
+            }
+
+        });
+
+
+        /* =========================================================
+           BACKEND PLACEHOLDER FUNCTIONS
+        ========================================================= */
+
+        async function loadQuizStats() {
+
+            /*
+                Production example:
+
+                const response = await fetch('/api/admin/quiz/stats', {
+                    headers: {
+                        Authorization: `Bearer ${adminToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Unable to load quiz stats');
+                }
+
+                return await response.json();
+            */
+
+            return {
+                success: true,
+                data: quizStats
+            };
+
+        }
+
+
+        async function loadQuizSettings() {
+
+            /*
+                Production:
+                GET /api/admin/quiz/settings
+            */
+
+            return {
+                success: true,
+                data: quizSettings
+            };
+
+        }
+
+
+        async function loadQuestions() {
+
+            /*
+                Production:
+                GET /api/admin/quiz/questions
+
+                Important:
+                Never expose correct answers unnecessarily
+                to client-side users.
+
+                This endpoint is intended for an
+                authenticated administrator.
+            */
+
+
+            const loading =
+                document.getElementById('questionsLoading');
+
+            const error =
+                document.getElementById('questionsError');
+
+            const empty =
+                document.getElementById('questionsEmpty');
+
+
+            loading.classList.remove('hidden');
+            error.classList.add('hidden');
+            empty.classList.add('hidden');
+
+
+            try {
+
+                /*
+                    Replace this section with your real
+                    backend/Firebase request.
+
+                    The prototype intentionally returns
+                    an empty question collection.
+                */
+
+                await new Promise(resolve => setTimeout(resolve, 350));
+
+
+                const response = {
+                    success: true,
+                    data: []
+                };
+
+
+                if (!response.success) {
+                    throw new Error('Unable to load questions');
+                }
+
+
+                questions.length = 0;
+
+                response.data.forEach(question => {
+                    questions.push(question);
+                });
+
+
+                loading.classList.add('hidden');
+
+                updateStatsFromQuestions();
+
+                renderQuestions();
+
+
+                return {
+                    success: true
+                };
+
+
+            } catch (errorObject) {
+
+                console.error(errorObject);
+
+                loading.classList.add('hidden');
+                error.classList.remove('hidden');
+
+                return {
+                    success: false,
+                    message: 'Unable to load quiz questions.'
+                };
+
+            }
+
+        }
+
+
+        async function createQuestion(questionData) {
+
+            /*
+                Production:
+                POST /api/admin/quiz/questions
+
+                The backend should validate:
+
+                - Admin authorization
+                - Question content
+                - Option count
+                - Correct answer
+                - Category
+                - Difficulty
+                - Status
+                - Audit log
+            */
+
+            console.log('CREATE QUESTION REQUEST', questionData);
+
+            return {
+                success: true
+            };
+
+        }
+
+
+        async function updateQuestion(id, questionData) {
+
+            /*
+                Production:
+                PUT /api/admin/quiz/questions/:id
+            */
+
+            console.log(
+                'UPDATE QUESTION REQUEST',
+                id,
+                questionData
+            );
+
+            return {
+                success: true
+            };
+
+        }
+
+
+        async function deleteQuestion(id) {
+
+            /*
+                Production:
+                DELETE /api/admin/quiz/questions/:id
+            */
+
+            console.log(
+                'DELETE QUESTION REQUEST',
+                id
+            );
+
+            return {
+                success: true
+            };
+
+        }
+
+
+        async function toggleQuestionStatus(id, active) {
+
+            /*
+                Production:
+                PATCH /api/admin/quiz/questions/:id/status
+            */
+
+            console.log(
+                'STATUS REQUEST',
+                id,
+                active
+            );
+
+            return {
+                success: true
+            };
+
+        }
+
+
+        async function getQuestionDetails(id) {
+
+            /*
+                Production:
+                GET /api/admin/quiz/questions/:id
+            */
+
+            console.log(
+                'QUESTION DETAILS REQUEST',
+                id
+            );
+
+            return {
+                success: true,
+                data: null
+            };
+
+        }
+
+
+        async function saveQuizSettings(settings) {
+
+            /*
+                Production:
+                PUT /api/admin/quiz/settings
+            */
+
+            console.log(
+                'SAVE QUIZ SETTINGS REQUEST',
+                settings
+            );
+
+            return {
+                success: true
+            };
+
+        }
+
+
+        async function loadQuizPerformance() {
+
+            /*
+                Production:
+                GET /api/admin/quiz/performance
+            */
+
+            return {
+                success: true,
+                data: performance
+            };
+
+        }
+
+
+        /* =========================================================
+           PERFORMANCE
+        ========================================================= */
+
+        function renderPerformance() {
+
+            document.getElementById('totalAttempts').textContent =
+                performance.totalAttempts;
+
+            document.getElementById('completedQuizzes').textContent =
+                performance.completedQuizzes;
+
+            document.getElementById('averageScore').textContent =
+                `${performance.averageScore}%`;
+
+            document.getElementById('performanceRewards').textContent =
+                formatUSD(performance.totalRewardsIssued);
+
+        }
+
+
+        /* =========================================================
+           STATS FROM QUESTIONS
+        ========================================================= */
+
+        function updateStatsFromQuestions() {
+
+            /*
+                In production these values should come
+                directly from the backend instead of being
+                calculated from a client-side collection.
+            */
+
+            quizStats.totalQuestions =
+                questions.length;
+
+            quizStats.activeQuestions =
+                questions.filter(q => q.status === 'active').length;
+
+            quizStats.inactiveQuestions =
+                questions.filter(q => q.status === 'inactive').length;
+
+            quizStats.questionsAnswered =
+                questions.reduce(
+                    (total, question) =>
+                        total + Number(question.timesAnswered || 0),
+                    0
+                );
+
+            renderStats();
+
+        }
+
+
+        /* =========================================================
+           RETRY
+        ========================================================= */
+
+        document.getElementById('retryQuestionsBtn').addEventListener('click', () => {
+
+            loadQuestions();
+
+        });
+
+
+        document.getElementById('refreshQuestionsBtn').addEventListener('click', async () => {
+
+            const icon =
+                document.querySelector('#refreshQuestionsBtn i');
+
+            icon.classList.add('bx-spin');
+
+            await loadQuestions();
+
+            icon.classList.remove('bx-spin');
+
+        });
+
+
+        /* =========================================================
+           LOGOUT
+        ========================================================= */
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+
+            /*
+                Production:
+                Firebase:
+                    signOut(auth)
+
+                or backend session:
+                    POST /api/admin/logout
+
+                Then:
+                    window.location.href = 'admin-login.html';
+            */
+
+            window.location.href = 'admin-login.html';
+
+        });
+
+
+        /* =========================================================
+           KEYBOARD / MODAL HANDLING
+        ========================================================= */
+
+        document.addEventListener('keydown', event => {
+
+            if (event.key === 'Escape') {
+
+                if (!questionModal.classList.contains('hidden')) {
+                    closeQuestionModal();
+                }
+
+                if (!viewModal.classList.contains('hidden')) {
+                    closeViewModal();
+                }
+
+                if (!confirmModal.classList.contains('hidden')) {
+                    closeConfirmModal();
+                }
+
+            }
+
+        });
+
+
+        questionModal.addEventListener('click', event => {
+
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+
+        });
+
+
+        viewModal.addEventListener('click', event => {
+
+            if (event.target === viewModal) {
+                closeViewModal();
+            }
+
+        });
+
+
+        confirmModal.addEventListener('click', event => {
+
+            if (event.target === confirmModal) {
+                closeConfirmModal();
+            }
+
+        });
+
+
+        /* =========================================================
+           HTML ESCAPING
+        ========================================================= */
+
+        function escapeHTML(value) {
+
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+
+        }
+
+
+        function escapeAttribute(value) {
+
+            return escapeHTML(value);
+
+        }
+
+
+        /* =========================================================
+           INITIALIZATION
+        ========================================================= */
+
+        async function initializePage() {
+
+            renderStats();
+            renderQuizSettings();
+            renderPerformance();
+            renderQuestions();
+
+
+            /*
+                Production authentication guard:
+
+                1. Check Firebase/backend authentication.
+                2. Get authenticated admin UID.
+                3. Read admin profile.
+                4. Verify role === "admin".
+                5. Verify active === true.
+                6. Only then load admin data.
+                7. Otherwise redirect to admin-login.html.
+            */
+
+
+            await Promise.all([
+                loadQuizStats(),
+                loadQuizSettings(),
+                loadQuizPerformance(),
+                loadQuestions()
+            ]);
+
+        }
+
+
+        initializePage();
+
+    </script>
+
+</body>
+</html>

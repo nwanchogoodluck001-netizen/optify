@@ -1,0 +1,2802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Withdrawals | Optify Admin</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        sora: ['Sora', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        :root {
+            --navy: #071A2B;
+            --emerald: #12B76A;
+            --teal: #0EA5A4;
+            --background: #F7F9FC;
+            --text: #101828;
+            --muted: #667085;
+            --border: #E4E7EC;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        body.dark {
+            background: #0b1220;
+            color: #f8fafc;
+        }
+
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #071A2B;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        .nav-item {
+            transition: .2s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, .06);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: rgba(18, 183, 106, .12);
+            color: #34d399;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #E4E7EC;
+            border-radius: 18px;
+        }
+
+        body.dark .card {
+            background: #111b2b;
+            border-color: #243247;
+        }
+
+        body.dark .text-slate-900 {
+            color: #f8fafc !important;
+        }
+
+        body.dark .text-slate-800 {
+            color: #f1f5f9 !important;
+        }
+
+        body.dark .text-slate-700 {
+            color: #cbd5e1 !important;
+        }
+
+        body.dark .text-slate-600 {
+            color: #94a3b8 !important;
+        }
+
+        body.dark .text-slate-500 {
+            color: #64748b !important;
+        }
+
+        body.dark .bg-white {
+            background: #111b2b !important;
+        }
+
+        body.dark .border-slate-200 {
+            border-color: #243247 !important;
+        }
+
+        body.dark input,
+        body.dark select {
+            background: #0d1726;
+            color: #f8fafc;
+            border-color: #243247;
+        }
+
+        .table-row {
+            transition: background .2s ease;
+        }
+
+        .table-row:hover {
+            background: #f8fafc;
+        }
+
+        body.dark .table-row:hover {
+            background: #172235;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status.pending {
+            color: #b54708;
+            background: #fffaeb;
+        }
+
+        .status.processing {
+            color: #175cd3;
+            background: #eff8ff;
+        }
+
+        .status.completed {
+            color: #027a48;
+            background: #ecfdf3;
+        }
+
+        .status.rejected {
+            color: #b42318;
+            background: #fef3f2;
+        }
+
+        .status.ineligible {
+            color: #6941c6;
+            background: #f9f5ff;
+        }
+
+        body.dark .status.pending {
+            background: rgba(247, 144, 9, .12);
+            color: #fbbf24;
+        }
+
+        body.dark .status.processing {
+            background: rgba(23, 92, 211, .15);
+            color: #60a5fa;
+        }
+
+        body.dark .status.completed {
+            background: rgba(2, 122, 72, .15);
+            color: #34d399;
+        }
+
+        body.dark .status.rejected {
+            background: rgba(180, 35, 24, .15);
+            color: #f87171;
+        }
+
+        body.dark .status.ineligible {
+            background: rgba(105, 65, 198, .15);
+            color: #c4b5fd;
+        }
+
+        .modal-backdrop {
+            background: rgba(7, 26, 43, .62);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal {
+            max-height: calc(100vh - 40px);
+        }
+
+        .toast {
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: .25s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: .25s ease;
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-overlay {
+            display: none;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        @media (max-width: 1023px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: .25s ease;
+                z-index: 70;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(7, 26, 43, .55);
+                z-index: 60;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .mobile-hide {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- MOBILE OVERLAY -->
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+<!-- SIDEBAR -->
+<aside id="sidebar" class="sidebar fixed left-0 top-0 bottom-0 z-[60] text-white overflow-y-auto">
+
+    <div class="px-5 py-6">
+
+        <!-- Logo -->
+        <div class="flex items-center gap-3 mb-8">
+
+            <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
+                <i class='bx bx-layer text-2xl'></i>
+            </div>
+
+            <div>
+                <div class="font-sora font-bold text-lg tracking-tight">
+                    OPTIFY
+                </div>
+
+                <div class="text-[10px] text-slate-400 uppercase tracking-[.18em]">
+                    Admin Portal
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Main Menu -->
+        <div class="mb-7">
+
+            <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                Main Menu
+            </p>
+
+            <nav class="space-y-1">
+
+                <a href="admin.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-grid-alt text-lg'></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="users.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-group text-lg'></i>
+                    <span>Users</span>
+                </a>
+
+                <a href="quizzes.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-help-circle text-lg'></i>
+                    <span>Quiz</span>
+                </a>
+
+                <a href="referrals.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-share-alt text-lg'></i>
+                    <span>Referrals</span>
+                </a>
+
+            </nav>
+        </div>
+
+        <!-- Finance -->
+        <div class="mb-7">
+
+            <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                Finance
+            </p>
+
+            <nav class="space-y-1">
+
+                <a href="epins.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-key text-lg'></i>
+                    <span>E-pins</span>
+                </a>
+
+                <a href="withdrawals.html"
+                   class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm">
+                    <i class='bx bx-money-withdraw text-lg'></i>
+                    <span>Withdrawals</span>
+                </a>
+<!-- 
+                <a href="transactions.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-transfer-alt text-lg'></i>
+                    <span>Transactions</span>
+                </a> -->
+
+            </nav>
+        </div>
+
+        <!-- Platform -->
+        <div class="mb-7">
+
+            <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                Platform
+            </p>
+
+            <nav class="space-y-1">
+
+                <a href="community-settings.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-link text-lg'></i>
+                    <span>Community Settings</span>
+                </a>
+
+                <a href="platform-settings.html"
+                   class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                    <i class='bx bx-cog text-lg'></i>
+                    <span>Platform Settings</span>
+                </a>
+
+            </nav>
+        </div>
+
+    </div>
+
+    <!-- Sidebar Bottom -->
+    <div class="absolute bottom-0 left-0 right-0 p-5 border-t border-white/10 bg-[#071A2B]">
+
+        <a href="admin-profile.html"
+           class="flex items-center gap-3 mb-4">
+
+            <div class="w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center">
+                <i class='bx bx-user text-emerald-400'></i>
+            </div>
+
+            <div class="min-w-0">
+                <p id="sidebarAdminName" class="text-sm font-medium truncate">
+                    Optify Admin
+                </p>
+
+                <p class="text-xs text-slate-500">
+                    Administrator
+                </p>
+            </div>
+
+        </a>
+
+        <button
+            id="logoutBtn"
+            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-400 hover:bg-white/5 hover:text-white transition">
+
+            <i class='bx bx-log-out text-lg'></i>
+            Logout
+
+        </button>
+
+    </div>
+
+</aside>
+
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+    <!-- TOP HEADER -->
+    <header class="sticky top-0 z-40 bg-white/90 dark:bg-[#0b1220]/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+
+        <div class="px-4 sm:px-6 lg:px-8 py-4">
+
+            <div class="flex items-center justify-between gap-4">
+
+                <div class="flex items-center gap-3">
+
+                    <button
+                        id="menuBtn"
+                        class="lg:hidden w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300">
+                        <i class='bx bx-menu text-xl'></i>
+                    </button>
+
+                    <div>
+                        <p class="text-[10px] uppercase tracking-[.18em] text-emerald-600 font-bold mb-1">
+                            Withdrawal Management
+                        </p>
+
+                        <h1 class="font-sora text-xl sm:text-2xl font-semibold text-slate-900">
+                            Withdrawals
+                        </h1>
+
+                        <p class="hidden sm:block text-sm text-slate-500 mt-1">
+                            Review and manage user withdrawal requests.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="flex items-center gap-2">
+
+                    <button
+                        id="themeBtn"
+                        class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                        title="Toggle theme">
+                        <i id="themeIcon" class='bx bx-moon text-lg'></i>
+                    </button>
+
+                    <button
+                        id="refreshBtn"
+                        class="flex items-center gap-2 px-3 sm:px-4 h-10 rounded-xl bg-[#071A2B] text-white text-sm font-medium hover:bg-[#0b304b] transition">
+                        <i id="refreshIcon" class='bx bx-refresh text-lg'></i>
+                        <span class="hidden sm:inline">Refresh</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- PAGE -->
+    <section class="p-4 sm:p-6 lg:p-8">
+
+        <!-- STATS -->
+        <div class="grid grid-cols-2 xl:grid-cols-5 gap-4 mb-6">
+
+            <!-- Total -->
+            <div class="card p-5">
+
+                <div class="flex items-start justify-between gap-3">
+
+                    <div>
+                        <p class="text-xs font-medium text-slate-500">
+                            Total Withdrawals
+                        </p>
+
+                        <h2 id="totalWithdrawals"
+                            class="font-sora text-2xl font-semibold mt-2 text-slate-900">
+                            0
+                        </h2>
+                    </div>
+
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+                        <i class='bx bx-money text-xl text-slate-600'></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Pending -->
+            <div class="card p-5">
+
+                <div class="flex items-start justify-between gap-3">
+
+                    <div>
+                        <p class="text-xs font-medium text-slate-500">
+                            Pending Review
+                        </p>
+
+                        <h2 id="pendingWithdrawals"
+                            class="font-sora text-2xl font-semibold mt-2 text-slate-900">
+                            0
+                        </h2>
+                    </div>
+
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                        <i class='bx bx-time-five text-xl text-amber-600'></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Processing -->
+            <div class="card p-5">
+
+                <div class="flex items-start justify-between gap-3">
+
+                    <div>
+                        <p class="text-xs font-medium text-slate-500">
+                            Processing
+                        </p>
+
+                        <h2 id="processingWithdrawals"
+                            class="font-sora text-2xl font-semibold mt-2 text-slate-900">
+                            0
+                        </h2>
+                    </div>
+
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+                        <i class='bx bx-loader-circle text-xl text-blue-600'></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Completed -->
+            <div class="card p-5">
+
+                <div class="flex items-start justify-between gap-3">
+
+                    <div>
+                        <p class="text-xs font-medium text-slate-500">
+                            Completed
+                        </p>
+
+                        <h2 id="completedWithdrawals"
+                            class="font-sora text-2xl font-semibold mt-2 text-slate-900">
+                            0
+                        </h2>
+                    </div>
+
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                        <i class='bx bx-check-circle text-xl text-emerald-600'></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Total Amount -->
+            <div class="card p-5 col-span-2 xl:col-span-1">
+
+                <div class="flex items-start justify-between gap-3">
+
+                    <div>
+                        <p class="text-xs font-medium text-slate-500">
+                            Total Withdrawn
+                        </p>
+
+                        <h2 id="totalWithdrawn"
+                            class="font-sora text-2xl font-semibold mt-2 text-slate-900">
+                            $0.00
+                        </h2>
+                    </div>
+
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+                        <i class='bx bx-dollar-circle text-xl text-emerald-600'></i>
+                    </div>
+
+                </div>
+
+                <p id="totalWithdrawnNaira" class="text-[11px] text-slate-400 mt-2">
+                    ₦0.00
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- RULES -->
+        <div class="card p-5 sm:p-6 mb-6">
+
+            <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5">
+
+                <div>
+
+                    <div class="flex items-center gap-2 mb-2">
+
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
+                            <i class='bx bx-shield-check text-emerald-600'></i>
+                        </div>
+
+                        <h2 class="font-sora text-sm font-semibold text-slate-900">
+                            Withdrawal Rules
+                        </h2>
+
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-slate-500 max-w-2xl">
+                        Withdrawals must satisfy the platform's eligibility requirements before an administrator can process them.
+                    </p>
+
+                </div>
+
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+
+                    <div class="px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/60">
+                        <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                            Minimum
+                        </p>
+                        <p class="font-semibold text-sm text-slate-800 dark:text-slate-100 mt-1">
+                            $10
+                        </p>
+                        <p class="text-[10px] text-slate-400">
+                            ₦10,000
+                        </p>
+                    </div>
+
+                    <div class="px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/60">
+                        <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                            E-pin
+                        </p>
+                        <p class="font-semibold text-sm text-slate-800 dark:text-slate-100 mt-1">
+                            $2
+                        </p>
+                        <p class="text-[10px] text-slate-400">
+                            ₦2,000
+                        </p>
+                    </div>
+
+                    <div class="px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/60">
+                        <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                            Validation
+                        </p>
+                        <p class="font-semibold text-sm text-slate-800 dark:text-slate-100 mt-1">
+                            Required
+                        </p>
+                    </div>
+
+                    <div class="px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/60">
+                        <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                            Conversion
+                        </p>
+                        <p class="font-semibold text-sm text-slate-800 dark:text-slate-100 mt-1">
+                            $1 = ₦1,000
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="flex flex-wrap gap-2 mt-5 pt-5 border-t border-slate-100 dark:border-slate-800">
+
+                <span class="inline-flex items-center gap-1.5 text-xs text-slate-500">
+                    <i class='bx bx-check text-emerald-500'></i>
+                    Dashboard validation
+                </span>
+
+                <span class="inline-flex items-center gap-1.5 text-xs text-slate-500">
+                    <i class='bx bx-check text-emerald-500'></i>
+                    Minimum balance
+                </span>
+
+                <span class="inline-flex items-center gap-1.5 text-xs text-slate-500">
+                    <i class='bx bx-check text-emerald-500'></i>
+                    Approved withdrawal E-pin
+                </span>
+
+                <span class="inline-flex items-center gap-1.5 text-xs text-slate-500">
+                    <i class='bx bx-check text-emerald-500'></i>
+                    Valid bank details
+                </span>
+
+                <a href="platform-settings.html"
+                   class="ml-auto text-xs font-medium text-emerald-600 hover:text-emerald-700">
+                    Manage Settings
+                    <i class='bx bx-right-arrow-alt align-middle'></i>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- FILTERS -->
+        <div class="card p-4 sm:p-5 mb-6">
+
+            <div class="flex flex-col xl:flex-row xl:items-end gap-4">
+
+                <div class="flex-1">
+
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                        Search
+                    </label>
+
+                    <div class="relative">
+
+                        <i class='bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400'></i>
+
+                        <input
+                            id="searchInput"
+                            type="text"
+                            placeholder="Search user, withdrawal ID or account..."
+                            class="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10">
+
+                    </div>
+
+                </div>
+
+
+                <div class="w-full xl:w-44">
+
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                        Status
+                    </label>
+
+                    <select
+                        id="statusFilter"
+                        class="w-full h-11 px-3 rounded-xl border border-slate-200 text-sm outline-none focus:border-emerald-500">
+
+                        <option value="">All statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="completed">Completed</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="ineligible">Ineligible</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="w-full xl:w-44">
+
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                        Validation
+                    </label>
+
+                    <select
+                        id="validationFilter"
+                        class="w-full h-11 px-3 rounded-xl border border-slate-200 text-sm outline-none focus:border-emerald-500">
+
+                        <option value="">All</option>
+                        <option value="validated">Validated</option>
+                        <option value="not_validated">Not validated</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="w-full xl:w-44">
+
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                        E-pin
+                    </label>
+
+                    <select
+                        id="epinFilter"
+                        class="w-full h-11 px-3 rounded-xl border border-slate-200 text-sm outline-none focus:border-emerald-500">
+
+                        <option value="">All</option>
+                        <option value="approved">Approved</option>
+                        <option value="pending">Pending</option>
+                        <option value="none">None</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="w-full xl:w-44">
+
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                        Date
+                    </label>
+
+                    <select
+                        id="dateFilter"
+                        class="w-full h-11 px-3 rounded-xl border border-slate-200 text-sm outline-none focus:border-emerald-500">
+
+                        <option value="">All time</option>
+                        <option value="today">Today</option>
+                        <option value="7days">Last 7 days</option>
+                        <option value="30days">Last 30 days</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="flex gap-2">
+
+                    <button
+                        id="applyFilters"
+                        class="h-11 px-4 rounded-xl bg-[#071A2B] text-white text-sm font-medium hover:bg-[#0b304b] transition">
+                        Apply
+                    </button>
+
+                    <button
+                        id="clearFilters"
+                        class="h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+                        Clear
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- WITHDRAWALS TABLE -->
+        <div class="card overflow-hidden">
+
+            <div class="px-5 py-5 border-b border-slate-200 dark:border-slate-800">
+
+                <div class="flex items-center justify-between gap-3">
+
+                    <div>
+                        <h2 class="font-sora text-base font-semibold text-slate-900">
+                            Withdrawal Requests
+                        </h2>
+
+                        <p id="resultSummary" class="text-xs text-slate-500 mt-1">
+                            No withdrawal requests found
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+
+                        <span
+                            id="connectionBadge"
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-slate-100 text-slate-500 text-[11px] font-medium">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                            Backend pending
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Loading -->
+            <div id="loadingState" class="hidden p-12 text-center">
+
+                <div class="w-10 h-10 mx-auto rounded-full border-2 border-slate-200 border-t-emerald-500 animate-spin"></div>
+
+                <p class="text-sm text-slate-500 mt-4">
+                    Loading withdrawal requests...
+                </p>
+
+            </div>
+
+
+            <!-- Error -->
+            <div id="errorState" class="hidden p-8 text-center">
+
+                <div class="w-12 h-12 mx-auto rounded-2xl bg-red-50 flex items-center justify-center">
+                    <i class='bx bx-error-circle text-2xl text-red-500'></i>
+                </div>
+
+                <h3 class="font-semibold text-slate-800 mt-4">
+                    Unable to load withdrawals
+                </h3>
+
+                <p id="errorMessage" class="text-sm text-slate-500 mt-1">
+                    Something went wrong while loading withdrawal requests.
+                </p>
+
+                <button
+                    id="retryBtn"
+                    class="mt-4 px-4 py-2.5 rounded-xl bg-[#071A2B] text-white text-sm font-medium">
+                    Try Again
+                </button>
+
+            </div>
+
+
+            <!-- Desktop Table -->
+            <div id="desktopTable" class="hidden md:block overflow-x-auto">
+
+                <table class="w-full text-left">
+
+                    <thead class="bg-slate-50 dark:bg-slate-900/60">
+
+                        <tr class="text-[11px] uppercase tracking-wide text-slate-500">
+
+                            <th class="px-5 py-3.5 font-semibold">
+                                User
+                            </th>
+
+                            <th class="px-5 py-3.5 font-semibold">
+                                Withdrawal ID
+                            </th>
+
+                            <th class="px-5 py-3.5 font-semibold">
+                                Amount
+                            </th>
+
+                            <th class="px-5 py-3.5 font-semibold">
+                                Bank
+                            </th>
+
+                            <th class="px-5 py-3.5 font-semibold">
+                                Validation
+                            </th>
+
+                            <th class="px-5 py-3.5 font-semibold">
+                                E-pin
+                            </th>
+
+                            <th class="px-5 py-3.5 font-semibold">
+                                Status
+                            </th>
+
+                            <th class="px-5 py-3.5 font-semibold">
+                                Requested
+                            </th>
+
+                            <th class="px-5 py-3.5 font-semibold text-right">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="withdrawalTableBody">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- Mobile -->
+            <div id="mobileCards" class="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+            </div>
+
+
+            <!-- Empty State -->
+            <div id="emptyState" class="p-10 sm:p-14 text-center">
+
+                <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                    <i class='bx bx-money-withdraw text-3xl text-slate-400'></i>
+                </div>
+
+                <h3 class="font-sora font-semibold text-slate-800 mt-5">
+                    No withdrawal requests
+                </h3>
+
+                <p class="max-w-md mx-auto text-sm text-slate-500 mt-2">
+                    Withdrawal requests will appear here when users submit them.
+                </p>
+
+            </div>
+
+
+            <!-- Pagination -->
+            <div id="pagination"
+                 class="hidden px-5 py-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+
+                <p id="paginationText" class="text-xs text-slate-500">
+                    Showing 0 of 0
+                </p>
+
+                <div class="flex items-center gap-2">
+
+                    <button
+                        id="previousPage"
+                        class="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 disabled:opacity-40">
+                        <i class='bx bx-chevron-left'></i>
+                    </button>
+
+                    <span
+                        id="currentPage"
+                        class="min-w-9 h-9 px-2 rounded-lg bg-[#071A2B] text-white flex items-center justify-center text-xs font-medium">
+                        1
+                    </span>
+
+                    <button
+                        id="nextPage"
+                        class="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 disabled:opacity-40">
+                        <i class='bx bx-chevron-right'></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- WITHDRAWAL DETAILS MODAL -->
+<div id="detailsModal"
+     class="hidden fixed inset-0 z-[100] modal-backdrop p-4 items-center justify-center">
+
+    <div class="modal w-full max-w-3xl bg-white dark:bg-[#111b2b] rounded-2xl shadow-2xl overflow-hidden">
+
+        <!-- Modal Header -->
+        <div class="px-5 sm:px-6 py-5 border-b border-slate-200 dark:border-slate-800">
+
+            <div class="flex items-center justify-between gap-4">
+
+                <div>
+
+                    <p class="text-[10px] uppercase tracking-[.18em] text-emerald-600 font-bold">
+                        Withdrawal Details
+                    </p>
+
+                    <h2 id="modalWithdrawalId"
+                        class="font-sora text-lg font-semibold text-slate-900 mt-1">
+                        —
+                    </h2>
+
+                </div>
+
+                <button
+                    id="closeModal"
+                    class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800">
+                    <i class='bx bx-x text-xl'></i>
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- Modal Content -->
+        <div class="overflow-y-auto max-h-[calc(100vh-180px)]">
+
+            <div class="p-5 sm:p-6 space-y-5">
+
+                <!-- Summary -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4">
+                        <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                            Amount
+                        </p>
+
+                        <p id="modalAmount"
+                           class="font-sora text-lg font-semibold text-slate-900 mt-1">
+                            $0.00
+                        </p>
+                    </div>
+
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4">
+                        <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                            Status
+                        </p>
+
+                        <div id="modalStatus" class="mt-2">
+                            —
+                        </div>
+                    </div>
+
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4">
+                        <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                            Validation
+                        </p>
+
+                        <p id="modalValidation"
+                           class="font-medium text-sm text-slate-900 mt-2">
+                            —
+                        </p>
+                    </div>
+
+                    <div class="rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4">
+                        <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                            E-pin
+                        </p>
+
+                        <p id="modalEpin"
+                           class="font-medium text-sm text-slate-900 mt-2">
+                            —
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <!-- User -->
+                <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
+
+                    <div class="flex items-center gap-2 mb-4">
+
+                        <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                            <i class='bx bx-user text-slate-600 dark:text-slate-300'></i>
+                        </div>
+
+                        <h3 class="font-sora text-sm font-semibold text-slate-900">
+                            User Information
+                        </h3>
+
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                        <div>
+                            <p class="text-xs text-slate-400">
+                                Name
+                            </p>
+                            <p id="modalUserName" class="text-sm font-medium text-slate-800 mt-1">
+                                —
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-xs text-slate-400">
+                                Email
+                            </p>
+                            <p id="modalUserEmail" class="text-sm font-medium text-slate-800 mt-1 break-all">
+                                —
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-xs text-slate-400">
+                                User ID
+                            </p>
+                            <p id="modalUserId" class="text-sm font-medium text-slate-800 mt-1 break-all">
+                                —
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-xs text-slate-400">
+                                Current Balance
+                            </p>
+                            <p id="modalBalance" class="text-sm font-medium text-slate-800 mt-1">
+                                —
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Bank -->
+                <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
+
+                    <div class="flex items-center gap-2 mb-4">
+
+                        <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                            <i class='bx bx-building-house text-slate-600 dark:text-slate-300'></i>
+                        </div>
+
+                        <h3 class="font-sora text-sm font-semibold text-slate-900">
+                            Bank Information
+                        </h3>
+
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                        <div>
+                            <p class="text-xs text-slate-400">
+                                Bank
+                            </p>
+                            <p id="modalBankName" class="text-sm font-medium text-slate-800 mt-1">
+                                —
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-xs text-slate-400">
+                                Account Name
+                            </p>
+                            <p id="modalAccountName" class="text-sm font-medium text-slate-800 mt-1">
+                                —
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-xs text-slate-400">
+                                Account Number
+                            </p>
+                            <p id="modalAccountNumber" class="text-sm font-medium text-slate-800 mt-1">
+                                —
+                            </p>
+                        </div>
+
+                        <div>
+                            <p class="text-xs text-slate-400">
+                                Requested
+                            </p>
+                            <p id="modalRequestedAt" class="text-sm font-medium text-slate-800 mt-1">
+                                —
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Eligibility -->
+                <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
+
+                    <div class="flex items-center gap-2 mb-4">
+
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
+                            <i class='bx bx-check-shield text-emerald-600'></i>
+                        </div>
+
+                        <div>
+                            <h3 class="font-sora text-sm font-semibold text-slate-900">
+                                Eligibility Checklist
+                            </h3>
+
+                            <p class="text-xs text-slate-500 mt-0.5">
+                                Final eligibility must be confirmed by the backend.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div id="eligibilityList" class="space-y-3">
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-slate-600">Dashboard validated</span>
+                            <span class="text-xs text-slate-400">Not checked</span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-slate-600">Minimum withdrawal met</span>
+                            <span class="text-xs text-slate-400">Not checked</span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-slate-600">E-pin approved</span>
+                            <span class="text-xs text-slate-400">Not checked</span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-slate-600">Bank details valid</span>
+                            <span class="text-xs text-slate-400">Not checked</span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-slate-600">Sufficient balance</span>
+                            <span class="text-xs text-slate-400">Not checked</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Activity -->
+                <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
+
+                    <div class="flex items-center gap-2 mb-4">
+
+                        <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                            <i class='bx bx-history text-slate-600 dark:text-slate-300'></i>
+                        </div>
+
+                        <h3 class="font-sora text-sm font-semibold text-slate-900">
+                            Activity
+                        </h3>
+
+                    </div>
+
+                    <div id="activityList">
+
+                        <div class="text-center py-5 text-sm text-slate-400">
+                            No activity available.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Actions -->
+        <div class="px-5 sm:px-6 py-4 border-t border-slate-200 dark:border-slate-800">
+
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+                <p class="text-xs text-slate-400">
+                    Financial actions require backend authorization.
+                </p>
+
+                <div class="flex flex-wrap gap-2">
+
+                    <button
+                        id="rejectBtn"
+                        class="hidden px-4 py-2.5 rounded-xl border border-red-200 text-red-600 text-sm font-medium hover:bg-red-50 transition">
+                        Reject
+                    </button>
+
+                    <button
+                        id="approveBtn"
+                        class="hidden px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition">
+                        Approve
+                    </button>
+
+                    <button
+                        id="processingBtn"
+                        class="hidden px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition">
+                        Mark Processing
+                    </button>
+
+                    <button
+                        id="completeBtn"
+                        class="hidden px-4 py-2.5 rounded-xl bg-[#071A2B] text-white text-sm font-medium hover:bg-[#0b304b] transition">
+                        Complete
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- CONFIRMATION MODAL -->
+<div id="confirmModal"
+     class="hidden fixed inset-0 z-[120] modal-backdrop p-4 items-center justify-center">
+
+    <div class="w-full max-w-md bg-white dark:bg-[#111b2b] rounded-2xl shadow-2xl p-6">
+
+        <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center">
+            <i class='bx bx-shield-exclamation text-2xl text-amber-600'></i>
+        </div>
+
+        <h2 id="confirmTitle"
+            class="font-sora text-lg font-semibold text-slate-900 mt-5">
+            Confirm action
+        </h2>
+
+        <p id="confirmText"
+           class="text-sm text-slate-500 mt-2 leading-6">
+            This action will be sent to the backend for authorization.
+        </p>
+
+        <div class="flex gap-3 mt-6">
+
+            <button
+                id="cancelConfirm"
+                class="flex-1 h-11 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300">
+                Cancel
+            </button>
+
+            <button
+                id="confirmAction"
+                class="flex-1 h-11 rounded-xl bg-[#071A2B] text-white text-sm font-medium">
+                Continue
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- TOAST -->
+<div id="toast"
+     class="toast fixed bottom-5 right-5 z-[200] max-w-sm">
+
+    <div class="flex items-start gap-3 bg-[#071A2B] text-white rounded-2xl shadow-xl px-4 py-3.5">
+
+        <div id="toastIcon"
+             class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+            <i class='bx bx-info-circle'></i>
+        </div>
+
+        <div>
+            <p id="toastTitle" class="text-sm font-semibold">
+                Notice
+            </p>
+
+            <p id="toastMessage" class="text-xs text-slate-300 mt-0.5">
+                Backend action is not connected yet.
+            </p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+    /*
+     * ============================================================
+     * OPTIFY ADMIN — WITHDRAWAL MANAGEMENT
+     * ============================================================
+     *
+     * Frontend only.
+     *
+     * Backend endpoints expected:
+     *
+     * GET  /api/admin/withdrawals/stats
+     * GET  /api/admin/withdrawals
+     * GET  /api/admin/withdrawals/:id
+     * GET  /api/admin/withdrawals/:id/eligibility
+     * GET  /api/admin/withdrawals/:id/activity
+     *
+     * POST /api/admin/withdrawals/:id/approve
+     * POST /api/admin/withdrawals/:id/reject
+     * POST /api/admin/withdrawals/:id/processing
+     * POST /api/admin/withdrawals/:id/complete
+     *
+     * IMPORTANT:
+     * The frontend must never independently:
+     * - approve a financial transaction
+     * - modify a user's balance
+     * - determine eligibility
+     * - generate an E-pin
+     * - mark a withdrawal completed
+     *
+     * These operations must be performed and verified server-side.
+     */
+
+
+    // ============================================================
+    // DEMO STATE
+    // ============================================================
+
+    const withdrawalStats = {
+        total: 0,
+        pending: 0,
+        processing: 0,
+        completed: 0,
+        totalWithdrawn: 0
+    };
+
+    const withdrawals = [];
+
+    let filteredWithdrawals = [];
+    let currentPage = 1;
+    let pageSize = 10;
+    let selectedWithdrawal = null;
+    let pendingAction = null;
+
+
+    // ============================================================
+    // ELEMENTS
+    // ============================================================
+
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const menuBtn = document.getElementById('menuBtn');
+
+    const themeBtn = document.getElementById('themeBtn');
+    const themeIcon = document.getElementById('themeIcon');
+
+    const refreshBtn = document.getElementById('refreshBtn');
+    const refreshIcon = document.getElementById('refreshIcon');
+
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const validationFilter = document.getElementById('validationFilter');
+    const epinFilter = document.getElementById('epinFilter');
+    const dateFilter = document.getElementById('dateFilter');
+
+    const applyFilters = document.getElementById('applyFilters');
+    const clearFilters = document.getElementById('clearFilters');
+
+    const loadingState = document.getElementById('loadingState');
+    const errorState = document.getElementById('errorState');
+    const emptyState = document.getElementById('emptyState');
+    const desktopTable = document.getElementById('desktopTable');
+    const mobileCards = document.getElementById('mobileCards');
+    const pagination = document.getElementById('pagination');
+
+    const detailsModal = document.getElementById('detailsModal');
+    const closeModal = document.getElementById('closeModal');
+
+    const confirmModal = document.getElementById('confirmModal');
+    const cancelConfirm = document.getElementById('cancelConfirm');
+    const confirmAction = document.getElementById('confirmAction');
+
+    const toast = document.getElementById('toast');
+
+
+    // ============================================================
+    // THEME
+    // ============================================================
+
+    function initializeTheme() {
+
+        const savedTheme = localStorage.getItem('optify_admin_theme');
+
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark');
+            themeIcon.className = 'bx bx-sun text-lg';
+        } else {
+            document.body.classList.remove('dark');
+            themeIcon.className = 'bx bx-moon text-lg';
+        }
+    }
+
+    themeBtn.addEventListener('click', () => {
+
+        const isDark = document.body.classList.toggle('dark');
+
+        localStorage.setItem(
+            'optify_admin_theme',
+            isDark ? 'dark' : 'light'
+        );
+
+        themeIcon.className = isDark
+            ? 'bx bx-sun text-lg'
+            : 'bx bx-moon text-lg';
+    });
+
+
+    // ============================================================
+    // MOBILE SIDEBAR
+    // ============================================================
+
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        sidebarOverlay.classList.remove('show');
+    }
+
+    menuBtn.addEventListener('click', () => {
+        sidebar.classList.add('open');
+        sidebarOverlay.classList.add('show');
+    });
+
+    sidebarOverlay.addEventListener('click', closeSidebar);
+
+
+    // ============================================================
+    // FORMATTING
+    // ============================================================
+
+    function formatUSD(value) {
+
+        const number = Number(value || 0);
+
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2
+        }).format(number);
+    }
+
+
+    function formatNGN(value) {
+
+        const number = Number(value || 0);
+
+        return new Intl.NumberFormat('en-NG', {
+            style: 'currency',
+            currency: 'NGN',
+            minimumFractionDigits: 2
+        }).format(number);
+    }
+
+
+    function formatDate(value) {
+
+        if (!value) return '—';
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return '—';
+        }
+
+        return new Intl.DateTimeFormat('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+        }).format(date);
+    }
+
+
+    function escapeHTML(value) {
+
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+
+    function statusMarkup(status) {
+
+        const normalized = String(status || '').toLowerCase();
+
+        const labels = {
+            pending: 'Pending',
+            processing: 'Processing',
+            completed: 'Completed',
+            rejected: 'Rejected',
+            ineligible: 'Ineligible'
+        };
+
+        const icons = {
+            pending: 'bx-time-five',
+            processing: 'bx-loader-circle',
+            completed: 'bx-check-circle',
+            rejected: 'bx-x-circle',
+            ineligible: 'bx-block'
+        };
+
+        const label = labels[normalized] || 'Unknown';
+        const icon = icons[normalized] || 'bx-help-circle';
+
+        return `
+            <span class="status ${escapeHTML(normalized)}">
+                <i class='bx ${icon}'></i>
+                ${escapeHTML(label)}
+            </span>
+        `;
+    }
+
+
+    function validationMarkup(validated) {
+
+        if (validated === true || validated === 'validated') {
+
+            return `
+                <span class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
+                    <i class='bx bx-check-circle'></i>
+                    Validated
+                </span>
+            `;
+        }
+
+        return `
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400">
+                <i class='bx bx-x-circle'></i>
+                Not validated
+            </span>
+        `;
+    }
+
+
+    function epinMarkup(epinStatus) {
+
+        const status = String(epinStatus || '').toLowerCase();
+
+        if (status === 'approved') {
+
+            return `
+                <span class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
+                    <i class='bx bx-check-circle'></i>
+                    Approved
+                </span>
+            `;
+        }
+
+        if (status === 'pending') {
+
+            return `
+                <span class="inline-flex items-center gap-1.5 text-xs font-medium text-amber-600">
+                    <i class='bx bx-time-five'></i>
+                    Pending
+                </span>
+            `;
+        }
+
+        return `
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400">
+                <i class='bx bx-minus-circle'></i>
+                None
+            </span>
+        `;
+    }
+
+
+    // ============================================================
+    // STATS
+    // ============================================================
+
+    function renderStats() {
+
+        document.getElementById('totalWithdrawals').textContent =
+            Number(withdrawalStats.total || 0).toLocaleString();
+
+        document.getElementById('pendingWithdrawals').textContent =
+            Number(withdrawalStats.pending || 0).toLocaleString();
+
+        document.getElementById('processingWithdrawals').textContent =
+            Number(withdrawalStats.processing || 0).toLocaleString();
+
+        document.getElementById('completedWithdrawals').textContent =
+            Number(withdrawalStats.completed || 0).toLocaleString();
+
+        document.getElementById('totalWithdrawn').textContent =
+            formatUSD(withdrawalStats.totalWithdrawn);
+
+        document.getElementById('totalWithdrawnNaira').textContent =
+            formatNGN(Number(withdrawalStats.totalWithdrawn || 0) * 1000);
+    }
+
+
+    // ============================================================
+    // FILTERING
+    // ============================================================
+
+    function applyCurrentFilters() {
+
+        const search = searchInput.value.trim().toLowerCase();
+        const status = statusFilter.value;
+        const validation = validationFilter.value;
+        const epin = epinFilter.value;
+        const date = dateFilter.value;
+
+        filteredWithdrawals = withdrawals.filter(withdrawal => {
+
+            const searchTarget = [
+                withdrawal.id,
+                withdrawal.userId,
+                withdrawal.userName,
+                withdrawal.email,
+                withdrawal.bankName,
+                withdrawal.accountNumber
+            ]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase();
+
+            if (search && !searchTarget.includes(search)) {
+                return false;
+            }
+
+            if (
+                status &&
+                String(withdrawal.status || '').toLowerCase() !== status
+            ) {
+                return false;
+            }
+
+            if (validation) {
+
+                const validated =
+                    withdrawal.validated === true ||
+                    withdrawal.validated === 'validated';
+
+                if (validation === 'validated' && !validated) {
+                    return false;
+                }
+
+                if (validation === 'not_validated' && validated) {
+                    return false;
+                }
+            }
+
+            if (
+                epin &&
+                String(withdrawal.epinStatus || '').toLowerCase() !== epin
+            ) {
+                return false;
+            }
+
+            if (date && withdrawal.createdAt) {
+
+                const created = new Date(withdrawal.createdAt);
+                const now = new Date();
+
+                if (date === 'today') {
+
+                    const sameDay =
+                        created.getDate() === now.getDate() &&
+                        created.getMonth() === now.getMonth() &&
+                        created.getFullYear() === now.getFullYear();
+
+                    if (!sameDay) {
+                        return false;
+                    }
+                }
+
+                if (date === '7days') {
+
+                    const sevenDaysAgo =
+                        Date.now() - (7 * 24 * 60 * 60 * 1000);
+
+                    if (created.getTime() < sevenDaysAgo) {
+                        return false;
+                    }
+                }
+
+                if (date === '30days') {
+
+                    const thirtyDaysAgo =
+                        Date.now() - (30 * 24 * 60 * 60 * 1000);
+
+                    if (created.getTime() < thirtyDaysAgo) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        });
+
+        currentPage = 1;
+
+        renderWithdrawals();
+    }
+
+
+    // ============================================================
+    // TABLE RENDERING
+    // ============================================================
+
+    function renderWithdrawals() {
+
+        const total = filteredWithdrawals.length;
+
+        const start = (currentPage - 1) * pageSize;
+        const end = start + pageSize;
+
+        const pageItems = filteredWithdrawals.slice(start, end);
+
+        document.getElementById('resultSummary').textContent =
+            total === 0
+                ? 'No withdrawal requests found'
+                : `${total.toLocaleString()} withdrawal request${total === 1 ? '' : 's'} found`;
+
+        mobileCards.innerHTML = '';
+        document.getElementById('withdrawalTableBody').innerHTML = '';
+
+        if (total === 0) {
+
+            emptyState.classList.remove('hidden');
+            desktopTable.classList.add('hidden');
+            mobileCards.classList.add('hidden');
+            pagination.classList.add('hidden');
+
+            return;
+        }
+
+        emptyState.classList.add('hidden');
+        desktopTable.classList.remove('hidden');
+        mobileCards.classList.remove('hidden');
+
+        pageItems.forEach(withdrawal => {
+
+            renderDesktopRow(withdrawal);
+            renderMobileCard(withdrawal);
+
+        });
+
+        const totalPages = Math.ceil(total / pageSize);
+
+        pagination.classList.remove('hidden');
+
+        document.getElementById('paginationText').textContent =
+            `Showing ${start + 1}-${Math.min(end, total)} of ${total}`;
+
+        document.getElementById('currentPage').textContent =
+            currentPage;
+
+        document.getElementById('previousPage').disabled =
+            currentPage <= 1;
+
+        document.getElementById('nextPage').disabled =
+            currentPage >= totalPages;
+    }
+
+
+    function renderDesktopRow(withdrawal) {
+
+        const row = document.createElement('tr');
+
+        row.className =
+            'table-row border-t border-slate-100 dark:border-slate-800';
+
+        row.innerHTML = `
+
+            <td class="px-5 py-4">
+
+                <div class="flex items-center gap-3">
+
+                    <div class="w-9 h-9 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center shrink-0">
+                        <i class='bx bx-user text-emerald-600'></i>
+                    </div>
+
+                    <div class="min-w-0">
+
+                        <p class="text-sm font-medium text-slate-800 dark:text-slate-100 truncate max-w-[150px]">
+                            ${escapeHTML(withdrawal.userName || 'Unknown user')}
+                        </p>
+
+                        <p class="text-[11px] text-slate-400 truncate max-w-[150px]">
+                            ${escapeHTML(withdrawal.email || withdrawal.userId || '—')}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </td>
+
+
+            <td class="px-5 py-4">
+
+                <button
+                    onclick="openWithdrawalDetails('${escapeHTML(withdrawal.id)}')"
+                    class="text-xs font-medium text-emerald-600 hover:text-emerald-700">
+                    ${escapeHTML(withdrawal.id || '—')}
+                </button>
+
+            </td>
+
+
+            <td class="px-5 py-4">
+
+                <p class="font-sora text-sm font-semibold text-slate-800 dark:text-slate-100">
+                    ${formatUSD(withdrawal.amount)}
+                </p>
+
+                <p class="text-[10px] text-slate-400">
+                    ${formatNGN(Number(withdrawal.amount || 0) * 1000)}
+                </p>
+
+            </td>
+
+
+            <td class="px-5 py-4">
+
+                <p class="text-xs font-medium text-slate-700 dark:text-slate-200">
+                    ${escapeHTML(withdrawal.bankName || '—')}
+                </p>
+
+                <p class="text-[10px] text-slate-400">
+                    ${escapeHTML(withdrawal.accountNumber || '—')}
+                </p>
+
+            </td>
+
+
+            <td class="px-5 py-4">
+                ${validationMarkup(withdrawal.validated)}
+            </td>
+
+
+            <td class="px-5 py-4">
+                ${epinMarkup(withdrawal.epinStatus)}
+            </td>
+
+
+            <td class="px-5 py-4">
+                ${statusMarkup(withdrawal.status)}
+            </td>
+
+
+            <td class="px-5 py-4">
+
+                <p class="text-xs text-slate-600 dark:text-slate-300 whitespace-nowrap">
+                    ${formatDate(withdrawal.createdAt)}
+                </p>
+
+            </td>
+
+
+            <td class="px-5 py-4 text-right">
+
+                <button
+                    onclick="openWithdrawalDetails('${escapeHTML(withdrawal.id)}')"
+                    class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">
+                    <i class='bx bx-show'></i>
+                    View
+                </button>
+
+            </td>
+        `;
+
+        document
+            .getElementById('withdrawalTableBody')
+            .appendChild(row);
+    }
+
+
+    function renderMobileCard(withdrawal) {
+
+        const card = document.createElement('div');
+
+        card.className = 'p-5';
+
+        card.innerHTML = `
+
+            <div class="flex items-start justify-between gap-3">
+
+                <div class="flex items-center gap-3 min-w-0">
+
+                    <div class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center shrink-0">
+                        <i class='bx bx-user text-emerald-600 text-lg'></i>
+                    </div>
+
+                    <div class="min-w-0">
+
+                        <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
+                            ${escapeHTML(withdrawal.userName || 'Unknown user')}
+                        </p>
+
+                        <p class="text-[11px] text-slate-400 truncate">
+                            ${escapeHTML(withdrawal.email || withdrawal.userId || '—')}
+                        </p>
+
+                    </div>
+
+                </div>
+
+                ${statusMarkup(withdrawal.status)}
+
+            </div>
+
+
+            <div class="grid grid-cols-2 gap-4 mt-5">
+
+                <div>
+                    <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                        Amount
+                    </p>
+
+                    <p class="font-sora font-semibold text-slate-800 dark:text-slate-100 mt-1">
+                        ${formatUSD(withdrawal.amount)}
+                    </p>
+
+                    <p class="text-[10px] text-slate-400">
+                        ${formatNGN(Number(withdrawal.amount || 0) * 1000)}
+                    </p>
+                </div>
+
+                <div>
+                    <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                        Withdrawal ID
+                    </p>
+
+                    <p class="text-xs font-medium text-emerald-600 mt-1 break-all">
+                        ${escapeHTML(withdrawal.id || '—')}
+                    </p>
+                </div>
+
+                <div>
+                    <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                        Bank
+                    </p>
+
+                    <p class="text-xs font-medium text-slate-700 dark:text-slate-200 mt-1">
+                        ${escapeHTML(withdrawal.bankName || '—')}
+                    </p>
+
+                    <p class="text-[10px] text-slate-400">
+                        ${escapeHTML(withdrawal.accountNumber || '—')}
+                    </p>
+                </div>
+
+                <div>
+                    <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                        Requested
+                    </p>
+
+                    <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                        ${formatDate(withdrawal.createdAt)}
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="flex items-center justify-between gap-3 mt-5 pt-4 border-t border-slate-100 dark:border-slate-800">
+
+                <div class="flex items-center gap-3">
+
+                    ${validationMarkup(withdrawal.validated)}
+
+                    ${epinMarkup(withdrawal.epinStatus)}
+
+                </div>
+
+                <button
+                    onclick="openWithdrawalDetails('${escapeHTML(withdrawal.id)}')"
+                    class="px-3 py-2 rounded-lg bg-[#071A2B] text-white text-xs font-medium">
+                    View
+                </button>
+
+            </div>
+        `;
+
+        mobileCards.appendChild(card);
+    }
+
+
+    // ============================================================
+    // DETAILS MODAL
+    // ============================================================
+
+    window.openWithdrawalDetails = function(id) {
+
+        const withdrawal = withdrawals.find(item => item.id === id);
+
+        if (!withdrawal) {
+            showToast(
+                'Withdrawal not found',
+                'The requested withdrawal could not be found.'
+            );
+            return;
+        }
+
+        selectedWithdrawal = withdrawal;
+
+        document.getElementById('modalWithdrawalId').textContent =
+            withdrawal.id || '—';
+
+        document.getElementById('modalAmount').textContent =
+            formatUSD(withdrawal.amount);
+
+        document.getElementById('modalStatus').innerHTML =
+            statusMarkup(withdrawal.status);
+
+        document.getElementById('modalValidation').innerHTML =
+            withdrawal.validated === true
+                ? '<span class="text-emerald-600">Validated</span>'
+                : '<span class="text-slate-400">Not validated</span>';
+
+        document.getElementById('modalEpin').textContent =
+            withdrawal.epinStatus || 'None';
+
+        document.getElementById('modalUserName').textContent =
+            withdrawal.userName || '—';
+
+        document.getElementById('modalUserEmail').textContent =
+            withdrawal.email || '—';
+
+        document.getElementById('modalUserId').textContent =
+            withdrawal.userId || '—';
+
+        document.getElementById('modalBalance').textContent =
+            formatUSD(withdrawal.balance);
+
+        document.getElementById('modalBankName').textContent =
+            withdrawal.bankName || '—';
+
+        document.getElementById('modalAccountName').textContent =
+            withdrawal.accountName || '—';
+
+        document.getElementById('modalAccountNumber').textContent =
+            withdrawal.accountNumber || '—';
+
+        document.getElementById('modalRequestedAt').textContent =
+            formatDate(withdrawal.createdAt);
+
+        renderEligibility(withdrawal);
+        renderActivity(withdrawal);
+        renderModalActions(withdrawal);
+
+        detailsModal.classList.remove('hidden');
+        detailsModal.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
+    };
+
+
+    function closeDetailsModal() {
+
+        detailsModal.classList.add('hidden');
+        detailsModal.classList.remove('flex');
+
+        document.body.classList.remove('overflow-hidden');
+
+        selectedWithdrawal = null;
+    }
+
+
+    closeModal.addEventListener('click', closeDetailsModal);
+
+    detailsModal.addEventListener('click', event => {
+
+        if (event.target === detailsModal) {
+            closeDetailsModal();
+        }
+
+    });
+
+
+    function renderEligibility(withdrawal) {
+
+        const checks = [
+
+            {
+                label: 'Dashboard validated',
+                passed: withdrawal.validated === true
+            },
+
+            {
+                label: 'Minimum withdrawal met',
+                passed: Number(withdrawal.amount || 0) >= 10
+            },
+
+            {
+                label: 'E-pin approved',
+                passed: withdrawal.epinStatus === 'approved'
+            },
+
+            {
+                label: 'Bank details valid',
+                passed: Boolean(
+                    withdrawal.bankName &&
+                    withdrawal.accountName &&
+                    withdrawal.accountNumber
+                )
+            },
+
+            {
+                label: 'Sufficient balance',
+                passed:
+                    Number(withdrawal.balance || 0) >=
+                    Number(withdrawal.amount || 0)
+            }
+
+        ];
+
+        document.getElementById('eligibilityList').innerHTML =
+            checks.map(check => `
+
+                <div class="flex items-center justify-between gap-4">
+
+                    <span class="text-sm text-slate-600 dark:text-slate-300">
+                        ${escapeHTML(check.label)}
+                    </span>
+
+                    ${
+                        check.passed
+                            ? `
+                                <span class="inline-flex items-center gap-1 text-xs font-medium text-emerald-600">
+                                    <i class='bx bx-check-circle'></i>
+                                    Passed
+                                </span>
+                              `
+                            : `
+                                <span class="inline-flex items-center gap-1 text-xs font-medium text-red-500">
+                                    <i class='bx bx-x-circle'></i>
+                                    Failed
+                                </span>
+                              `
+                    }
+
+                </div>
+
+            `).join('');
+    }
+
+
+    function renderActivity(withdrawal) {
+
+        const activity = Array.isArray(withdrawal.activity)
+            ? withdrawal.activity
+            : [];
+
+        if (!activity.length) {
+
+            document.getElementById('activityList').innerHTML = `
+                <div class="text-center py-5 text-sm text-slate-400">
+                    No activity available.
+                </div>
+            `;
+
+            return;
+        }
+
+        document.getElementById('activityList').innerHTML =
+            activity.map(item => `
+
+                <div class="relative pl-7 pb-5 last:pb-0">
+
+                    <div class="absolute left-0 top-1 w-3 h-3 rounded-full bg-emerald-500"></div>
+
+                    <div class="absolute left-[5px] top-4 bottom-0 w-px bg-slate-200 dark:bg-slate-700 last:hidden"></div>
+
+                    <p class="text-sm font-medium text-slate-800 dark:text-slate-100">
+                        ${escapeHTML(item.action || 'Activity')}
+                    </p>
+
+                    <p class="text-xs text-slate-400 mt-1">
+                        ${escapeHTML(item.actor || 'System')}
+                        ·
+                        ${formatDate(item.createdAt)}
+                    </p>
+
+                </div>
+
+            `).join('');
+    }
+
+
+    function renderModalActions(withdrawal) {
+
+        const status = String(withdrawal.status || '').toLowerCase();
+
+        const approveBtn = document.getElementById('approveBtn');
+        const rejectBtn = document.getElementById('rejectBtn');
+        const processingBtn = document.getElementById('processingBtn');
+        const completeBtn = document.getElementById('completeBtn');
+
+        approveBtn.classList.add('hidden');
+        rejectBtn.classList.add('hidden');
+        processingBtn.classList.add('hidden');
+        completeBtn.classList.add('hidden');
+
+        if (status === 'pending') {
+
+            approveBtn.classList.remove('hidden');
+            rejectBtn.classList.remove('hidden');
+
+        }
+
+        if (status === 'processing') {
+
+            completeBtn.classList.remove('hidden');
+
+        }
+
+    }
+
+
+    // ============================================================
+    // ACTIONS
+    // ============================================================
+
+    document.getElementById('approveBtn').addEventListener('click', () => {
+        openConfirmation(
+            'Approve Withdrawal',
+            'This request will be sent to the backend for eligibility verification and approval.',
+            'approve'
+        );
+    });
+
+
+    document.getElementById('rejectBtn').addEventListener('click', () => {
+        openConfirmation(
+            'Reject Withdrawal',
+            'This rejection will be sent to the backend. The withdrawal will not be completed by this page.',
+            'reject'
+        );
+    });
+
+
+    document.getElementById('processingBtn').addEventListener('click', () => {
+        openConfirmation(
+            'Mark as Processing',
+            'This action will be sent to the backend to update the withdrawal processing state.',
+            'processing'
+        );
+    });
+
+
+    document.getElementById('completeBtn').addEventListener('click', () => {
+        openConfirmation(
+            'Complete Withdrawal',
+            'Completion must be confirmed by the backend after the actual transfer has been verified.',
+            'complete'
+        );
+    });
+
+
+    function openConfirmation(title, message, action) {
+
+        pendingAction = action;
+
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmText').textContent = message;
+
+        confirmModal.classList.remove('hidden');
+        confirmModal.classList.add('flex');
+    }
+
+
+    function closeConfirmation() {
+
+        confirmModal.classList.add('hidden');
+        confirmModal.classList.remove('flex');
+
+        pendingAction = null;
+    }
+
+
+    cancelConfirm.addEventListener('click', closeConfirmation);
+
+
+    confirmModal.addEventListener('click', event => {
+
+        if (event.target === confirmModal) {
+            closeConfirmation();
+        }
+
+    });
+
+
+    confirmAction.addEventListener('click', async () => {
+
+        if (!selectedWithdrawal || !pendingAction) {
+            return;
+        }
+
+        const action = pendingAction;
+
+        closeConfirmation();
+
+        await performBackendAction(
+            selectedWithdrawal.id,
+            action
+        );
+    });
+
+
+    // ============================================================
+    // BACKEND ACTION PLACEHOLDER
+    // ============================================================
+
+    async function performBackendAction(withdrawalId, action) {
+
+        /*
+         * Replace this section with your authenticated backend request.
+         *
+         * Example:
+         *
+         * const response = await fetch(
+         *     `/api/admin/withdrawals/${withdrawalId}/${action}`,
+         *     {
+         *         method: 'POST',
+         *         headers: {
+         *             'Content-Type': 'application/json'
+         *         },
+         *         credentials: 'include'
+         *     }
+         * );
+         *
+         * const result = await response.json();
+         *
+         * if (!response.ok) {
+         *     throw new Error(result.message || 'Action failed');
+         * }
+         *
+         * await loadWithdrawals();
+         */
+
+        console.log(
+            'Backend action requested:',
+            {
+                withdrawalId,
+                action
+            }
+        );
+
+        showToast(
+            'Backend action not connected',
+            'The action was not executed. Connect the authenticated backend endpoint first.'
+        );
+    }
+
+
+    // ============================================================
+    // LOAD DATA
+    // ============================================================
+
+    async function loadWithdrawals() {
+
+        setLoading(true);
+        setError(false);
+
+        /*
+         * Production:
+         *
+         * const response = await fetch('/api/admin/withdrawals', {
+         *     credentials: 'include'
+         * });
+         *
+         * if (!response.ok) throw new Error('Failed to load withdrawals');
+         *
+         * const result = await response.json();
+         *
+         * withdrawals.splice(
+         *     0,
+         *     withdrawals.length,
+         *     ...(result.withdrawals || [])
+         * );
+         *
+         * Object.assign(
+         *     withdrawalStats,
+         *     result.stats || {}
+         * );
+         *
+         * document.getElementById('connectionBadge').innerHTML = `
+         *     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+         *     Connected
+         * `;
+         */
+
+        await new Promise(resolve => setTimeout(resolve, 450));
+
+        /*
+         * Demo state intentionally remains empty.
+         * No fake withdrawal data is inserted.
+         */
+
+        filteredWithdrawals = [...withdrawals];
+
+        renderStats();
+        renderWithdrawals();
+
+        setLoading(false);
+
+        document.getElementById('connectionBadge').innerHTML = `
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+            Backend pending
+        `;
+    }
+
+
+    function setLoading(isLoading) {
+
+        if (isLoading) {
+
+            loadingState.classList.remove('hidden');
+
+            emptyState.classList.add('hidden');
+            desktopTable.classList.add('hidden');
+            mobileCards.classList.add('hidden');
+            pagination.classList.add('hidden');
+
+            return;
+        }
+
+        loadingState.classList.add('hidden');
+    }
+
+
+    function setError(hasError, message = '') {
+
+        if (hasError) {
+
+            errorState.classList.remove('hidden');
+
+            document.getElementById('errorMessage').textContent =
+                message || 'Something went wrong.';
+
+            emptyState.classList.add('hidden');
+            desktopTable.classList.add('hidden');
+            mobileCards.classList.add('hidden');
+            pagination.classList.add('hidden');
+
+        } else {
+
+            errorState.classList.add('hidden');
+
+        }
+    }
+
+
+    // ============================================================
+    // REFRESH
+    // ============================================================
+
+    async function refreshWithdrawals() {
+
+        refreshIcon.classList.add('animate-spin');
+        refreshBtn.disabled = true;
+
+        try {
+
+            await loadWithdrawals();
+
+        } catch (error) {
+
+            console.error(error);
+
+            setError(
+                true,
+                error.message || 'Unable to load withdrawal requests.'
+            );
+
+        } finally {
+
+            refreshIcon.classList.remove('animate-spin');
+            refreshBtn.disabled = false;
+        }
+    }
+
+
+    refreshBtn.addEventListener('click', refreshWithdrawals);
+    document.getElementById('retryBtn').addEventListener('click', refreshWithdrawals);
+
+
+    // ============================================================
+    // FILTER EVENTS
+    // ============================================================
+
+    applyFilters.addEventListener('click', applyCurrentFilters);
+
+
+    clearFilters.addEventListener('click', () => {
+
+        searchInput.value = '';
+        statusFilter.value = '';
+        validationFilter.value = '';
+        epinFilter.value = '';
+        dateFilter.value = '';
+
+        applyCurrentFilters();
+    });
+
+
+    searchInput.addEventListener('keydown', event => {
+
+        if (event.key === 'Enter') {
+            applyCurrentFilters();
+        }
+
+    });
+
+
+    // ============================================================
+    // PAGINATION
+    // ============================================================
+
+    document.getElementById('previousPage').addEventListener('click', () => {
+
+        if (currentPage > 1) {
+
+            currentPage--;
+
+            renderWithdrawals();
+        }
+
+    });
+
+
+    document.getElementById('nextPage').addEventListener('click', () => {
+
+        const totalPages =
+            Math.ceil(filteredWithdrawals.length / pageSize);
+
+        if (currentPage < totalPages) {
+
+            currentPage++;
+
+            renderWithdrawals();
+        }
+
+    });
+
+
+    // ============================================================
+    // TOAST
+    // ============================================================
+
+    let toastTimeout;
+
+    function showToast(title, message) {
+
+        document.getElementById('toastTitle').textContent = title;
+        document.getElementById('toastMessage').textContent = message;
+
+        toast.classList.add('show');
+
+        clearTimeout(toastTimeout);
+
+        toastTimeout = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 4000);
+    }
+
+
+    // ============================================================
+    // LOGOUT
+    // ============================================================
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+
+        /*
+         * Production:
+         *
+         * Replace this with Firebase Auth signOut()
+         * or your authenticated backend logout flow.
+         *
+         * Example:
+         *
+         * await signOut(auth);
+         * window.location.href = 'admin-login.html';
+         */
+
+        showToast(
+            'Logout not connected',
+            'Connect Firebase Authentication before enabling administrator logout.'
+        );
+    });
+
+
+    // ============================================================
+    // AUTHENTICATION PLACEHOLDER
+    // ============================================================
+
+    /*
+     * Production admin protection:
+     *
+     * 1. Firebase Authentication checks whether an admin is signed in.
+     * 2. Get the authenticated user's UID.
+     * 3. Read admins/{uid}.
+     * 4. Require:
+     *
+     *      role === "admin"
+     *      active === true
+     *
+     * 5. Only then render/load administrative data.
+     *
+     * Never trust:
+     * - localStorage role values
+     * - URL parameters
+     * - hidden HTML fields
+     * - client-side admin flags
+     */
+
+
+    // ============================================================
+    // INITIALIZE
+    // ============================================================
+
+    initializeTheme();
+
+    renderStats();
+
+    filteredWithdrawals = [...withdrawals];
+
+    renderWithdrawals();
+
+    loadWithdrawals();
+</script>
+
+</body>
+</html>

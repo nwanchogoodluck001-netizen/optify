@@ -1,0 +1,2644 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Referral | Optify</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Boxicons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        sora: ['Sora', 'sans-serif']
+                    },
+                    colors: {
+                        optify: {
+                            navy: '#071A2B',
+                            green: '#12B76A',
+                            teal: '#0EA5A4',
+                            soft: '#E8F8F0',
+                            bg: '#F7F9FC',
+                            text: '#101828',
+                            muted: '#667085',
+                            border: '#E4E7EC',
+                            warning: '#F79009'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --navy: #071A2B;
+            --green: #12B76A;
+            --teal: #0EA5A4;
+            --soft-green: #E8F8F0;
+            --background: #F7F9FC;
+            --white: #FFFFFF;
+            --text: #101828;
+            --muted: #667085;
+            --border: #E4E7EC;
+            --warning: #F79009;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            transition: background .25s ease, color .25s ease;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        button,
+        a,
+        input {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .sidebar {
+            width: 260px;
+        }
+
+        .main-content {
+            margin-left: 260px;
+        }
+
+        .gradient-card {
+            background: linear-gradient(135deg, #071A2B 0%, #0B3B4A 55%, #12B76A 145%);
+        }
+
+        .gradient-soft {
+            background: linear-gradient(135deg,
+                    rgba(18, 183, 106, .12),
+                    rgba(14, 165, 164, .08));
+        }
+
+        .sidebar-link {
+            transition: all .2s ease;
+        }
+
+        .sidebar-link:hover {
+            transform: translateX(2px);
+        }
+
+        .mobile-nav {
+            display: none;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d0d5dd;
+            border-radius: 20px;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #344054;
+        }
+
+        .toast {
+            transform: translateY(120px);
+            opacity: 0;
+            pointer-events: none;
+            transition: .3s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 1023px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+                z-index: 60;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-nav {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 639px) {
+            .mobile-bottom-space {
+                padding-bottom: 85px;
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+
+    <!-- Sidebar Overlay -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-950/50 backdrop-blur-sm z-50 hidden lg:hidden"></div>
+
+
+    <!-- ================= SIDEBAR ================= -->
+    <aside id="sidebar" class="sidebar fixed top-0 left-0 h-screen bg-[#071A2B] text-white flex flex-col">
+
+        <!-- Logo -->
+        <div class="h-20 px-6 flex items-center border-b border-white/10">
+
+            <a href="dashboard.html" class="flex items-center gap-3">
+
+                <div class="w-10 h-10 rounded-xl bg-[#12B76A] flex items-center justify-center">
+                    <i class='bx bx-line-chart text-2xl'></i>
+                </div>
+
+                <div>
+                    <div class="font-sora text-xl font-bold tracking-tight">
+                        OPTIFY
+                    </div>
+
+                    <div class="text-[10px] text-white/50 uppercase tracking-[.2em]">
+                        Rewards Platform
+                    </div>
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-4 py-6 overflow-y-auto custom-scrollbar">
+
+            <p class="text-[10px] uppercase tracking-[.18em] text-white/35 font-semibold px-3 mb-3">
+                Main Menu
+            </p>
+
+            <div class="space-y-1">
+
+                <a href="dashboard.html"
+                    class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-white/65 hover:text-white hover:bg-white/5">
+                    <i class='bx bx-grid-alt text-xl'></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="tasks.html"
+                    class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-white/65 hover:text-white hover:bg-white/5">
+                    <i class='bx bx-task text-xl'></i>
+                    <span>Tasks</span>
+                </a>
+
+                <a href="streak.html"
+                    class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-white/65 hover:text-white hover:bg-white/5">
+                    <i class='bx bx-calendar-check text-xl'></i>
+                    <span>Streak</span>
+                </a>
+
+                <a href="mystery-box.html"
+                    class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-white/65 hover:text-white hover:bg-white/5">
+                    <i class='bx bx-gift text-xl'></i>
+                    <span>Mystery Box</span>
+                </a>
+
+                <a href="quiz.html"
+                    class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-white/65 hover:text-white hover:bg-white/5">
+                    <i class='bx bx-help-circle text-xl'></i>
+                    <span>Quiz</span>
+                </a>
+
+                <!-- Active -->
+                <a href="referral.html"
+                    class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm bg-[#12B76A] text-white shadow-lg shadow-emerald-950/20">
+                    <i class='bx bx-user-plus text-xl'></i>
+                    <span class="font-medium">Referral</span>
+                </a>
+
+                <a href="epin.html" class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-white/65 hover:text-white hover:bg-white/5">
+                    <i class='bx bx-key'></i>
+                    <span>Withdrawal E-pin</span>
+                </a>
+
+                <a href="withdrawal.html"
+                    class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-white/65 hover:text-white hover:bg-white/5">
+                    <i class='bx bx-money-withdraw text-xl'></i>
+                    <span>Withdrawal</span>
+                </a>
+
+                <a href="transactions.html"
+                    class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-white/65 hover:text-white hover:bg-white/5">
+                    <i class='bx bx-transfer-alt text-xl'></i>
+                    <span>Transactions</span>
+                </a>
+
+            </div>
+
+
+            <p class="text-[10px] uppercase tracking-[.18em] text-white/35 font-semibold px-3 mb-3 mt-8">
+                Account
+            </p>
+
+            <div class="space-y-1">
+
+                <a href="settings.html"
+                    class="sidebar-link flex items-center gap-3 px-3 py-3 rounded-xl text-sm text-white/65 hover:text-white hover:bg-white/5">
+                    <i class='bx bx-cog text-xl'></i>
+                    <span>Settings</span>
+                </a>
+
+            </div>
+
+        </nav>
+
+
+        <!-- Sidebar User -->
+        <div class="p-4 border-t border-white/10">
+
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5">
+
+                <div id="sidebarAvatar"
+                    class="w-10 h-10 rounded-full bg-[#12B76A]/20 border border-[#12B76A]/30 flex items-center justify-center text-[#6EE7B7] font-semibold">
+                    D
+                </div>
+
+                <div class="min-w-0 flex-1">
+
+                    <p id="sidebarName" class="text-sm font-semibold truncate">
+                        Member
+                    </p>
+
+                    <p class="text-xs text-white/40 truncate">
+                        Optify Member
+                    </p>
+
+                </div>
+
+                <button onclick="logout()" title="Logout"
+                    class="w-8 h-8 rounded-lg hover:bg-white/10 flex items-center justify-center text-white/50 hover:text-white">
+
+                    <i class='bx bx-log-out text-lg'></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+    <main class="main-content min-h-screen mobile-bottom-space">
+
+        <!-- Topbar -->
+        <header
+            class="h-20 bg-white/90 dark:bg-[#0B1724]/95 backdrop-blur-md border-b border-[#E4E7EC] dark:border-white/10 sticky top-0 z-40">
+
+            <div class="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+
+                <div class="flex items-center gap-3">
+
+                    <button id="menuBtn"
+                        class="lg:hidden w-10 h-10 rounded-xl bg-[#F7F9FC] dark:bg-white/5 flex items-center justify-center dark:text-white">
+
+                        <i class='bx bx-menu text-xl'></i>
+
+                    </button>
+
+                    <div>
+
+                        <p class="text-xs text-[#667085] dark:text-slate-400">
+                            Referral Center
+                        </p>
+
+                        <div class="flex items-center gap-2">
+
+                            <h1 class="font-sora text-base sm:text-lg font-semibold dark:text-white">
+                                Refer & Earn
+                            </h1>
+
+                            <span
+                                class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#E8F8F0] dark:bg-[#12B76A]/10 text-[#087443] dark:text-[#6EE7B7] text-[10px] font-semibold">
+
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#12B76A]"></span>
+
+                                Dashboard Validated
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="flex items-center gap-2 sm:gap-3">
+
+                    <!-- Theme -->
+                    <button id="themeToggle"
+                        class="w-10 h-10 rounded-xl border border-[#E4E7EC] dark:border-white/10 bg-white dark:bg-white/5 flex items-center justify-center text-[#667085] dark:text-slate-300 hover:bg-[#F7F9FC] dark:hover:bg-white/10 transition">
+
+                        <i id="themeIcon" class='bx bx-moon text-xl'></i>
+
+                    </button>
+
+
+                    <!-- Notification -->
+                    <button
+                        class="relative w-10 h-10 rounded-xl border border-[#E4E7EC] dark:border-white/10 bg-white dark:bg-white/5 flex items-center justify-center text-[#667085] dark:text-slate-300">
+
+                        <i class='bx bx-bell text-xl'></i>
+
+                        <span
+                            class="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#12B76A] border-2 border-white dark:border-[#0B1724]">
+                        </span>
+
+                    </button>
+
+
+                    <!-- Profile -->
+                    <button
+                        class="hidden sm:flex items-center gap-2 pl-2 border-l border-[#E4E7EC] dark:border-white/10 ml-1">
+
+                        <div id="headerAvatar"
+                            class="w-9 h-9 rounded-full bg-[#E8F8F0] dark:bg-[#12B76A]/10 text-[#12B76A] flex items-center justify-center font-semibold">
+                            D
+                        </div>
+
+                        <div class="text-left">
+
+                            <p id="headerName" class="text-xs font-semibold dark:text-white">
+                                Member
+                            </p>
+
+                            <p class="text-[10px] text-[#667085] dark:text-slate-500">
+                                Validated Member
+                            </p>
+
+                        </div>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- Content -->
+        <div class="max-w-[1450px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+
+            <!-- ================= VALIDATED STATUS ================= -->
+            <section class="mb-6">
+
+                <div
+                    class="gradient-soft border border-[#12B76A]/20 rounded-2xl px-4 py-3.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+                    <div class="flex items-center gap-3">
+
+                        <div
+                            class="w-10 h-10 shrink-0 rounded-xl bg-[#12B76A] text-white flex items-center justify-center">
+
+                            <i class='bx bx-check-shield text-xl'></i>
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-sm font-semibold dark:text-white">
+                                Dashboard Validation Active
+                            </p>
+
+                            <p class="text-xs text-[#667085] dark:text-slate-400 mt-0.5">
+                                Your referral rewards are now available.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <span
+                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#087443] dark:text-[#6EE7B7] bg-white dark:bg-white/5 border border-[#12B76A]/20 px-3 py-1.5 rounded-lg w-fit">
+
+                        <i class='bx bx-check-circle'></i>
+                        Active
+
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= PAGE HEADING ================= -->
+            <section class="mb-6">
+
+                <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+
+                    <div>
+
+                        <div
+                            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E8F8F0] dark:bg-[#12B76A]/10 text-[#12B76A] text-xs font-semibold mb-3">
+
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#12B76A]"></span>
+
+                            Referral Program
+
+                        </div>
+
+                        <h2 class="font-sora text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight dark:text-white">
+
+                            Invite Friends & Earn
+                            <span class="text-[#12B76A]">$5</span>
+
+                        </h2>
+
+                        <p class="text-sm sm:text-base text-[#667085] dark:text-slate-400 mt-2 max-w-2xl">
+
+                            Invite friends to Optify and earn $5 when an eligible referral
+                            successfully validates their dashboard.
+
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="flex items-center gap-2 text-xs font-medium text-[#667085] dark:text-slate-400 bg-white dark:bg-white/5 border border-[#E4E7EC] dark:border-white/10 px-3 py-2 rounded-xl w-fit">
+
+                        <i class='bx bx-dollar-circle text-lg text-[#12B76A]'></i>
+
+                        <span>
+                            $1 = ₦1,000
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= HERO ================= -->
+            <section class="grid lg:grid-cols-[1.5fr_1fr] gap-5 mb-6">
+
+                <!-- Main Referral Hero -->
+                <div class="gradient-card rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden">
+
+                    <div class="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-[#12B76A]/20 blur-2xl">
+                    </div>
+
+                    <div class="absolute -bottom-24 right-20 w-52 h-52 rounded-full bg-[#0EA5A4]/20 blur-2xl">
+                    </div>
+
+                    <div class="relative z-10">
+
+                        <div class="flex items-center justify-between gap-4 mb-7">
+
+                            <div>
+
+                                <div
+                                    class="w-12 h-12 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center mb-4">
+
+                                    <i class='bx bx-user-plus text-2xl text-[#6EE7B7]'></i>
+
+                                </div>
+
+                                <p class="text-white/60 text-sm mb-1">
+                                    Referral Reward
+                                </p>
+
+                                <h3 class="font-sora text-3xl sm:text-4xl font-bold">
+                                    $5.00
+                                </h3>
+
+                                <p class="text-white/50 text-sm mt-1">
+                                    ≈ ₦5,000 per eligible referral
+                                </p>
+
+                            </div>
+
+
+                            <div class="hidden sm:flex">
+
+                                <div
+                                    class="w-24 h-24 rounded-full border border-white/10 bg-white/5 flex items-center justify-center">
+
+                                    <i class='bx bx-gift text-5xl text-[#6EE7B7]'></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="border-t border-white/10 pt-5">
+
+                            <p class="text-sm text-white/70 leading-6 max-w-xl">
+
+                                Share your personal referral link. When someone joins
+                                through your link and successfully validates their dashboard,
+                                the referral can become eligible for the $5 reward.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Referral Earnings -->
+                <div
+                    class="bg-white dark:bg-[#0B1724] border border-[#E4E7EC] dark:border-white/10 rounded-3xl p-6 flex flex-col justify-between">
+
+                    <div class="flex items-start justify-between">
+
+                        <div>
+
+                            <p class="text-sm text-[#667085] dark:text-slate-400">
+                                Referral Earnings
+                            </p>
+
+                            <h3 id="referralEarnings" class="font-sora text-3xl font-bold mt-2 dark:text-white">
+                                $0.00
+                            </h3>
+
+                            <p id="referralEarningsNaira" class="text-sm text-[#667085] dark:text-slate-500 mt-1">
+                                ≈ ₦0
+                            </p>
+
+                        </div>
+
+                        <div
+                            class="w-12 h-12 rounded-2xl bg-[#E8F8F0] dark:bg-[#12B76A]/10 text-[#12B76A] flex items-center justify-center">
+
+                            <i class='bx bx-wallet text-2xl'></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mt-8">
+
+                        <div class="flex justify-between text-xs mb-2">
+
+                            <span class="text-[#667085] dark:text-slate-400">
+                                Rewarded referrals
+                            </span>
+
+                            <span id="rewardedCount" class="font-semibold dark:text-white">
+                                0
+                            </span>
+
+                        </div>
+
+
+                        <div class="h-2 bg-[#F2F4F7] dark:bg-white/5 rounded-full overflow-hidden">
+
+                            <div id="rewardProgress"
+                                class="h-full w-0 bg-[#12B76A] rounded-full transition-all duration-500">
+                            </div>
+
+                        </div>
+
+
+                        <p class="text-xs text-[#98A2B3] mt-3">
+
+                            Referral rewards are credited only when eligibility requirements
+                            are met.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= REFERRAL LINK ================= -->
+            <section
+                class="bg-white dark:bg-[#0B1724] border border-[#E4E7EC] dark:border-white/10 rounded-3xl p-5 sm:p-7 mb-6">
+
+                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+
+                    <div>
+
+                        <div class="flex items-center gap-2 mb-2">
+
+                            <div
+                                class="w-9 h-9 rounded-xl bg-[#E8F8F0] dark:bg-[#12B76A]/10 text-[#12B76A] flex items-center justify-center">
+
+                                <i class='bx bx-link-alt text-xl'></i>
+
+                            </div>
+
+                            <h3 class="font-sora font-semibold text-lg dark:text-white">
+                                Your Referral Link
+                            </h3>
+
+                        </div>
+
+                        <p class="text-sm text-[#667085] dark:text-slate-400">
+
+                            Share this link with friends to track eligible referrals.
+
+                        </p>
+
+                    </div>
+
+
+                    <span
+                        class="text-xs font-medium text-[#12B76A] bg-[#E8F8F0] dark:bg-[#12B76A]/10 px-3 py-1.5 rounded-full w-fit">
+
+                        Personal Link
+
+                    </span>
+
+                </div>
+
+
+                <!-- Link Input -->
+                <div class="flex flex-col sm:flex-row gap-3">
+
+                    <div
+                        class="flex-1 flex items-center min-w-0 bg-[#F7F9FC] dark:bg-white/5 border border-[#E4E7EC] dark:border-white/10 rounded-2xl px-4">
+
+                        <i class='bx bx-link text-xl text-[#98A2B3] mr-3'></i>
+
+                        <input id="referralLink" value="" readonly placeholder="Loading referral link..."
+                            class="w-full py-4 bg-transparent outline-none text-sm text-[#344054] dark:text-slate-300 min-w-0">
+
+                    </div>
+
+
+                    <button id="copyLinkBtn"
+                        class="sm:w-32 px-5 py-4 rounded-2xl bg-[#071A2B] hover:bg-[#0B3046] dark:bg-[#12B76A] dark:hover:bg-[#0EA05C] text-white font-semibold text-sm flex items-center justify-center gap-2 transition">
+
+                        <i class='bx bx-copy'></i>
+                        <span>Copy Link</span>
+
+                    </button>
+
+
+                    <button id="shareBtn"
+                        class="sm:w-32 px-5 py-4 rounded-2xl border border-[#E4E7EC] dark:border-white/10 hover:bg-[#F7F9FC] dark:hover:bg-white/5 text-[#344054] dark:text-slate-200 font-semibold text-sm flex items-center justify-center gap-2 transition">
+
+                        <i class='bx bx-share-alt'></i>
+                        <span>Share</span>
+
+                    </button>
+
+                </div>
+
+
+                <!-- Referral Code -->
+                <div class="mt-5 pt-5 border-t border-[#E4E7EC] dark:border-white/10">
+
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+                        <div>
+
+                            <p class="text-xs text-[#667085] dark:text-slate-500 mb-1">
+                                Referral Code
+                            </p>
+
+                            <p id="referralCode" class="font-sora font-bold text-lg tracking-wider dark:text-white">
+                                —
+                            </p>
+
+                        </div>
+
+
+                        <button id="copyCodeBtn"
+                            class="w-fit px-4 py-2.5 rounded-xl border border-[#E4E7EC] dark:border-white/10 text-sm font-medium text-[#344054] dark:text-slate-300 hover:bg-[#F7F9FC] dark:hover:bg-white/5 transition flex items-center gap-2">
+
+                            <i class='bx bx-copy'></i>
+                            Copy Code
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= STATS ================= -->
+            <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+
+                <!-- Total -->
+                <div
+                    class="bg-white dark:bg-[#0B1724] border border-[#E4E7EC] dark:border-white/10 rounded-2xl p-4 sm:p-5">
+
+                    <div class="flex items-center justify-between gap-2">
+
+                        <div
+                            class="w-10 h-10 rounded-xl bg-[#E8F8F0] dark:bg-[#12B76A]/10 text-[#12B76A] flex items-center justify-center">
+
+                            <i class='bx bx-group text-xl'></i>
+
+                        </div>
+
+                        <span class="text-xs text-[#98A2B3]">
+                            Total
+                        </span>
+
+                    </div>
+
+                    <p id="totalReferrals" class="font-sora text-2xl font-bold mt-4 dark:text-white">
+                        0
+                    </p>
+
+                    <p class="text-xs text-[#667085] dark:text-slate-500 mt-1">
+                        Total Referrals
+                    </p>
+
+                </div>
+
+
+                <!-- Eligible -->
+                <div
+                    class="bg-white dark:bg-[#0B1724] border border-[#E4E7EC] dark:border-white/10 rounded-2xl p-4 sm:p-5">
+
+                    <div class="flex items-center justify-between gap-2">
+
+                        <div
+                            class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+
+                            <i class='bx bx-check-shield text-xl'></i>
+
+                        </div>
+
+                        <span class="text-xs text-[#98A2B3]">
+                            Eligible
+                        </span>
+
+                    </div>
+
+                    <p id="validatedReferrals" class="font-sora text-2xl font-bold mt-4 dark:text-white">
+                        0
+                    </p>
+
+                    <p class="text-xs text-[#667085] dark:text-slate-500 mt-1">
+                        Validated Referrals
+                    </p>
+
+                </div>
+
+
+                <!-- Pending -->
+                <div
+                    class="bg-white dark:bg-[#0B1724] border border-[#E4E7EC] dark:border-white/10 rounded-2xl p-4 sm:p-5">
+
+                    <div class="flex items-center justify-between gap-2">
+
+                        <div
+                            class="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-500/10 text-[#F79009] flex items-center justify-center">
+
+                            <i class='bx bx-time-five text-xl'></i>
+
+                        </div>
+
+                        <span class="text-xs text-[#98A2B3]">
+                            Pending
+                        </span>
+
+                    </div>
+
+                    <p id="pendingReferrals" class="font-sora text-2xl font-bold mt-4 dark:text-white">
+                        0
+                    </p>
+
+                    <p class="text-xs text-[#667085] dark:text-slate-500 mt-1">
+                        Pending Referrals
+                    </p>
+
+                </div>
+
+
+                <!-- Earnings -->
+                <div
+                    class="bg-white dark:bg-[#0B1724] border border-[#E4E7EC] dark:border-white/10 rounded-2xl p-4 sm:p-5">
+
+                    <div class="flex items-center justify-between gap-2">
+
+                        <div
+                            class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+
+                            <i class='bx bx-dollar-circle text-xl'></i>
+
+                        </div>
+
+                        <span class="text-xs text-[#98A2B3]">
+                            Earned
+                        </span>
+
+                    </div>
+
+                    <p id="statsEarnings" class="font-sora text-2xl font-bold mt-4 dark:text-white">
+                        $0.00
+                    </p>
+
+                    <p class="text-xs text-[#667085] dark:text-slate-500 mt-1">
+                        Referral Earnings
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= HOW IT WORKS ================= -->
+            <section
+                class="bg-white dark:bg-[#0B1724] border border-[#E4E7EC] dark:border-white/10 rounded-3xl p-5 sm:p-7 mb-6">
+
+                <div class="mb-6">
+
+                    <p class="text-xs font-semibold uppercase tracking-[.15em] text-[#12B76A] mb-2">
+                        Simple Process
+                    </p>
+
+                    <h3 class="font-sora text-xl sm:text-2xl font-bold dark:text-white">
+                        How the Referral Program Works
+                    </h3>
+
+                    <p class="text-sm text-[#667085] dark:text-slate-400 mt-2">
+                        Your referral reward follows a simple four-step process.
+                    </p>
+
+                </div>
+
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                    <!-- Step 1 -->
+                    <div
+                        class="p-5 rounded-2xl bg-[#F7F9FC] dark:bg-white/[.03] border border-[#E4E7EC] dark:border-white/10">
+
+                        <div class="w-11 h-11 rounded-xl bg-[#071A2B] text-white flex items-center justify-center mb-4">
+
+                            <i class='bx bx-share-alt text-xl'></i>
+
+                        </div>
+
+                        <span class="text-xs font-semibold text-[#12B76A]">
+                            STEP 01
+                        </span>
+
+                        <h4 class="font-sora font-semibold mt-2 dark:text-white">
+                            Share
+                        </h4>
+
+                        <p class="text-sm text-[#667085] dark:text-slate-400 mt-2 leading-6">
+
+                            Share your personal Optify referral link with someone you know.
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- Step 2 -->
+                    <div
+                        class="p-5 rounded-2xl bg-[#F7F9FC] dark:bg-white/[.03] border border-[#E4E7EC] dark:border-white/10">
+
+                        <div class="w-11 h-11 rounded-xl bg-[#0EA5A4] text-white flex items-center justify-center mb-4">
+
+                            <i class='bx bx-user-plus text-xl'></i>
+
+                        </div>
+
+                        <span class="text-xs font-semibold text-[#12B76A]">
+                            STEP 02
+                        </span>
+
+                        <h4 class="font-sora font-semibold mt-2 dark:text-white">
+                            Join
+                        </h4>
+
+                        <p class="text-sm text-[#667085] dark:text-slate-400 mt-2 leading-6">
+
+                            Your friend registers through your referral link.
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- Step 3 -->
+                    <div
+                        class="p-5 rounded-2xl bg-[#F7F9FC] dark:bg-white/[.03] border border-[#E4E7EC] dark:border-white/10">
+
+                        <div class="w-11 h-11 rounded-xl bg-[#12B76A] text-white flex items-center justify-center mb-4">
+
+                            <i class='bx bx-check-circle text-xl'></i>
+
+                        </div>
+
+                        <span class="text-xs font-semibold text-[#12B76A]">
+                            STEP 03
+                        </span>
+
+                        <h4 class="font-sora font-semibold mt-2 dark:text-white">
+                            Validate
+                        </h4>
+
+                        <p class="text-sm text-[#667085] dark:text-slate-400 mt-2 leading-6">
+
+                            Your referred user completes their dashboard validation.
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- Step 4 -->
+                    <div
+                        class="p-5 rounded-2xl bg-[#F7F9FC] dark:bg-white/[.03] border border-[#E4E7EC] dark:border-white/10">
+
+                        <div class="w-11 h-11 rounded-xl bg-[#071A2B] text-white flex items-center justify-center mb-4">
+
+                            <i class='bx bx-dollar text-xl'></i>
+
+                        </div>
+
+                        <span class="text-xs font-semibold text-[#12B76A]">
+                            STEP 04
+                        </span>
+
+                        <h4 class="font-sora font-semibold mt-2 dark:text-white">
+                            Earn
+                        </h4>
+
+                        <p class="text-sm text-[#667085] dark:text-slate-400 mt-2 leading-6">
+
+                            Once eligible, the $5 referral reward can be credited to your account.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= IMPORTANT RULE ================= -->
+            <section class="gradient-soft border border-[#12B76A]/20 rounded-3xl p-5 sm:p-6 mb-6">
+
+                <div class="flex flex-col sm:flex-row gap-4">
+
+                    <div
+                        class="w-12 h-12 shrink-0 rounded-2xl bg-[#12B76A] text-white flex items-center justify-center">
+
+                        <i class='bx bx-info-circle text-2xl'></i>
+
+                    </div>
+
+                    <div>
+
+                        <h3 class="font-sora font-semibold text-lg dark:text-white">
+                            Important Referral Rule
+                        </h3>
+
+                        <p class="text-sm text-[#667085] dark:text-slate-400 mt-2 leading-6 max-w-4xl">
+
+                            A registration by itself does not qualify as a rewarded referral.
+                            The referred user must successfully complete the required dashboard
+                            validation before the referral can become eligible for the $5 reward.
+
+                        </p>
+
+                        <div class="flex flex-wrap gap-2 mt-4">
+
+                            <span
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-white/5 border border-[#E4E7EC] dark:border-white/10 text-xs font-medium dark:text-slate-300">
+
+                                <i class='bx bx-user-plus text-[#12B76A]'></i>
+                                Registration
+
+                            </span>
+
+                            <span class="text-[#98A2B3] self-center">
+                                →
+                            </span>
+
+                            <span
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-white/5 border border-[#E4E7EC] dark:border-white/10 text-xs font-medium dark:text-slate-300">
+
+                                <i class='bx bx-check-shield text-[#12B76A]'></i>
+                                Validation
+
+                            </span>
+
+                            <span class="text-[#98A2B3] self-center">
+                                →
+                            </span>
+
+                            <span
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-white/5 border border-[#E4E7EC] dark:border-white/10 text-xs font-medium dark:text-slate-300">
+
+                                <i class='bx bx-dollar-circle text-[#12B76A]'></i>
+                                Eligible Reward
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= REFERRAL TABLE ================= -->
+            <section
+                class="bg-white dark:bg-[#0B1724] border border-[#E4E7EC] dark:border-white/10 rounded-3xl overflow-hidden mb-6">
+
+                <div class="p-5 sm:p-7 border-b border-[#E4E7EC] dark:border-white/10">
+
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+                        <div>
+
+                            <h3 class="font-sora text-xl font-semibold dark:text-white">
+                                Your Referrals
+                            </h3>
+
+                            <p class="text-sm text-[#667085] dark:text-slate-400 mt-1">
+
+                                Track referral registrations and eligibility.
+
+                            </p>
+
+                        </div>
+
+                        <span
+                            class="w-fit text-xs px-3 py-1.5 rounded-full bg-[#F2F4F7] dark:bg-white/5 text-[#667085] dark:text-slate-400">
+
+                            Backend Data
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Empty State -->
+                <div id="referralEmptyState" class="px-5 sm:px-7 py-14 text-center">
+
+                    <div
+                        class="w-16 h-16 mx-auto rounded-2xl bg-[#F7F9FC] dark:bg-white/5 flex items-center justify-center text-[#98A2B3] dark:text-slate-500">
+
+                        <i class='bx bx-group text-3xl'></i>
+
+                    </div>
+
+                    <h4 class="font-sora font-semibold mt-5 dark:text-white">
+                        No referrals yet
+                    </h4>
+
+                    <p class="text-sm text-[#667085] dark:text-slate-400 max-w-md mx-auto mt-2 leading-6">
+
+                        Share your referral link with friends. Referrals will appear here
+                        when they register through your link.
+
+                    </p>
+
+                    <button onclick="copyReferralLink()"
+                        class="mt-5 px-5 py-3 rounded-xl bg-[#12B76A] hover:bg-[#0EA05C] text-white text-sm font-semibold transition">
+
+                        <i class='bx bx-copy mr-1'></i>
+                        Copy Referral Link
+
+                    </button>
+
+                </div>
+
+
+                <!-- Table -->
+                <div id="referralTableWrapper" class="hidden overflow-x-auto">
+
+                    <table class="w-full min-w-[720px]">
+
+                        <thead class="bg-[#F9FAFB] dark:bg-white/[.02]">
+
+                            <tr class="text-left text-xs text-[#667085] dark:text-slate-500">
+
+                                <th class="px-6 py-4 font-semibold">
+                                    Referral
+                                </th>
+
+                                <th class="px-6 py-4 font-semibold">
+                                    Joined
+                                </th>
+
+                                <th class="px-6 py-4 font-semibold">
+                                    Validation
+                                </th>
+
+                                <th class="px-6 py-4 font-semibold">
+                                    Status
+                                </th>
+
+                                <th class="px-6 py-4 font-semibold text-right">
+                                    Reward
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="referralTableBody" class="divide-y divide-[#E4E7EC] dark:divide-white/10">
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= LOWER GRID ================= -->
+            <section class="grid lg:grid-cols-2 gap-5 mb-6">
+
+                <!-- Referral History -->
+                <div
+                    class="bg-white dark:bg-[#0B1724] border border-[#E4E7EC] dark:border-white/10 rounded-3xl p-5 sm:p-7">
+
+                    <div class="flex items-center justify-between mb-6">
+
+                        <div>
+
+                            <h3 class="font-sora text-lg font-semibold dark:text-white">
+                                Referral Earnings History
+                            </h3>
+
+                            <p class="text-xs text-[#667085] dark:text-slate-500 mt-1">
+
+                                Reward transactions generated by eligible referrals.
+
+                            </p>
+
+                        </div>
+
+                        <div
+                            class="w-10 h-10 rounded-xl bg-[#E8F8F0] dark:bg-[#12B76A]/10 text-[#12B76A] flex items-center justify-center">
+
+                            <i class='bx bx-history text-xl'></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="historyEmptyState" class="text-center py-8">
+
+                        <div
+                            class="w-12 h-12 mx-auto rounded-xl bg-[#F7F9FC] dark:bg-white/5 flex items-center justify-center text-[#98A2B3]">
+
+                            <i class='bx bx-receipt text-2xl'></i>
+
+                        </div>
+
+                        <p class="text-sm font-medium mt-4 dark:text-white">
+                            No referral rewards yet
+                        </p>
+
+                        <p class="text-xs text-[#667085] dark:text-slate-500 mt-1 max-w-xs mx-auto">
+
+                            Your eligible referral reward transactions will appear here.
+
+                        </p>
+
+                    </div>
+
+                    <div id="historyList" class="hidden space-y-3"></div>
+
+                </div>
+
+
+                <!-- Referral Protection -->
+                <div
+                    class="bg-white dark:bg-[#0B1724] border border-[#E4E7EC] dark:border-white/10 rounded-3xl p-5 sm:p-7">
+
+                    <div class="flex items-center gap-3 mb-6">
+
+                        <div
+                            class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+
+                            <i class='bx bx-shield-quarter text-xl'></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3 class="font-sora text-lg font-semibold dark:text-white">
+                                Referral Protection
+                            </h3>
+
+                            <p class="text-xs text-[#667085] dark:text-slate-500 mt-1">
+                                Keeping referral attribution reliable.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="space-y-4">
+
+                        <div class="flex gap-3">
+
+                            <i class='bx bx-check-circle text-[#12B76A] text-lg mt-0.5'></i>
+
+                            <div>
+
+                                <p class="text-sm font-medium dark:text-white">
+                                    One referral owner
+                                </p>
+
+                                <p class="text-xs text-[#667085] dark:text-slate-500 mt-1 leading-5">
+
+                                    Referral ownership is determined by the platform backend.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex gap-3">
+
+                            <i class='bx bx-check-circle text-[#12B76A] text-lg mt-0.5'></i>
+
+                            <div>
+
+                                <p class="text-sm font-medium dark:text-white">
+                                    Validation required
+                                </p>
+
+                                <p class="text-xs text-[#667085] dark:text-slate-500 mt-1 leading-5">
+
+                                    Registration alone does not create a rewarded referral.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex gap-3">
+
+                            <i class='bx bx-check-circle text-[#12B76A] text-lg mt-0.5'></i>
+
+                            <div>
+
+                                <p class="text-sm font-medium dark:text-white">
+                                    Duplicate protection
+                                </p>
+
+                                <p class="text-xs text-[#667085] dark:text-slate-500 mt-1 leading-5">
+
+                                    Duplicate or invalid referral rewards should be rejected by
+                                    the backend.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex gap-3">
+
+                            <i class='bx bx-check-circle text-[#12B76A] text-lg mt-0.5'></i>
+
+                            <div>
+
+                                <p class="text-sm font-medium dark:text-white">
+                                    No self-referrals
+                                </p>
+
+                                <p class="text-xs text-[#667085] dark:text-slate-500 mt-1 leading-5">
+
+                                    The system should prevent users from referring themselves.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= RULES ================= -->
+            <section
+                class="bg-white dark:bg-[#0B1724] border border-[#E4E7EC] dark:border-white/10 rounded-3xl p-5 sm:p-7">
+
+                <div class="flex items-start gap-4">
+
+                    <div
+                        class="w-11 h-11 shrink-0 rounded-xl bg-[#F2F4F7] dark:bg-white/5 flex items-center justify-center text-[#667085] dark:text-slate-400">
+
+                        <i class='bx bx-book-open text-xl'></i>
+
+                    </div>
+
+                    <div class="flex-1">
+
+                        <h3 class="font-sora font-semibold dark:text-white">
+                            Referral Rules
+                        </h3>
+
+                        <div class="grid sm:grid-cols-2 gap-x-8 gap-y-3 mt-5">
+
+                            <div class="flex gap-2 text-sm text-[#667085] dark:text-slate-400">
+
+                                <i class='bx bx-check text-[#12B76A] text-lg shrink-0'></i>
+
+                                <span>
+
+                                    Referral reward is
+                                    <strong class="text-[#344054] dark:text-slate-200">
+                                        $5
+                                    </strong>
+                                    per eligible referral.
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="flex gap-2 text-sm text-[#667085] dark:text-slate-400">
+
+                                <i class='bx bx-check text-[#12B76A] text-lg shrink-0'></i>
+
+                                <span>
+                                    Referred users must register through your referral link.
+                                </span>
+
+                            </div>
+
+
+                            <div class="flex gap-2 text-sm text-[#667085] dark:text-slate-400">
+
+                                <i class='bx bx-check text-[#12B76A] text-lg shrink-0'></i>
+
+                                <span>
+                                    The referred user must successfully validate their dashboard.
+                                </span>
+
+                            </div>
+
+
+                            <div class="flex gap-2 text-sm text-[#667085] dark:text-slate-400">
+
+                                <i class='bx bx-check text-[#12B76A] text-lg shrink-0'></i>
+
+                                <span>
+                                    Self-referrals are not eligible.
+                                </span>
+
+                            </div>
+
+
+                            <div class="flex gap-2 text-sm text-[#667085] dark:text-slate-400">
+
+                                <i class='bx bx-check text-[#12B76A] text-lg shrink-0'></i>
+
+                                <span>
+                                    Duplicate or manipulated referrals are not eligible.
+                                </span>
+
+                            </div>
+
+
+                            <div class="flex gap-2 text-sm text-[#667085] dark:text-slate-400">
+
+                                <i class='bx bx-check text-[#12B76A] text-lg shrink-0'></i>
+
+                                <span>
+                                    Referral eligibility and rewards are controlled by the backend.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- ================= MOBILE BOTTOM NAV ================= -->
+    <nav
+        class="mobile-nav fixed bottom-0 left-0 right-0 h-[68px] bg-white/95 dark:bg-[#0B1724]/95 backdrop-blur-xl border-t border-[#E4E7EC] dark:border-white/10 z-50 items-center justify-around px-2">
+
+        <a href="dashboard.html"
+            class="flex flex-col items-center justify-center gap-1 w-16 text-[#98A2B3] dark:text-slate-500">
+
+            <i class='bx bx-grid-alt text-xl'></i>
+            <span class="text-[9px]">Home</span>
+
+        </a>
+
+
+        <a href="tasks.html"
+            class="flex flex-col items-center justify-center gap-1 w-16 text-[#98A2B3] dark:text-slate-500">
+
+            <i class='bx bx-task text-xl'></i>
+            <span class="text-[9px]">Tasks</span>
+
+        </a>
+
+
+        <a href="referral.html" class="flex flex-col items-center justify-center gap-1 w-16 text-[#12B76A]">
+
+            <i class='bx bx-user-plus text-xl'></i>
+            <span class="text-[9px] font-semibold">Referral</span>
+
+        </a>
+
+
+        <a href="withdrawal.html"
+            class="flex flex-col items-center justify-center gap-1 w-16 text-[#98A2B3] dark:text-slate-500">
+
+            <i class='bx bx-money-withdraw text-xl'></i>
+            <span class="text-[9px]">Withdraw</span>
+
+        </a>
+
+
+        <a href="settings.html"
+            class="flex flex-col items-center justify-center gap-1 w-16 text-[#98A2B3] dark:text-slate-500">
+
+            <i class='bx bx-cog text-xl'></i>
+            <span class="text-[9px]">Settings</span>
+
+        </a>
+
+    </nav>
+
+
+    <!-- ================= TOAST ================= -->
+    <div id="toast" class="toast fixed bottom-6 right-5 z-[100] w-[calc(100%-40px)] sm:w-auto max-w-sm">
+
+        <div
+            class="bg-[#071A2B] dark:bg-white text-white dark:text-[#071A2B] rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3">
+
+            <div id="toastIcon"
+                class="w-9 h-9 rounded-xl bg-[#12B76A]/20 text-[#6EE7B7] dark:bg-[#E8F8F0] dark:text-[#12B76A] flex items-center justify-center">
+
+                <i class='bx bx-check text-xl'></i>
+
+            </div>
+
+            <div>
+
+                <p id="toastTitle" class="text-sm font-semibold">
+                    Copied
+                </p>
+
+                <p id="toastMessage" class="text-xs opacity-60 mt-0.5">
+                    Referral link copied to clipboard.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+        /* =========================================================
+           OPTIFY REFERRAL PAGE
+           VALIDATED USER VERSION
+
+           IMPORTANT:
+           This interface represents a user whose dashboard
+           validation has already been completed.
+
+           Production backend must control:
+           - Authentication
+           - Validation status
+           - Referral ownership
+           - Referral attribution
+           - Referral eligibility
+           - $5 reward
+           - Balance updates
+           - Transaction creation
+           - Duplicate/self-referral protection
+
+           The frontend must never directly credit a reward.
+           ========================================================= */
+
+
+        /* ================= USER STATE ================= */
+
+        /*
+            `validated: true` represents the state of this page.
+
+            In production, this value MUST come from the
+            authenticated backend/Firebase user record.
+
+            It should never be trusted if supplied by the
+            browser itself.
+        */
+
+        const user = {
+            uid: null,
+            name: null,
+            validated: true,
+            referralCode: null,
+            referralLink: null
+        };
+
+
+        /* ================= REFERRAL STATE ================= */
+
+        /*
+            Production data should come from:
+
+            GET /api/user/referrals
+
+            or the equivalent Firebase/backend listener.
+
+            No fake referral records are included.
+        */
+
+        const referralStats = {
+            totalReferrals: 0,
+            pendingReferrals: 0,
+            validatedReferrals: 0,
+            rewardedReferrals: 0,
+            totalReferralEarnings: 0
+        };
+
+
+        const referrals = [];
+
+
+        /*
+            Referral reward configuration.
+
+            The backend must remain authoritative.
+        */
+
+        const referralConfig = {
+            rewardUsd: 5,
+            rewardNgn: 5000,
+            validationRequired: true,
+            selfReferralPrevention: true
+        };
+
+
+        /* ================= DOM ================= */
+
+        const sidebar = document.getElementById("sidebar");
+        const sidebarOverlay = document.getElementById("sidebarOverlay");
+        const menuBtn = document.getElementById("menuBtn");
+
+        const themeToggle = document.getElementById("themeToggle");
+        const themeIcon = document.getElementById("themeIcon");
+
+
+        /* ================= THEME ================= */
+
+        function applyTheme(theme) {
+
+            if (theme === "dark") {
+
+                document.documentElement.classList.add("dark");
+
+                themeIcon.className = "bx bx-sun text-xl";
+
+            } else {
+
+                document.documentElement.classList.remove("dark");
+
+                themeIcon.className = "bx bx-moon text-xl";
+
+            }
+
+        }
+
+
+        function initializeTheme() {
+
+            const savedTheme = localStorage.getItem("optify-theme");
+
+            if (savedTheme) {
+
+                applyTheme(savedTheme);
+
+                return;
+            }
+
+
+            const prefersDark = window.matchMedia(
+                "(prefers-color-scheme: dark)"
+            ).matches;
+
+
+            applyTheme(
+                prefersDark ? "dark" : "light"
+            );
+
+        }
+
+
+        themeToggle.addEventListener("click", () => {
+
+            const isDark =
+                document.documentElement.classList.contains("dark");
+
+            const newTheme =
+                isDark ? "light" : "dark";
+
+            localStorage.setItem(
+                "optify-theme",
+                newTheme
+            );
+
+            applyTheme(newTheme);
+
+        });
+
+
+        initializeTheme();
+
+
+        /* ================= MOBILE SIDEBAR ================= */
+
+        function openSidebar() {
+
+            sidebar.classList.add("open");
+
+            sidebarOverlay.classList.remove("hidden");
+
+            document.body.classList.add("overflow-hidden");
+
+        }
+
+
+        function closeSidebar() {
+
+            sidebar.classList.remove("open");
+
+            sidebarOverlay.classList.add("hidden");
+
+            document.body.classList.remove("overflow-hidden");
+
+        }
+
+
+        menuBtn.addEventListener(
+            "click",
+            openSidebar
+        );
+
+
+        sidebarOverlay.addEventListener(
+            "click",
+            closeSidebar
+        );
+
+
+        document.querySelectorAll(".sidebar a").forEach(link => {
+
+            link.addEventListener("click", () => {
+
+                if (window.innerWidth < 1024) {
+
+                    closeSidebar();
+
+                }
+
+            });
+
+        });
+
+
+        /* ================= USER HELPERS ================= */
+
+        function getInitial(name) {
+
+            if (!name) {
+                return "U";
+            }
+
+            return String(name)
+                .trim()
+                .charAt(0)
+                .toUpperCase();
+
+        }
+
+
+        function renderUser() {
+
+            const displayName =
+                user.name || "Member";
+
+            const initial =
+                getInitial(displayName);
+
+
+            document.getElementById("sidebarName")
+                .textContent = displayName;
+
+
+            document.getElementById("headerName")
+                .textContent = displayName;
+
+
+            document.getElementById("sidebarAvatar")
+                .textContent = initial;
+
+
+            document.getElementById("headerAvatar")
+                .textContent = initial;
+
+        }
+
+
+        /* ================= REFERRAL STATS ================= */
+
+        function renderReferralStats() {
+
+            const stats =
+                referralStats;
+
+
+            document.getElementById(
+                "totalReferrals"
+            ).textContent =
+                Number(stats.totalReferrals || 0);
+
+
+            document.getElementById(
+                "validatedReferrals"
+            ).textContent =
+                Number(stats.validatedReferrals || 0);
+
+
+            document.getElementById(
+                "pendingReferrals"
+            ).textContent =
+                Number(stats.pendingReferrals || 0);
+
+
+            document.getElementById(
+                "rewardedCount"
+            ).textContent =
+                Number(stats.rewardedReferrals || 0);
+
+
+            const earnings =
+                Number(
+                    stats.totalReferralEarnings || 0
+                );
+
+
+            document.getElementById(
+                "referralEarnings"
+            ).textContent =
+                `$${earnings.toFixed(2)}`;
+
+
+            document.getElementById(
+                "statsEarnings"
+            ).textContent =
+                `$${earnings.toFixed(2)}`;
+
+
+            document.getElementById(
+                "referralEarningsNaira"
+            ).textContent =
+                `≈ ₦${(
+                    earnings * 1000
+                ).toLocaleString()}`;
+
+
+            const progress =
+                Number(stats.totalReferrals) > 0
+                    ? Math.min(
+                        100,
+                        (
+                            Number(stats.rewardedReferrals || 0) /
+                            Number(stats.totalReferrals || 1)
+                        ) * 100
+                    )
+                    : 0;
+
+
+            document.getElementById(
+                "rewardProgress"
+            ).style.width =
+                `${progress}%`;
+
+        }
+
+
+        /* ================= REFERRAL DATA ================= */
+
+        function renderReferralData() {
+
+            const linkInput =
+                document.getElementById(
+                    "referralLink"
+                );
+
+            const codeElement =
+                document.getElementById(
+                    "referralCode"
+                );
+
+
+            if (user.referralLink) {
+
+                linkInput.value =
+                    user.referralLink;
+
+                linkInput.placeholder = "";
+
+            } else {
+
+                linkInput.value = "";
+
+                linkInput.placeholder =
+                    "Referral link unavailable";
+
+            }
+
+
+            codeElement.textContent =
+                user.referralCode || "—";
+
+        }
+
+
+        function getReferralLink() {
+
+            return user.referralLink || "";
+
+        }
+
+
+        /* ================= COPY LINK ================= */
+
+        async function copyReferralLink() {
+
+            const link =
+                getReferralLink();
+
+
+            if (!link) {
+
+                showToast(
+                    "Link unavailable",
+                    "Your referral link is not available yet."
+                );
+
+                return;
+            }
+
+
+            try {
+
+                await navigator.clipboard.writeText(
+                    link
+                );
+
+
+                showToast(
+                    "Link copied",
+                    "Your referral link has been copied."
+                );
+
+            } catch (error) {
+
+                fallbackCopy(link);
+
+            }
+
+        }
+
+
+        /* ================= COPY CODE ================= */
+
+        async function copyCode() {
+
+            const code =
+                user.referralCode;
+
+
+            if (!code) {
+
+                showToast(
+                    "Code unavailable",
+                    "Your referral code is not available yet."
+                );
+
+                return;
+            }
+
+
+            try {
+
+                await navigator.clipboard.writeText(
+                    code
+                );
+
+
+                showToast(
+                    "Code copied",
+                    "Your referral code has been copied."
+                );
+
+            } catch (error) {
+
+                fallbackCopy(code);
+
+            }
+
+        }
+
+
+        /* ================= FALLBACK COPY ================= */
+
+        function fallbackCopy(text) {
+
+            if (!text) {
+                return;
+            }
+
+
+            const textarea =
+                document.createElement(
+                    "textarea"
+                );
+
+
+            textarea.value =
+                text;
+
+            textarea.style.position =
+                "fixed";
+
+            textarea.style.opacity =
+                "0";
+
+
+            document.body.appendChild(
+                textarea
+            );
+
+
+            textarea.select();
+
+
+            try {
+
+                document.execCommand(
+                    "copy"
+                );
+
+
+                showToast(
+                    "Copied",
+                    "The information has been copied."
+                );
+
+            } catch (error) {
+
+                showToast(
+                    "Copy failed",
+                    "Please copy the information manually."
+                );
+
+            }
+
+
+            textarea.remove();
+
+        }
+
+
+        document.getElementById(
+            "copyLinkBtn"
+        ).addEventListener(
+            "click",
+            copyReferralLink
+        );
+
+
+        document.getElementById(
+            "copyCodeBtn"
+        ).addEventListener(
+            "click",
+            copyCode
+        );
+
+
+        /* ================= SHARE ================= */
+
+        async function shareReferralLink() {
+
+            const link =
+                getReferralLink();
+
+
+            if (!link) {
+
+                showToast(
+                    "Link unavailable",
+                    "Your referral link is not available yet."
+                );
+
+                return;
+            }
+
+
+            const shareData = {
+
+                title: "Join Optify",
+
+                text:
+                    "Join me on Optify using my referral link.",
+
+                url: link
+
+            };
+
+
+            if (navigator.share) {
+
+                try {
+
+                    await navigator.share(
+                        shareData
+                    );
+
+
+                    showToast(
+                        "Share opened",
+                        "Choose an app to share your referral link."
+                    );
+
+                } catch (error) {
+
+                    /*
+                        Native share dialogs may be cancelled
+                        by the user. No error toast is needed.
+                    */
+
+                }
+
+            } else {
+
+                await copyReferralLink();
+
+            }
+
+        }
+
+
+        document.getElementById(
+            "shareBtn"
+        ).addEventListener(
+            "click",
+            shareReferralLink
+        );
+
+
+        /* ================= TOAST ================= */
+
+        let toastTimeout;
+
+
+        function showToast(
+            title,
+            message
+        ) {
+
+            const toast =
+                document.getElementById(
+                    "toast"
+                );
+
+
+            document.getElementById(
+                "toastTitle"
+            ).textContent =
+                title;
+
+
+            document.getElementById(
+                "toastMessage"
+            ).textContent =
+                message;
+
+
+            toast.classList.add(
+                "show"
+            );
+
+
+            clearTimeout(
+                toastTimeout
+            );
+
+
+            toastTimeout =
+                setTimeout(() => {
+
+                    toast.classList.remove(
+                        "show"
+                    );
+
+                }, 2800);
+
+        }
+
+
+        /* ================= REFERRAL TABLE ================= */
+
+        function renderReferralTable() {
+
+            const emptyState =
+                document.getElementById(
+                    "referralEmptyState"
+                );
+
+
+            const tableWrapper =
+                document.getElementById(
+                    "referralTableWrapper"
+                );
+
+
+            const tableBody =
+                document.getElementById(
+                    "referralTableBody"
+                );
+
+
+            if (!referrals.length) {
+
+                emptyState.classList.remove(
+                    "hidden"
+                );
+
+                tableWrapper.classList.add(
+                    "hidden"
+                );
+
+                return;
+
+            }
+
+
+            emptyState.classList.add(
+                "hidden"
+            );
+
+
+            tableWrapper.classList.remove(
+                "hidden"
+            );
+
+
+            tableBody.innerHTML = "";
+
+
+            referrals.forEach(
+                referral => {
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    row.className =
+                        "hover:bg-[#F9FAFB] dark:hover:bg-white/[.02] transition";
+
+
+                    row.innerHTML = `
+
+                        <td class="px-6 py-4">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="w-9 h-9 rounded-full bg-[#E8F8F0] dark:bg-[#12B76A]/10 text-[#12B76A] flex items-center justify-center font-semibold">
+
+                                    ${escapeHtml(
+                        getInitial(
+                            referral.displayName
+                        )
+                    )}
+
+                                </div>
+
+                                <div>
+
+                                    <p class="text-sm font-medium dark:text-white">
+
+                                        ${escapeHtml(
+                        referral.displayName
+                    )}
+
+                                    </p>
+
+                                    <p class="text-xs text-[#98A2B3]">
+                                        Referral
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td class="px-6 py-4 text-sm text-[#667085] dark:text-slate-400">
+
+                            ${escapeHtml(
+                        referral.joinedAt || "—"
+                    )}
+
+                        </td>
+
+
+                        <td class="px-6 py-4 text-sm text-[#667085] dark:text-slate-400">
+
+                            ${escapeHtml(
+                        referral.validationStatus || "Pending"
+                    )}
+
+                        </td>
+
+
+                        <td class="px-6 py-4">
+
+                            <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-[#E8F8F0] text-[#087443]">
+
+                                ${escapeHtml(
+                        referral.status || "Pending"
+                    )}
+
+                            </span>
+
+                        </td>
+
+
+                        <td class="px-6 py-4 text-right">
+
+                            <span class="text-sm font-semibold text-[#12B76A]">
+
+                                $${Number(
+                        referral.reward || 0
+                    ).toFixed(2)}
+
+                            </span>
+
+                        </td>
+
+                    `;
+
+
+                    tableBody.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* ================= HISTORY ================= */
+
+        /*
+            Production:
+
+            GET /api/user/referrals/history
+
+            Only backend-created referral reward transactions
+            should be rendered here.
+        */
+
+        function renderHistory(history = []) {
+
+            const emptyState =
+                document.getElementById(
+                    "historyEmptyState"
+                );
+
+            const historyList =
+                document.getElementById(
+                    "historyList"
+                );
+
+
+            if (!history.length) {
+
+                emptyState.classList.remove(
+                    "hidden"
+                );
+
+                historyList.classList.add(
+                    "hidden"
+                );
+
+                return;
+
+            }
+
+
+            emptyState.classList.add(
+                "hidden"
+            );
+
+            historyList.classList.remove(
+                "hidden"
+            );
+
+
+            historyList.innerHTML = "";
+
+
+            history.forEach(
+                item => {
+
+                    const row =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    row.className =
+                        "flex items-center justify-between gap-4 p-4 rounded-2xl bg-[#F7F9FC] dark:bg-white/[.03] border border-[#E4E7EC] dark:border-white/10";
+
+
+                    row.innerHTML = `
+
+                        <div class="flex items-center gap-3 min-w-0">
+
+                            <div class="w-10 h-10 shrink-0 rounded-xl bg-[#E8F8F0] dark:bg-[#12B76A]/10 text-[#12B76A] flex items-center justify-center">
+
+                                <i class='bx bx-user-plus text-xl'></i>
+
+                            </div>
+
+                            <div class="min-w-0">
+
+                                <p class="text-sm font-medium dark:text-white truncate">
+
+                                    ${escapeHtml(
+                        item.description || "Referral reward"
+                    )}
+
+                                </p>
+
+                                <p class="text-xs text-[#667085] dark:text-slate-500 mt-1">
+
+                                    ${escapeHtml(
+                        item.date || "—"
+                    )}
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <span class="font-sora font-semibold text-[#12B76A] shrink-0">
+
+                            +$${Number(
+                        item.amount || 0
+                    ).toFixed(2)}
+
+                        </span>
+
+                    `;
+
+
+                    historyList.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* ================= ESCAPE HTML ================= */
+
+        function escapeHtml(value) {
+
+            return String(value)
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+        /* ================= USER DATA ================= */
+
+        async function loadUserData() {
+
+            /*
+                Production architecture:
+
+                1. Authenticate the user with Firebase Auth
+                   or your backend session.
+
+                2. Fetch the authenticated user's profile.
+
+                3. Verify that validation is active.
+
+                4. Fetch the user's referral code/link.
+
+                5. Fetch referral statistics.
+
+                6. Fetch referral records.
+
+                7. Fetch referral reward history.
+
+                Suggested endpoints:
+
+                GET /api/user/profile
+                GET /api/user/referrals
+                GET /api/user/referrals/stats
+                GET /api/user/referrals/history
+
+                Example response:
+
+                {
+                    validated: true,
+                    name: "...",
+                    referralCode: "...",
+                    referralLink: "...",
+                    stats: {
+                        totalReferrals: 0,
+                        pendingReferrals: 0,
+                        validatedReferrals: 0,
+                        rewardedReferrals: 0,
+                        totalReferralEarnings: 0
+                    },
+                    referrals: [],
+                    history: []
+                }
+
+                Do not expose referral ownership or reward
+                authority to the client.
+            */
+
+
+            /*
+                Current frontend state intentionally remains empty
+                until the backend is connected.
+
+                This prevents fake referral information from being
+                displayed as real account data.
+            */
+
+        }
+
+
+        /* ================= LOGOUT ================= */
+
+        async function logout() {
+
+            /*
+                Production:
+
+                await Firebase signOut(auth);
+
+                OR:
+
+                await backendLogout();
+
+                Then redirect only after successful logout.
+            */
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+        /* ================= INITIALIZE ================= */
+
+        function initializePage() {
+
+            /*
+                This is the validated version.
+
+                There is intentionally no validation modal,
+                validation redirect, or locked referral section.
+            */
+
+            renderUser();
+
+            renderReferralStats();
+
+            renderReferralData();
+
+            renderReferralTable();
+
+            renderHistory([]);
+
+            loadUserData();
+
+        }
+
+
+        initializePage();
+
+    </script>
+
+</body>
+
+</html>

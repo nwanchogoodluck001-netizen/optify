@@ -1,0 +1,2302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Community Settings | Optify Admin</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Boxicons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        sora: ['Sora', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        :root {
+            --navy: #071A2B;
+            --navy-light: #0B2539;
+            --emerald: #12B76A;
+            --teal: #0EA5A4;
+            --background: #F7F9FC;
+            --border: #E4E7EC;
+            --text: #101828;
+            --muted: #667085;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: #071A2B;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .nav-item {
+            transition: all .2s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, .06);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: rgba(18, 183, 106, .13);
+            color: #6EE7B7;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .1);
+            border-radius: 10px;
+        }
+
+        .input-field,
+        .select-field,
+        .textarea-field {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 12px;
+            padding: 11px 13px;
+            outline: none;
+            font-size: 14px;
+            color: #101828;
+            transition: border .2s, box-shadow .2s;
+        }
+
+        .input-field:focus,
+        .select-field:focus,
+        .textarea-field:focus {
+            border-color: #12B76A;
+            box-shadow: 0 0 0 3px rgba(18, 183, 106, .10);
+        }
+
+        .textarea-field {
+            min-height: 115px;
+            resize: vertical;
+        }
+
+        .dark .input-field,
+        .dark .select-field,
+        .dark .textarea-field {
+            background: #0B2539;
+            border-color: #1E3A4F;
+            color: #fff;
+        }
+
+        .dark .input-field::placeholder,
+        .dark .textarea-field::placeholder {
+            color: #718096;
+        }
+
+        .dark body {
+            background: #061521;
+            color: #F8FAFC;
+        }
+
+        .dark .page-bg {
+            background: #061521;
+        }
+
+        .dark .card {
+            background: #0B2539;
+            border-color: #1E3A4F;
+        }
+
+        .dark .soft-card {
+            background: #092032;
+            border-color: #1E3A4F;
+        }
+
+        .dark .border-light {
+            border-color: #1E3A4F;
+        }
+
+        .dark .text-main {
+            color: #F8FAFC;
+        }
+
+        .dark .text-muted {
+            color: #94A3B8;
+        }
+
+        .dark .preview-bg {
+            background: #071A2B;
+        }
+
+        .switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            inset: 0;
+            background: #D0D5DD;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .slider:before {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            left: 3px;
+            top: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: .2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .18);
+        }
+
+        .switch input:checked + .slider {
+            background: #12B76A;
+        }
+
+        .switch input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .mobile-overlay {
+            display: none;
+        }
+
+        .sidebar-open .mobile-overlay {
+            display: block;
+        }
+
+        .sidebar-open .sidebar {
+            transform: translateX(0);
+        }
+
+        .toast {
+            transform: translateY(120px);
+            opacity: 0;
+            pointer-events: none;
+            transition: .3s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .preview-button {
+            transition: .2s;
+        }
+
+        @media (max-width: 1023px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform .25s ease;
+                z-index: 70;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, .45);
+                z-index: 60;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .header-actions button {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Mobile Overlay -->
+    <div id="mobileOverlay" class="mobile-overlay"></div>
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar"
+        class="sidebar fixed left-0 top-0 bottom-0 z-[60] text-white overflow-y-auto">
+
+        <div class="px-5 py-6">
+
+            <!-- Logo -->
+            <div class="flex items-center gap-3 mb-8">
+
+                <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
+                    <i class='bx bx-layer text-2xl'></i>
+                </div>
+
+                <div>
+                    <div class="font-sora font-bold text-lg tracking-tight">
+                        OPTIFY
+                    </div>
+
+                    <div class="text-[10px] text-slate-400 uppercase tracking-[.18em]">
+                        Admin Portal
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Main Menu -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Main Menu
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="admin.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-grid-alt text-lg'></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a href="users.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-group text-lg'></i>
+                        <span>Users</span>
+                    </a>
+
+                    <a href="quizzes.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-help-circle text-lg'></i>
+                        <span>Quiz</span>
+                    </a>
+
+                    <a href="referrals.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-share-alt text-lg'></i>
+                        <span>Referrals</span>
+                    </a>
+
+                </nav>
+            </div>
+
+            <!-- Finance -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Finance
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="epins.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-key text-lg'></i>
+                        <span>E-pins</span>
+                    </a>
+
+                    <a href="withdrawals.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-money-withdraw text-lg'></i>
+                        <span>Withdrawals</span>
+                    </a>
+
+                    <a href="transactions.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-transfer-alt text-lg'></i>
+                        <span>Transactions</span>
+                    </a>
+
+                </nav>
+            </div>
+
+            <!-- Platform -->
+            <div class="mb-7">
+
+                <p class="px-3 mb-2 text-[10px] uppercase tracking-[.18em] text-slate-500 font-semibold">
+                    Platform
+                </p>
+
+                <nav class="space-y-1">
+
+                    <a href="community-settings.html"
+                        class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm">
+                        <i class='bx bx-link text-lg'></i>
+                        <span>Community Settings</span>
+                    </a>
+
+                    <a href="platform-settings.html"
+                        class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-300">
+                        <i class='bx bx-cog text-lg'></i>
+                        <span>Platform Settings</span>
+                    </a>
+
+                </nav>
+            </div>
+
+        </div>
+
+        <!-- Sidebar Bottom -->
+        <div class="absolute bottom-0 left-0 right-0 p-5 border-t border-white/10 bg-[#071A2B]">
+
+            <a href="admin-profile.html" class="flex items-center gap-3 mb-4">
+
+                <div class="w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center">
+                    <i class='bx bx-user text-emerald-400'></i>
+                </div>
+
+                <div class="min-w-0">
+                    <p id="sidebarAdminName" class="text-sm font-medium truncate">
+                        Optify Admin
+                    </p>
+
+                    <p class="text-xs text-slate-500">
+                        Administrator
+                    </p>
+                </div>
+
+            </a>
+
+            <button id="logoutBtn"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-slate-400 hover:bg-white/5 hover:text-white transition">
+
+                <i class='bx bx-log-out text-lg'></i>
+                Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main-content page-bg min-h-screen">
+
+        <!-- Header -->
+        <header
+            class="sticky top-0 z-40 bg-white/90 dark:bg-[#061521]/90 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
+
+            <div class="px-4 sm:px-6 lg:px-8 py-4">
+
+                <div class="flex items-center justify-between gap-4 page-header">
+
+                    <div class="flex items-center gap-3">
+
+                        <button id="menuBtn"
+                            class="lg:hidden w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-700 dark:text-white">
+                            <i class='bx bx-menu text-xl'></i>
+                        </button>
+
+                        <div>
+                            <p class="text-[10px] uppercase tracking-[.18em] font-semibold text-emerald-600 mb-1">
+                                Community Settings
+                            </p>
+
+                            <h1 class="font-sora text-xl sm:text-2xl font-semibold text-main">
+                                Community Settings
+                            </h1>
+
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                Manage the official Optify community destination shown to users.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="flex items-center gap-2 header-actions">
+
+                        <button id="themeToggle"
+                            class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0B2539] flex items-center justify-center text-slate-600 dark:text-slate-300 hover:border-emerald-300 transition">
+                            <i id="themeIcon" class='bx bx-moon text-lg'></i>
+                        </button>
+
+                        <button id="discardBtn"
+                            disabled
+                            class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-400 dark:text-slate-500 bg-white dark:bg-[#0B2539] disabled:opacity-50 disabled:cursor-not-allowed">
+                            Discard
+                        </button>
+
+                        <button id="saveBtn"
+                            class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold flex items-center justify-center gap-2 transition shadow-sm">
+                            <i class='bx bx-save'></i>
+                            <span id="saveBtnText">Save Changes</span>
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- Content -->
+        <section class="px-4 sm:px-6 lg:px-8 py-6 pb-16">
+
+            <!-- Unsaved changes -->
+            <div id="unsavedBar"
+                class="hidden mb-5 rounded-xl border border-amber-200 bg-amber-50 dark:bg-amber-500/10 dark:border-amber-500/20 px-4 py-3">
+
+                <div class="flex items-center gap-3">
+
+                    <div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-500/10 flex items-center justify-center">
+                        <i class='bx bx-edit text-amber-600'></i>
+                    </div>
+
+                    <div>
+                        <p class="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                            Unsaved changes
+                        </p>
+
+                        <p class="text-xs text-amber-700 dark:text-amber-400">
+                            Your changes have not been saved yet.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Loading -->
+            <div id="loadingState" class="space-y-5">
+
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+
+                    <div class="xl:col-span-2 card bg-white rounded-2xl border border-slate-200 p-6 animate-pulse">
+                        <div class="h-5 bg-slate-200 rounded w-48 mb-6"></div>
+                        <div class="h-10 bg-slate-100 rounded-xl mb-5"></div>
+                        <div class="h-10 bg-slate-100 rounded-xl mb-5"></div>
+                        <div class="h-10 bg-slate-100 rounded-xl"></div>
+                    </div>
+
+                    <div class="card bg-white rounded-2xl border border-slate-200 p-6 animate-pulse">
+                        <div class="h-5 bg-slate-200 rounded w-32 mb-6"></div>
+                        <div class="h-36 bg-slate-100 rounded-2xl"></div>
+                    </div>
+
+                </div>
+
+                <div class="card bg-white rounded-2xl border border-slate-200 p-6 animate-pulse">
+                    <div class="h-5 bg-slate-200 rounded w-56 mb-6"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="h-10 bg-slate-100 rounded-xl"></div>
+                        <div class="h-10 bg-slate-100 rounded-xl"></div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- Error -->
+            <div id="errorState" class="hidden">
+
+                <div class="max-w-xl mx-auto mt-10 text-center">
+
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-red-50 dark:bg-red-500/10 flex items-center justify-center mb-4">
+                        <i class='bx bx-error-circle text-3xl text-red-500'></i>
+                    </div>
+
+                    <h2 class="font-sora font-semibold text-lg text-main">
+                        Unable to load community settings
+                    </h2>
+
+                    <p id="errorMessage" class="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                        Something went wrong while loading the settings.
+                    </p>
+
+                    <button id="retryBtn"
+                        class="mt-5 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold">
+                        <i class='bx bx-refresh mr-1'></i>
+                        Try Again
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Empty / configuration state -->
+            <div id="emptyState" class="hidden">
+
+                <div class="max-w-xl mx-auto mt-10 text-center">
+
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center mb-4">
+                        <i class='bx bx-link-alt text-3xl text-emerald-500'></i>
+                    </div>
+
+                    <h2 class="font-sora font-semibold text-lg text-main">
+                        Community not configured
+                    </h2>
+
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
+                        Configure the official Optify community below. No community destination has been added yet.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Settings Content -->
+            <div id="settingsContent" class="hidden space-y-5">
+
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+
+                    <!-- Primary Community -->
+                    <div class="xl:col-span-2 card bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                        <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+
+                            <div class="flex items-center justify-between gap-4">
+
+                                <div>
+                                    <h2 class="font-sora font-semibold text-base text-main">
+                                        Primary Community
+                                    </h2>
+
+                                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                        Set the official community destination users should join.
+                                    </p>
+                                </div>
+
+                                <div class="flex items-center gap-2">
+
+                                    <span id="statusBadge"
+                                        class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500">
+                                        Inactive
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="p-6 space-y-5">
+
+                            <!-- Name -->
+                            <div>
+
+                                <label class="block text-sm font-medium text-main mb-2">
+                                    Community Name
+                                </label>
+
+                                <input
+                                    id="communityName"
+                                    type="text"
+                                    class="input-field"
+                                    placeholder="e.g. Optify Community"
+                                    maxlength="80">
+
+                                <p class="text-xs text-slate-400 mt-1.5">
+                                    This name can appear in the registration prompt and preview.
+                                </p>
+
+                            </div>
+
+
+                            <!-- Platform -->
+                            <div>
+
+                                <label class="block text-sm font-medium text-main mb-2">
+                                    Platform
+                                </label>
+
+                                <select id="platform" class="select-field">
+
+                                    <option value="">
+                                        Select platform
+                                    </option>
+
+                                    <option value="whatsapp">
+                                        WhatsApp
+                                    </option>
+
+                                    <option value="telegram">
+                                        Telegram
+                                    </option>
+
+                                    <option value="discord">
+                                        Discord
+                                    </option>
+
+                                    <option value="facebook">
+                                        Facebook Group
+                                    </option>
+
+                                    <option value="other">
+                                        Other
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- Link -->
+                            <div>
+
+                                <label class="block text-sm font-medium text-main mb-2">
+                                    Community Link
+                                </label>
+
+                                <div class="relative">
+
+                                    <i class='bx bx-link absolute left-3 top-1/2 -translate-y-1/2 text-slate-400'></i>
+
+                                    <input
+                                        id="communityLink"
+                                        type="url"
+                                        class="input-field pl-10"
+                                        placeholder="https://...">
+
+                                </div>
+
+                                <p class="text-xs text-slate-400 mt-1.5">
+                                    Use a complete HTTPS link whenever possible.
+                                </p>
+
+                                <p id="linkError"
+                                    class="hidden text-xs text-red-500 mt-1.5">
+                                </p>
+
+                            </div>
+
+
+                            <!-- Active -->
+                            <div class="flex items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-[#092032] border border-slate-100 dark:border-slate-800">
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-main">
+                                        Community Active
+                                    </p>
+
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                        Allow users to access this community destination.
+                                    </p>
+
+                                </div>
+
+                                <label class="switch">
+
+                                    <input type="checkbox" id="communityActive">
+
+                                    <span class="slider"></span>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Preview -->
+                    <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                        <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+
+                            <div class="flex items-center gap-3">
+
+                                <div class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+                                    <i class='bx bx-show text-emerald-500'></i>
+                                </div>
+
+                                <div>
+                                    <h2 class="font-sora font-semibold text-base text-main">
+                                        Community Preview
+                                    </h2>
+
+                                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                                        User-facing preview
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="p-6">
+
+                            <div class="preview-bg rounded-2xl p-5 text-white">
+
+                                <div class="flex items-center gap-3 mb-5">
+
+                                    <div id="previewIcon"
+                                        class="w-11 h-11 rounded-xl bg-emerald-500/15 flex items-center justify-center">
+                                        <i class='bx bx-link text-xl text-emerald-400'></i>
+                                    </div>
+
+                                    <div class="min-w-0">
+
+                                        <p id="previewCommunityName"
+                                            class="font-sora font-semibold truncate">
+                                            Your Community
+                                        </p>
+
+                                        <p id="previewPlatform"
+                                            class="text-xs text-slate-400 mt-1">
+                                            Community platform
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="mb-5">
+
+                                    <p id="previewTitle"
+                                        class="font-sora font-semibold text-base">
+                                        Join the Optify Community
+                                    </p>
+
+                                    <p id="previewMessage"
+                                        class="text-sm text-slate-400 leading-6 mt-2">
+                                        Stay connected with the Optify community for updates and announcements.
+                                    </p>
+
+                                </div>
+
+                                <button id="previewButton"
+                                    type="button"
+                                    class="preview-button w-full rounded-xl bg-emerald-500 text-white py-2.5 text-sm font-semibold">
+                                    Join Community
+                                </button>
+
+                                <button id="previewSecondary"
+                                    type="button"
+                                    class="w-full mt-2 py-2 text-xs text-slate-400">
+                                    Maybe Later
+                                </button>
+
+                            </div>
+
+                            <div class="mt-4 flex items-start gap-2">
+
+                                <i class='bx bx-info-circle text-slate-400 mt-0.5'></i>
+
+                                <p class="text-xs leading-5 text-slate-500 dark:text-slate-400">
+                                    Preview buttons are disabled while editing and will not open the configured link.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Registration Prompt -->
+                <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+
+                        <div class="flex items-center justify-between gap-4">
+
+                            <div>
+                                <h2 class="font-sora font-semibold text-base text-main">
+                                    Registration Community Prompt
+                                </h2>
+
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                    Control the community popup shown after a user registers.
+                                </p>
+                            </div>
+
+                            <label class="switch">
+
+                                <input type="checkbox" id="promptEnabled">
+
+                                <span class="slider"></span>
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                            <!-- Title -->
+                            <div>
+
+                                <label class="block text-sm font-medium text-main mb-2">
+                                    Popup Title
+                                </label>
+
+                                <input
+                                    id="promptTitle"
+                                    type="text"
+                                    class="input-field"
+                                    placeholder="Join the Optify Community"
+                                    maxlength="100">
+
+                            </div>
+
+                            <!-- Button -->
+                            <div>
+
+                                <label class="block text-sm font-medium text-main mb-2">
+                                    Button Text
+                                </label>
+
+                                <input
+                                    id="promptButtonText"
+                                    type="text"
+                                    class="input-field"
+                                    placeholder="Join Community"
+                                    maxlength="40">
+
+                            </div>
+
+                            <!-- Secondary -->
+                            <div>
+
+                                <label class="block text-sm font-medium text-main mb-2">
+                                    Secondary Button Text
+                                </label>
+
+                                <input
+                                    id="promptSecondaryText"
+                                    type="text"
+                                    class="input-field"
+                                    placeholder="Maybe Later"
+                                    maxlength="40">
+
+                            </div>
+
+                            <!-- Message -->
+                            <div class="md:col-span-2">
+
+                                <label class="block text-sm font-medium text-main mb-2">
+                                    Popup Message
+                                </label>
+
+                                <textarea
+                                    id="promptMessage"
+                                    class="textarea-field"
+                                    placeholder="Invite users to join the official Optify community."></textarea>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Link Behavior -->
+                <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+
+                        <h2 class="font-sora font-semibold text-base text-main">
+                            Link Behavior
+                        </h2>
+
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                            Configure how the community link behaves when users interact with it.
+                        </p>
+
+                    </div>
+
+                    <div class="p-6 space-y-5">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                            <div>
+
+                                <label class="block text-sm font-medium text-main mb-2">
+                                    Open Destination
+                                </label>
+
+                                <select id="linkTarget" class="select-field">
+
+                                    <option value="new_tab">
+                                        New Tab
+                                    </option>
+
+                                    <option value="same_tab">
+                                        Same Tab
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="flex items-center justify-between gap-4 p-4 rounded-xl bg-slate-50 dark:bg-[#092032] border border-slate-100 dark:border-slate-800">
+
+                                <div>
+
+                                    <p class="text-sm font-semibold text-main">
+                                        External Link Warning
+                                    </p>
+
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                        Warn users before leaving Optify.
+                                    </p>
+
+                                </div>
+
+                                <label class="switch">
+
+                                    <input type="checkbox" id="externalWarning">
+
+                                    <span class="slider"></span>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Current Link Status -->
+                <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-800">
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center">
+                                <i class='bx bx-info-circle text-slate-500 dark:text-slate-300'></i>
+                            </div>
+
+                            <div>
+
+                                <h2 class="font-sora font-semibold text-base text-main">
+                                    Current Link Status
+                                </h2>
+
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                    Information currently stored by the backend.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="p-6">
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                            <div class="soft-card bg-slate-50 border border-slate-100 rounded-xl p-4">
+
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                                    Community
+                                </p>
+
+                                <p id="currentCommunity"
+                                    class="font-medium text-sm text-main truncate">
+                                    Not configured
+                                </p>
+
+                            </div>
+
+                            <div class="soft-card bg-slate-50 border border-slate-100 rounded-xl p-4">
+
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                                    Platform
+                                </p>
+
+                                <p id="currentPlatform"
+                                    class="font-medium text-sm text-main">
+                                    Not configured
+                                </p>
+
+                            </div>
+
+                            <div class="soft-card bg-slate-50 border border-slate-100 rounded-xl p-4">
+
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                                    Status
+                                </p>
+
+                                <p id="currentStatus"
+                                    class="font-medium text-sm text-main">
+                                    Not configured
+                                </p>
+
+                            </div>
+
+                            <div class="soft-card bg-slate-50 border border-slate-100 rounded-xl p-4">
+
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                                    Last Updated
+                                </p>
+
+                                <p id="currentUpdated"
+                                    class="font-medium text-sm text-main">
+                                    Not configured
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="mt-4 p-4 rounded-xl bg-slate-50 dark:bg-[#092032] border border-slate-100 dark:border-slate-800">
+
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                                Updated By
+                            </p>
+
+                            <p id="currentUpdatedBy"
+                                class="text-sm font-medium text-main">
+                                Not configured
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Configuration History -->
+                <div class="card bg-white rounded-2xl border border-slate-200 shadow-sm">
+
+                    <div class="p-6 flex items-center justify-between gap-4">
+
+                        <div>
+
+                            <h2 class="font-sora font-semibold text-base text-main">
+                                Configuration History
+                            </h2>
+
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                Recent community configuration activity.
+                            </p>
+
+                        </div>
+
+                        <button id="activityBtn"
+                            class="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 hover:border-emerald-300 transition">
+                            <i class='bx bx-history mr-1'></i>
+                            View Activity
+                        </button>
+
+                    </div>
+
+                    <div id="historyEmpty"
+                        class="px-6 pb-6">
+
+                        <div class="rounded-xl border border-dashed border-slate-200 dark:border-slate-700 p-8 text-center">
+
+                            <div class="w-11 h-11 mx-auto rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mb-3">
+                                <i class='bx bx-history text-xl text-slate-400'></i>
+                            </div>
+
+                            <p class="text-sm font-medium text-main">
+                                No configuration history available
+                            </p>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Backend audit records will appear here when available.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Toast -->
+    <div id="toast"
+        class="toast fixed bottom-5 right-5 z-[100] w-[calc(100%-40px)] sm:w-auto max-w-sm">
+
+        <div class="bg-[#071A2B] text-white rounded-2xl shadow-xl border border-white/10 px-4 py-3 flex items-start gap-3">
+
+            <div id="toastIcon"
+                class="w-9 h-9 rounded-xl bg-emerald-500/15 flex items-center justify-center flex-shrink-0">
+                <i class='bx bx-check text-emerald-400'></i>
+            </div>
+
+            <div class="min-w-0">
+
+                <p id="toastTitle" class="text-sm font-semibold">
+                    Settings Updated
+                </p>
+
+                <p id="toastMessage" class="text-xs text-slate-400 mt-0.5">
+                    Your Optify community settings have been saved.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Activity Modal -->
+    <div id="activityModal"
+        class="hidden fixed inset-0 z-[90] bg-slate-950/50 backdrop-blur-sm p-4 items-center justify-center">
+
+        <div class="w-full max-w-lg bg-white dark:bg-[#0B2539] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700">
+
+            <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+
+                <div>
+                    <h3 class="font-sora font-semibold text-base text-main">
+                        Configuration Activity
+                    </h3>
+
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        Backend audit activity
+                    </p>
+                </div>
+
+                <button id="closeActivity"
+                    class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-300 flex items-center justify-center">
+                    <i class='bx bx-x text-xl'></i>
+                </button>
+
+            </div>
+
+            <div class="p-6">
+
+                <div class="text-center py-8">
+
+                    <div class="w-12 h-12 mx-auto rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mb-3">
+                        <i class='bx bx-history text-2xl text-slate-400'></i>
+                    </div>
+
+                    <p class="text-sm font-medium text-main">
+                        No audit records available
+                    </p>
+
+                    <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">
+                        Activity will be loaded from the backend when audit logging is connected.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+        /*
+        ==========================================================
+        OPTIFY COMMUNITY SETTINGS
+        ==========================================================
+
+        Production architecture:
+
+        GET:
+        /api/admin/community-settings
+
+        PUT:
+        /api/admin/community-settings
+
+        Optional:
+        GET /api/admin/community-settings/activity
+
+        Firebase Authentication should authenticate the admin.
+
+        Backend must verify:
+
+        admins/{uid}
+        role === "admin"
+        active === true
+
+        The frontend must NEVER be trusted for authorization.
+
+        ==========================================================
+        */
+
+        const API = {
+            settings: '/api/admin/community-settings',
+            activity: '/api/admin/community-settings/activity'
+        };
+
+
+        /*
+        ----------------------------------------------------------
+        STATE
+        ----------------------------------------------------------
+        */
+
+        let communitySettings = null;
+        let originalSettings = null;
+        let isSaving = false;
+
+
+        /*
+        ----------------------------------------------------------
+        DEFAULT EMPTY STATE
+        ----------------------------------------------------------
+        No fake production community information is included.
+        ----------------------------------------------------------
+        */
+
+        const emptySettings = {
+            communityName: '',
+            platform: '',
+            communityLink: '',
+            active: false,
+
+            registrationPrompt: {
+                enabled: false,
+                title: '',
+                message: '',
+                buttonText: '',
+                secondaryButtonText: ''
+            },
+
+            linkBehavior: {
+                target: 'new_tab',
+                externalWarning: false
+            },
+
+            updatedAt: null,
+            updatedBy: null
+        };
+
+
+        /*
+        ----------------------------------------------------------
+        DOM
+        ----------------------------------------------------------
+        */
+
+        const body = document.body;
+
+        const loadingState = document.getElementById('loadingState');
+        const errorState = document.getElementById('errorState');
+        const settingsContent = document.getElementById('settingsContent');
+        const emptyState = document.getElementById('emptyState');
+
+        const errorMessage = document.getElementById('errorMessage');
+
+        const communityName = document.getElementById('communityName');
+        const platform = document.getElementById('platform');
+        const communityLink = document.getElementById('communityLink');
+        const communityActive = document.getElementById('communityActive');
+
+        const promptEnabled = document.getElementById('promptEnabled');
+        const promptTitle = document.getElementById('promptTitle');
+        const promptMessage = document.getElementById('promptMessage');
+        const promptButtonText = document.getElementById('promptButtonText');
+        const promptSecondaryText = document.getElementById('promptSecondaryText');
+
+        const linkTarget = document.getElementById('linkTarget');
+        const externalWarning = document.getElementById('externalWarning');
+
+        const statusBadge = document.getElementById('statusBadge');
+
+        const previewCommunityName = document.getElementById('previewCommunityName');
+        const previewPlatform = document.getElementById('previewPlatform');
+        const previewTitle = document.getElementById('previewTitle');
+        const previewMessage = document.getElementById('previewMessage');
+        const previewButton = document.getElementById('previewButton');
+        const previewSecondary = document.getElementById('previewSecondary');
+
+        const currentCommunity = document.getElementById('currentCommunity');
+        const currentPlatform = document.getElementById('currentPlatform');
+        const currentStatus = document.getElementById('currentStatus');
+        const currentUpdated = document.getElementById('currentUpdated');
+        const currentUpdatedBy = document.getElementById('currentUpdatedBy');
+
+        const saveBtn = document.getElementById('saveBtn');
+        const saveBtnText = document.getElementById('saveBtnText');
+        const discardBtn = document.getElementById('discardBtn');
+
+        const unsavedBar = document.getElementById('unsavedBar');
+
+        const linkError = document.getElementById('linkError');
+
+        const toast = document.getElementById('toast');
+        const toastTitle = document.getElementById('toastTitle');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastIcon = document.getElementById('toastIcon');
+
+        const activityModal = document.getElementById('activityModal');
+
+
+        /*
+        ----------------------------------------------------------
+        UTILITIES
+        ----------------------------------------------------------
+        */
+
+        function deepClone(value) {
+            return JSON.parse(JSON.stringify(value));
+        }
+
+
+        function normalizeSettings(data) {
+
+            if (!data) {
+                return null;
+            }
+
+            return {
+                communityName: data.communityName || '',
+                platform: data.platform || '',
+                communityLink: data.communityLink || '',
+                active: Boolean(data.active),
+
+                registrationPrompt: {
+                    enabled: Boolean(data.registrationPrompt?.enabled),
+                    title: data.registrationPrompt?.title || '',
+                    message: data.registrationPrompt?.message || '',
+                    buttonText: data.registrationPrompt?.buttonText || '',
+                    secondaryButtonText:
+                        data.registrationPrompt?.secondaryButtonText || ''
+                },
+
+                linkBehavior: {
+                    target: data.linkBehavior?.target || 'new_tab',
+                    externalWarning:
+                        Boolean(data.linkBehavior?.externalWarning)
+                },
+
+                updatedAt: data.updatedAt || null,
+                updatedBy: data.updatedBy || null
+            };
+        }
+
+
+        function settingsFromForm() {
+
+            return {
+                communityName: communityName.value.trim(),
+                platform: platform.value,
+                communityLink: communityLink.value.trim(),
+                active: communityActive.checked,
+
+                registrationPrompt: {
+                    enabled: promptEnabled.checked,
+                    title: promptTitle.value.trim(),
+                    message: promptMessage.value.trim(),
+                    buttonText: promptButtonText.value.trim(),
+                    secondaryButtonText: promptSecondaryText.value.trim()
+                },
+
+                linkBehavior: {
+                    target: linkTarget.value,
+                    externalWarning: externalWarning.checked
+                }
+            };
+        }
+
+
+        function hasChanges() {
+
+            if (!originalSettings) {
+                return true;
+            }
+
+            const current = settingsFromForm();
+
+            const original = {
+                communityName: originalSettings.communityName,
+                platform: originalSettings.platform,
+                communityLink: originalSettings.communityLink,
+                active: originalSettings.active,
+
+                registrationPrompt: originalSettings.registrationPrompt,
+
+                linkBehavior: originalSettings.linkBehavior
+            };
+
+            return JSON.stringify(current) !== JSON.stringify(original);
+        }
+
+
+        function updateUnsavedState() {
+
+            const changed = hasChanges();
+
+            discardBtn.disabled = !changed;
+
+            unsavedBar.classList.toggle('hidden', !changed);
+        }
+
+
+        function showToast(title, message, type = 'success') {
+
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+
+            if (type === 'error') {
+
+                toastIcon.className =
+                    'w-9 h-9 rounded-xl bg-red-500/15 flex items-center justify-center flex-shrink-0';
+
+                toastIcon.innerHTML =
+                    "<i class='bx bx-error text-red-400'></i>";
+
+            } else {
+
+                toastIcon.className =
+                    'w-9 h-9 rounded-xl bg-emerald-500/15 flex items-center justify-center flex-shrink-0';
+
+                toastIcon.innerHTML =
+                    "<i class='bx bx-check text-emerald-400'></i>";
+            }
+
+            toast.classList.add('show');
+
+            clearTimeout(window.toastTimer);
+
+            window.toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+
+        function formatDate(value) {
+
+            if (!value) {
+                return 'Not configured';
+            }
+
+            let date;
+
+            if (typeof value === 'string') {
+                date = new Date(value);
+            } else if (value.seconds) {
+                date = new Date(value.seconds * 1000);
+            } else {
+                date = new Date(value);
+            }
+
+            if (Number.isNaN(date.getTime())) {
+                return 'Not configured';
+            }
+
+            return date.toLocaleString([], {
+                dateStyle: 'medium',
+                timeStyle: 'short'
+            });
+        }
+
+
+        function platformLabel(value) {
+
+            const labels = {
+                whatsapp: 'WhatsApp',
+                telegram: 'Telegram',
+                discord: 'Discord',
+                facebook: 'Facebook Group',
+                other: 'Other'
+            };
+
+            return labels[value] || 'Not configured';
+        }
+
+
+        function showLoading() {
+
+            loadingState.classList.remove('hidden');
+            errorState.classList.add('hidden');
+            settingsContent.classList.add('hidden');
+            emptyState.classList.add('hidden');
+        }
+
+
+        function showError(message) {
+
+            loadingState.classList.add('hidden');
+            errorState.classList.remove('hidden');
+            settingsContent.classList.add('hidden');
+            emptyState.classList.add('hidden');
+
+            errorMessage.textContent =
+                message || 'Something went wrong while loading the settings.';
+        }
+
+
+        function showSettings() {
+
+            loadingState.classList.add('hidden');
+            errorState.classList.add('hidden');
+            emptyState.classList.add('hidden');
+            settingsContent.classList.remove('hidden');
+        }
+
+
+        function showEmpty() {
+
+            loadingState.classList.add('hidden');
+            errorState.classList.add('hidden');
+            settingsContent.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        FORM
+        ----------------------------------------------------------
+        */
+
+        function fillForm(settings) {
+
+            communityName.value = settings.communityName || '';
+            platform.value = settings.platform || '';
+            communityLink.value = settings.communityLink || '';
+            communityActive.checked = Boolean(settings.active);
+
+            promptEnabled.checked =
+                Boolean(settings.registrationPrompt?.enabled);
+
+            promptTitle.value =
+                settings.registrationPrompt?.title || '';
+
+            promptMessage.value =
+                settings.registrationPrompt?.message || '';
+
+            promptButtonText.value =
+                settings.registrationPrompt?.buttonText || '';
+
+            promptSecondaryText.value =
+                settings.registrationPrompt?.secondaryButtonText || '';
+
+            linkTarget.value =
+                settings.linkBehavior?.target || 'new_tab';
+
+            externalWarning.checked =
+                Boolean(settings.linkBehavior?.externalWarning);
+
+            updateStatusUI();
+            updatePreview();
+            updateCurrentStatus();
+
+            updateUnsavedState();
+        }
+
+
+        function updateStatusUI() {
+
+            if (communityActive.checked) {
+
+                statusBadge.textContent = 'Active';
+
+                statusBadge.className =
+                    'px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400';
+
+            } else {
+
+                statusBadge.textContent = 'Inactive';
+
+                statusBadge.className =
+                    'px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500 dark:bg-white/5 dark:text-slate-400';
+            }
+        }
+
+
+        function updatePreview() {
+
+            previewCommunityName.textContent =
+                communityName.value.trim() || 'Your Community';
+
+            previewPlatform.textContent =
+                platform.value
+                    ? platformLabel(platform.value)
+                    : 'Community platform';
+
+            previewTitle.textContent =
+                promptTitle.value.trim() ||
+                'Join the Optify Community';
+
+            previewMessage.textContent =
+                promptMessage.value.trim() ||
+                'Stay connected with the Optify community for updates and announcements.';
+
+            previewButton.textContent =
+                promptButtonText.value.trim() ||
+                'Join Community';
+
+            previewSecondary.textContent =
+                promptSecondaryText.value.trim() ||
+                'Maybe Later';
+
+            updateStatusUI();
+        }
+
+
+        function updateCurrentStatus() {
+
+            if (!originalSettings) {
+                currentCommunity.textContent = 'Not configured';
+                currentPlatform.textContent = 'Not configured';
+                currentStatus.textContent = 'Not configured';
+                currentUpdated.textContent = 'Not configured';
+                currentUpdatedBy.textContent = 'Not configured';
+                return;
+            }
+
+            currentCommunity.textContent =
+                originalSettings.communityName || 'Not configured';
+
+            currentPlatform.textContent =
+                platformLabel(originalSettings.platform);
+
+            currentStatus.textContent =
+                originalSettings.active ? 'Active' : 'Inactive';
+
+            currentUpdated.textContent =
+                formatDate(originalSettings.updatedAt);
+
+            currentUpdatedBy.textContent =
+                originalSettings.updatedBy || 'Not configured';
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        VALIDATION
+        ----------------------------------------------------------
+        */
+
+        function validateForm() {
+
+            linkError.classList.add('hidden');
+            linkError.textContent = '';
+
+            if (!communityName.value.trim()) {
+
+                showToast(
+                    'Community name required',
+                    'Enter a community name before saving.',
+                    'error'
+                );
+
+                communityName.focus();
+                return false;
+            }
+
+            if (!platform.value) {
+
+                showToast(
+                    'Platform required',
+                    'Select the community platform.',
+                    'error'
+                );
+
+                platform.focus();
+                return false;
+            }
+
+            if (communityActive.checked && !communityLink.value.trim()) {
+
+                linkError.textContent =
+                    'A community link is required when the community is active.';
+
+                linkError.classList.remove('hidden');
+
+                communityLink.focus();
+
+                return false;
+            }
+
+            if (communityLink.value.trim()) {
+
+                try {
+
+                    const url = new URL(communityLink.value.trim());
+
+                    if (!['http:', 'https:'].includes(url.protocol)) {
+                        throw new Error();
+                    }
+
+                } catch (error) {
+
+                    linkError.textContent =
+                        'Enter a valid HTTP or HTTPS community link.';
+
+                    linkError.classList.remove('hidden');
+
+                    communityLink.focus();
+
+                    return false;
+                }
+            }
+
+            if (promptEnabled.checked) {
+
+                if (!promptTitle.value.trim()) {
+
+                    showToast(
+                        'Popup title required',
+                        'Enter the title for the registration prompt.',
+                        'error'
+                    );
+
+                    promptTitle.focus();
+
+                    return false;
+                }
+
+                if (!promptButtonText.value.trim()) {
+
+                    showToast(
+                        'Button text required',
+                        'Enter the primary button text.',
+                        'error'
+                    );
+
+                    promptButtonText.focus();
+
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        API
+        ----------------------------------------------------------
+        */
+
+        async function fetchCommunitySettings() {
+
+            showLoading();
+
+            try {
+
+                /*
+                Production example:
+
+                const token = await firebase.auth().currentUser.getIdToken();
+
+                const response = await fetch(API.settings, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Unable to load settings.');
+                }
+
+                const data = await response.json();
+
+                */
+
+                /*
+                --------------------------------------------------
+                BACKEND PLACEHOLDER
+                --------------------------------------------------
+
+                No fake community configuration is inserted.
+
+                Replace this section with your real authenticated
+                backend request.
+
+                --------------------------------------------------
+                */
+
+                await new Promise(resolve => setTimeout(resolve, 700));
+
+                /*
+                Empty backend state.
+                */
+
+                communitySettings = null;
+
+                if (!communitySettings) {
+
+                    originalSettings = deepClone(emptySettings);
+
+                    fillForm(emptySettings);
+
+                    showSettings();
+
+                    return;
+                }
+
+                communitySettings =
+                    normalizeSettings(communitySettings);
+
+                originalSettings =
+                    deepClone(communitySettings);
+
+                fillForm(communitySettings);
+
+                showSettings();
+
+            } catch (error) {
+
+                console.error(error);
+
+                showError(
+                    error.message ||
+                    'Unable to load community settings.'
+                );
+            }
+        }
+
+
+        async function saveCommunitySettings() {
+
+            if (isSaving) {
+                return;
+            }
+
+            if (!validateForm()) {
+                return;
+            }
+
+            isSaving = true;
+
+            saveBtn.disabled = true;
+
+            saveBtnText.textContent = 'Saving...';
+
+            saveBtn.innerHTML =
+                "<i class='bx bx-loader-alt bx-spin'></i><span>Saving...</span>";
+
+            try {
+
+                const payload = settingsFromForm();
+
+                /*
+                --------------------------------------------------
+                PRODUCTION API REQUEST
+                --------------------------------------------------
+
+                const token =
+                    await firebase.auth().currentUser.getIdToken();
+
+                const response = await fetch(API.settings, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Unable to save community settings.');
+                }
+
+                const savedData = await response.json();
+
+                communitySettings =
+                    normalizeSettings(savedData);
+
+                --------------------------------------------------
+                */
+
+                /*
+                The following intentionally does NOT fake a
+                successful production save.
+
+                Until the backend is connected, show the correct
+                connection state instead.
+                */
+
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                throw new Error(
+                    'Backend action is not connected yet.'
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+                showToast(
+                    'Unable to save',
+                    error.message || 'The settings could not be saved.',
+                    'error'
+                );
+
+            } finally {
+
+                isSaving = false;
+
+                saveBtn.disabled = false;
+
+                saveBtn.innerHTML =
+                    "<i class='bx bx-save'></i><span id='saveBtnText'>Save Changes</span>";
+
+                updateUnsavedState();
+            }
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        DISCARD
+        ----------------------------------------------------------
+        */
+
+        function discardChanges() {
+
+            if (!originalSettings) {
+                return;
+            }
+
+            fillForm(originalSettings);
+
+            showToast(
+                'Changes discarded',
+                'Your unsaved changes have been removed.'
+            );
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        EVENT LISTENERS
+        ----------------------------------------------------------
+        */
+
+        [
+            communityName,
+            platform,
+            communityLink,
+            communityActive,
+            promptEnabled,
+            promptTitle,
+            promptMessage,
+            promptButtonText,
+            promptSecondaryText,
+            linkTarget,
+            externalWarning
+        ].forEach(element => {
+
+            element.addEventListener('input', () => {
+
+                updatePreview();
+                updateUnsavedState();
+
+                if (element === communityLink) {
+                    linkError.classList.add('hidden');
+                }
+
+            });
+
+            element.addEventListener('change', () => {
+
+                updatePreview();
+                updateUnsavedState();
+
+            });
+
+        });
+
+
+        communityActive.addEventListener('change', updateStatusUI);
+
+
+        saveBtn.addEventListener('click', saveCommunitySettings);
+
+        discardBtn.addEventListener('click', discardChanges);
+
+        document.getElementById('retryBtn')
+            .addEventListener('click', fetchCommunitySettings);
+
+
+        /*
+        ----------------------------------------------------------
+        MOBILE SIDEBAR
+        ----------------------------------------------------------
+        */
+
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        function openSidebar() {
+            document.documentElement.classList.add('sidebar-open');
+        }
+
+        function closeSidebar() {
+            document.documentElement.classList.remove('sidebar-open');
+        }
+
+        menuBtn.addEventListener('click', openSidebar);
+
+        mobileOverlay.addEventListener('click', closeSidebar);
+
+        document.querySelectorAll('.sidebar a').forEach(link => {
+
+            link.addEventListener('click', () => {
+
+                if (window.innerWidth < 1024) {
+                    closeSidebar();
+                }
+
+            });
+
+        });
+
+
+        /*
+        ----------------------------------------------------------
+        THEME
+        ----------------------------------------------------------
+        */
+
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
+        function updateThemeIcon() {
+
+            if (document.documentElement.classList.contains('dark')) {
+
+                themeIcon.className = 'bx bx-sun text-lg';
+
+            } else {
+
+                themeIcon.className = 'bx bx-moon text-lg';
+            }
+        }
+
+
+        function loadTheme() {
+
+            const savedTheme =
+                localStorage.getItem('optify-admin-theme');
+
+            if (savedTheme === 'dark') {
+
+                document.documentElement.classList.add('dark');
+
+            } else if (savedTheme === 'light') {
+
+                document.documentElement.classList.remove('dark');
+
+            } else {
+
+                if (window.matchMedia &&
+                    window.matchMedia('(prefers-color-scheme: dark)').matches) {
+
+                    document.documentElement.classList.add('dark');
+                }
+            }
+
+            updateThemeIcon();
+        }
+
+
+        themeToggle.addEventListener('click', () => {
+
+            const dark =
+                document.documentElement.classList.toggle('dark');
+
+            localStorage.setItem(
+                'optify-admin-theme',
+                dark ? 'dark' : 'light'
+            );
+
+            updateThemeIcon();
+        });
+
+
+        /*
+        ----------------------------------------------------------
+        ACTIVITY MODAL
+        ----------------------------------------------------------
+        */
+
+        document.getElementById('activityBtn')
+            .addEventListener('click', () => {
+
+                activityModal.classList.remove('hidden');
+                activityModal.classList.add('flex');
+
+            });
+
+
+        document.getElementById('closeActivity')
+            .addEventListener('click', closeActivityModal);
+
+
+        activityModal.addEventListener('click', event => {
+
+            if (event.target === activityModal) {
+                closeActivityModal();
+            }
+
+        });
+
+
+        function closeActivityModal() {
+
+            activityModal.classList.add('hidden');
+            activityModal.classList.remove('flex');
+
+        }
+
+
+        /*
+        ----------------------------------------------------------
+        PREVIEW BUTTONS
+        ----------------------------------------------------------
+        */
+
+        previewButton.addEventListener('click', () => {
+
+            showToast(
+                'Preview only',
+                'The preview button is disabled while editing.'
+            );
+
+        });
+
+
+        previewSecondary.addEventListener('click', () => {
+
+            showToast(
+                'Preview only',
+                'The preview button is disabled while editing.'
+            );
+
+        });
+
+
+        /*
+        ----------------------------------------------------------
+        LOGOUT
+        ----------------------------------------------------------
+
+        Replace with Firebase signOut() after Firebase
+        Authentication is connected.
+
+        ----------------------------------------------------------
+        */
+
+        document.getElementById('logoutBtn')
+            .addEventListener('click', async () => {
+
+                /*
+                Production:
+
+                await signOut(auth);
+                window.location.href = 'admin-login.html';
+                */
+
+                window.location.href = 'admin-login.html';
+
+            });
+
+
+        /*
+        ----------------------------------------------------------
+        UNSAVED CHANGES WARNING
+        ----------------------------------------------------------
+        */
+
+        window.addEventListener('beforeunload', event => {
+
+            if (hasChanges()) {
+
+                event.preventDefault();
+
+                event.returnValue = '';
+
+            }
+
+        });
+
+
+        /*
+        ----------------------------------------------------------
+        INITIALIZE
+        ----------------------------------------------------------
+        */
+
+        loadTheme();
+        fetchCommunitySettings();
+
+    </script>
+
+</body>
+
+</html>

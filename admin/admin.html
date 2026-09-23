@@ -1,0 +1,2335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Optify Admin Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy: #071A2B;
+            --navy-2: #0B2638;
+            --emerald: #12B76A;
+            --teal: #0EA5A4;
+            --green-soft: #E8F8F0;
+            --background: #F7F9FC;
+            --white: #FFFFFF;
+            --text: #101828;
+            --muted: #667085;
+            --border: #E4E7EC;
+            --warning: #F79009;
+            --danger: #F04438;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: "Inter", sans-serif;
+            transition: background .25s ease, color .25s ease;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        .font-sora {
+            font-family: "Sora", sans-serif;
+        }
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--navy);
+        }
+
+        .main-wrapper {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 76px;
+        }
+
+        .nav-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .nav-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .14);
+            border-radius: 20px;
+        }
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: 0 4px 18px rgba(16, 24, 40, .035);
+        }
+
+        .stat-card {
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(16, 24, 40, .07);
+        }
+
+        .nav-item {
+            color: rgba(255, 255, 255, .67);
+            transition: all .2s ease;
+        }
+
+        .nav-item:hover {
+            color: white;
+            background: rgba(255, 255, 255, .06);
+        }
+
+        .nav-item.active {
+            color: white;
+            background: rgba(18, 183, 106, .14);
+        }
+
+        .nav-item.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 9px;
+            bottom: 9px;
+            width: 3px;
+            background: var(--emerald);
+            border-radius: 0 5px 5px 0;
+        }
+
+        .mobile-overlay {
+            background: rgba(7, 26, 43, .48);
+            backdrop-filter: blur(3px);
+        }
+
+        .mobile-drawer {
+            transform: translateX(-105%);
+            transition: transform .25s ease;
+        }
+
+        .mobile-drawer.open {
+            transform: translateX(0);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--emerald);
+            box-shadow: 0 0 0 4px rgba(18, 183, 106, .11);
+        }
+
+        .icon-box {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .skeleton {
+            position: relative;
+            overflow: hidden;
+            background: #edf0f3;
+            border-radius: 7px;
+        }
+
+        .skeleton::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,.7),
+                transparent
+            );
+            animation: shimmer 1.35s infinite;
+        }
+
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .page-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: var(--background);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity .25s ease, visibility .25s ease;
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .spinner {
+            width: 38px;
+            height: 38px;
+            border: 3px solid #dce3e8;
+            border-top-color: var(--emerald);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .toast-container {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            min-width: 290px;
+            max-width: 390px;
+            background: var(--navy);
+            color: white;
+            border-radius: 14px;
+            padding: 13px 15px;
+            box-shadow: 0 15px 35px rgba(7, 26, 43, .2);
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+            animation: toastIn .25s ease;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-backdrop {
+            background: rgba(7, 26, 43, .56);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal {
+            animation: modalIn .2s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px) scale(.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .progress-track {
+            height: 7px;
+            border-radius: 20px;
+            background: #edf1f3;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: inherit;
+            background: var(--emerald);
+        }
+
+        .quick-card {
+            transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+        }
+
+        .quick-card:hover {
+            border-color: rgba(18, 183, 106, .3);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(16, 24, 40, .06);
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+        .table-scroll::-webkit-scrollbar {
+            height: 5px;
+        }
+
+        .table-scroll::-webkit-scrollbar-thumb {
+            background: #d5dce2;
+            border-radius: 20px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 999px;
+            padding: 5px 9px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-success {
+            color: #067647;
+            background: #ECFDF3;
+        }
+
+        .status-warning {
+            color: #B54708;
+            background: #FFFAEB;
+        }
+
+        .status-danger {
+            color: #B42318;
+            background: #FEF3F2;
+        }
+
+        .status-neutral {
+            color: #475467;
+            background: #F2F4F7;
+        }
+
+        .empty-state {
+            min-height: 180px;
+        }
+
+        .bottom-nav {
+            display: none;
+        }
+
+        /* DARK MODE */
+        body.dark {
+            --background: #08131e;
+            --white: #0d1d2b;
+            --text: #f1f5f9;
+            --muted: #98a7b5;
+            --border: #203342;
+        }
+
+        body.dark .card {
+            box-shadow: none;
+        }
+
+        body.dark .skeleton {
+            background: #182a38;
+        }
+
+        body.dark .skeleton::after {
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,.06),
+                transparent
+            );
+        }
+
+        body.dark .progress-track {
+            background: #1a2b37;
+        }
+
+        body.dark .table-row:hover {
+            background: rgba(255,255,255,.025);
+        }
+
+        body.dark .status-success {
+            background: rgba(18, 183, 106, .12);
+            color: #6ce0a4;
+        }
+
+        body.dark .status-warning {
+            background: rgba(247, 144, 9, .12);
+            color: #fdb968;
+        }
+
+        body.dark .status-danger {
+            background: rgba(240, 68, 56, .12);
+            color: #ff8f87;
+        }
+
+        body.dark .status-neutral {
+            background: rgba(255,255,255,.07);
+            color: #c3ccd4;
+        }
+
+        body.dark .border-gray {
+            border-color: var(--border);
+        }
+
+        @media (max-width: 1023px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+            }
+
+            .bottom-nav {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .topbar {
+                height: 68px;
+            }
+
+            .page-content {
+                padding-bottom: 92px !important;
+            }
+
+            .toast-container {
+                left: 14px;
+                right: 14px;
+                bottom: 78px;
+            }
+
+            .toast {
+                min-width: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- AUTH / PAGE LOADER -->
+    <!-- <div id="pageLoader" class="page-loader">
+        <div class="text-center">
+            <div class="w-12 h-12 rounded-2xl bg-[#E8F8F0] flex items-center justify-center mx-auto mb-4">
+                <i class='bx bx-shield-quarter text-2xl text-[#12B76A]'></i>
+            </div>
+            <div class="spinner mx-auto"></div>
+            <p class="mt-4 text-sm font-semibold text-gray-600">Checking admin access...</p>
+        </div>
+    </div> -->
+
+    <!-- MOBILE OVERLAY -->
+    <div id="mobileOverlay"
+         class="mobile-overlay fixed inset-0 z-[80] hidden"
+         onclick="closeMobileDrawer()">
+    </div>
+
+    <!-- DESKTOP SIDEBAR -->
+    <aside class="sidebar fixed left-0 top-0 bottom-0 z-[90] hidden lg:flex flex-col text-white">
+
+        <div class="h-[76px] px-6 flex items-center border-b border-white/10">
+            <a href="admin.html" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[#12B76A] flex items-center justify-center">
+                    <i class='bx bx-layer text-2xl text-white'></i>
+                </div>
+
+                <div>
+                    <div class="font-sora font-bold tracking-tight text-lg">
+                        OPTIFY
+                    </div>
+                    <div class="text-[9px] uppercase tracking-[.18em] text-white/45 font-bold">
+                        Admin Portal
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="nav-scroll flex-1 overflow-y-auto px-3 py-5">
+
+            <div class="px-3 mb-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/30">
+                Main
+            </div>
+
+            <nav class="space-y-1">
+                <a href="admin.html"
+                   class="nav-item active relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+                    <i class='bx bx-grid-alt text-lg'></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="users.html"
+                   class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-group text-lg'></i>
+                    <span>Users</span>
+                </a>
+
+                <!-- <a href="validations.html"
+                   class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-check-shield text-lg'></i>
+                    <span>Validation Requests</span>
+                </a> -->
+            </nav>
+
+            <div class="px-3 mt-7 mb-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/30">
+                Earning System
+            </div>
+
+            <nav class="space-y-1">
+                <!-- <a href="streak.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-time-five text-lg'></i>
+                    <span>Streak</span>
+                </a> -->
+
+                <!-- <a href="mystery-box.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-gift text-lg'></i>
+                    <span>Mystery Box</span>
+                </a> -->
+
+                <a href="quizzes.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-help-circle text-lg'></i>
+                    <span>Quiz</span>
+                </a>
+
+                <a href="referrals.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-user-plus text-lg'></i>
+                    <span>Referrals</span>
+                </a>
+            </nav>
+
+            <div class="px-3 mt-7 mb-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/30">
+                Payments
+            </div>
+
+            <nav class="space-y-1">
+                <a href="epins.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-key text-lg'></i>
+                    <span>E-pin</span>
+                </a>
+
+                <a href="withdrawals.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-money-withdraw text-lg'></i>
+                    <span>Withdrawals</span>
+                </a>
+
+                <a href="transactions.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-transfer-alt text-lg'></i>
+                    <span>Transactions</span>
+                </a>
+            </nav>
+
+            <div class="px-3 mt-7 mb-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/30">
+                Platform
+            </div>
+
+            <nav class="space-y-1">
+                <a href="community-settings.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-link-alt text-lg'></i>
+                    <span>Community Settings</span>
+                </a>
+
+                <a href="platform-settings.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-cog text-lg'></i>
+                    <span>Platform Settings</span>
+                </a>
+            </nav>
+
+            <div class="px-3 mt-7 mb-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/30">
+                Account
+            </div>
+
+            <nav class="space-y-1">
+                <a href="admin-profile.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-user-circle text-lg'></i>
+                    <span>Admin Profile</span>
+                </a>
+            </nav>
+
+        </div>
+
+        <div class="p-4 border-t border-white/10">
+
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[.045] mb-3">
+                <div id="sidebarAvatar"
+                     class="w-9 h-9 rounded-full bg-[#E8F8F0] text-[#087443] flex items-center justify-center font-bold text-sm">
+                    A
+                </div>
+
+                <div class="min-w-0 flex-1">
+                    <p id="sidebarAdminName"
+                       class="text-sm font-semibold truncate">
+                        Admin
+                    </p>
+
+                    <p class="text-[11px] text-white/40 truncate">
+                        Administrator
+                    </p>
+                </div>
+            </div>
+
+            <button onclick="openLogoutModal()"
+                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/60 hover:text-white hover:bg-white/[.06] transition">
+                <i class='bx bx-log-out text-lg'></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MOBILE DRAWER -->
+    <aside id="mobileDrawer"
+           class="mobile-drawer fixed left-0 top-0 bottom-0 z-[100] w-[280px] bg-[#071A2B] text-white lg:hidden flex flex-col shadow-2xl">
+
+        <div class="h-[68px] px-5 flex items-center justify-between border-b border-white/10">
+
+            <a href="admin.html" class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-[#12B76A] flex items-center justify-center">
+                    <i class='bx bx-layer text-xl'></i>
+                </div>
+
+                <div>
+                    <div class="font-sora font-bold">OPTIFY</div>
+                    <div class="text-[8px] uppercase tracking-[.16em] text-white/40 font-bold">
+                        Admin Portal
+                    </div>
+                </div>
+            </a>
+
+            <button onclick="closeMobileDrawer()"
+                    class="w-9 h-9 rounded-xl bg-white/[.06] flex items-center justify-center">
+                <i class='bx bx-x text-xl'></i>
+            </button>
+        </div>
+
+        <div class="nav-scroll overflow-y-auto flex-1 px-3 py-5">
+
+            <div class="px-3 mb-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/30">
+                Main
+            </div>
+
+            <nav class="space-y-1">
+                <a href="admin.html" class="nav-item active relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+                    <i class='bx bx-grid-alt text-lg'></i>
+                    Dashboard
+                </a>
+
+                <a href="users.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-group text-lg'></i>
+                    Users
+                </a>
+
+                <a href="validations.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-check-shield text-lg'></i>
+                    Validation Requests
+                </a>
+            </nav>
+
+            <div class="px-3 mt-7 mb-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/30">
+                Earning System
+            </div>
+
+            <nav class="space-y-1">
+                <a href="streak.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-time-five text-lg'></i>
+                    Streak
+                </a>
+
+                <a href="mystery-box.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-gift text-lg'></i>
+                    Mystery Box
+                </a>
+
+                <a href="quizzes.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-help-circle text-lg'></i>
+                    Quiz
+                </a>
+
+                <a href="referrals.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-user-plus text-lg'></i>
+                    Referrals
+                </a>
+            </nav>
+
+            <div class="px-3 mt-7 mb-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/30">
+                Payments
+            </div>
+
+            <nav class="space-y-1">
+                <a href="epins.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-key text-lg'></i>
+                    E-pin
+                </a>
+
+                <a href="withdrawals.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-money-withdraw text-lg'></i>
+                    Withdrawals
+                </a>
+
+                <a href="transactions.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-transfer-alt text-lg'></i>
+                    Transactions
+                </a>
+            </nav>
+
+            <div class="px-3 mt-7 mb-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/30">
+                Platform
+            </div>
+
+            <nav class="space-y-1">
+                <a href="community-settings.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-link-alt text-lg'></i>
+                    Community Settings
+                </a>
+
+                <a href="platform-settings.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-cog text-lg'></i>
+                    Platform Settings
+                </a>
+            </nav>
+
+            <div class="px-3 mt-7 mb-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/30">
+                Account
+            </div>
+
+            <nav class="space-y-1">
+                <a href="admin-profile.html" class="nav-item relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium">
+                    <i class='bx bx-user-circle text-lg'></i>
+                    Admin Profile
+                </a>
+            </nav>
+        </div>
+
+        <div class="p-4 border-t border-white/10">
+            <button onclick="openLogoutModal()"
+                    class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/[.06] text-sm font-semibold text-white/75">
+                <i class='bx bx-log-out'></i>
+                Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main-wrapper">
+
+        <!-- TOPBAR -->
+        <header class="topbar sticky top-0 z-50 bg-white/90 dark:bg-[#0d1d2b]/90 backdrop-blur border-b border-gray-100 dark:border-[#203342]">
+
+            <div class="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+
+                <div class="flex items-center gap-3">
+
+                    <button onclick="openMobileDrawer()"
+                            class="lg:hidden w-10 h-10 rounded-xl border border-gray-200 dark:border-[#203342] flex items-center justify-center text-gray-600 dark:text-gray-300">
+                        <i class='bx bx-menu text-xl'></i>
+                    </button>
+
+                    <div class="hidden sm:block">
+                        <p class="font-sora font-semibold text-sm">
+                            Admin Dashboard
+                        </p>
+                        <p class="text-[11px] text-gray-400">
+                            Optify platform management
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 sm:gap-3">
+
+                    <!-- THEME -->
+                    <button onclick="toggleTheme()"
+                            id="themeButton"
+                            aria-label="Toggle theme"
+                            class="w-10 h-10 rounded-xl border border-gray-200 dark:border-[#203342] flex items-center justify-center text-gray-600 dark:text-gray-300 hover:border-[#12B76A]/30 transition">
+                        <i id="themeIcon" class='bx bx-moon text-lg'></i>
+                    </button>
+
+                    <!-- NOTIFICATIONS -->
+                    <button onclick="toggleNotifications()"
+                            id="notificationButton"
+                            aria-label="Notifications"
+                            class="relative w-10 h-10 rounded-xl border border-gray-200 dark:border-[#203342] flex items-center justify-center text-gray-600 dark:text-gray-300 hover:border-[#12B76A]/30 transition">
+                        <i class='bx bx-bell text-lg'></i>
+                        <span id="notificationBadge"
+                              class="hidden absolute top-2 right-2 w-2 h-2 bg-[#F04438] rounded-full border-2 border-white dark:border-[#0d1d2b]"></span>
+                    </button>
+
+                    <!-- NOTIFICATION DROPDOWN -->
+                    <div id="notificationDropdown"
+                         class="hidden absolute right-4 sm:right-6 lg:right-8 top-[68px] w-[330px] card p-0 overflow-hidden z-[60]">
+
+                        <div class="px-4 py-4 border-b border-gray-100 dark:border-[#203342] flex items-center justify-between">
+                            <div>
+                                <h3 class="font-sora font-semibold text-sm">Notifications</h3>
+                                <p class="text-xs text-gray-400 mt-1">Platform alerts and updates</p>
+                            </div>
+
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                                Admin
+                            </span>
+                        </div>
+
+                        <div id="notificationContent" class="p-5">
+                            <div class="text-center py-5">
+                                <div class="w-10 h-10 rounded-xl bg-gray-50 dark:bg-white/[.04] flex items-center justify-center mx-auto mb-3">
+                                    <i class='bx bx-bell-off text-xl text-gray-400'></i>
+                                </div>
+                                <p class="text-sm font-semibold">No new notifications</p>
+                                <p class="text-xs text-gray-400 mt-1">
+                                    New platform alerts will appear here.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PROFILE -->
+                    <button onclick="goToAdminProfile()"
+                            class="flex items-center gap-2.5 pl-2 sm:pl-3 sm:border-l border-gray-200 dark:border-[#203342]">
+
+                        <div id="topbarAvatar"
+                             class="w-9 h-9 rounded-full bg-[#E8F8F0] text-[#087443] flex items-center justify-center font-bold text-sm">
+                            A
+                        </div>
+
+                        <div class="hidden md:block text-left">
+                            <p id="topbarAdminName" class="text-sm font-semibold leading-none">
+                                Admin
+                            </p>
+                            <p id="topbarAdminEmail"
+                               class="text-[10px] text-gray-400 mt-1 max-w-[150px] truncate">
+                                administrator
+                            </p>
+                        </div>
+
+                        <i class='bx bx-chevron-down hidden md:block text-gray-400'></i>
+                    </button>
+
+                </div>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <main class="page-content p-4 sm:p-6 lg:p-8">
+
+            <!-- PAGE HEADER -->
+            <section class="mb-7">
+
+                <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-5">
+
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-[11px] uppercase tracking-[.16em] font-bold text-[#12B76A]">
+                                ADMIN OVERVIEW
+                            </span>
+
+                            <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+
+                            <span class="text-[11px] text-gray-400">
+                                Today
+                            </span>
+                        </div>
+
+                        <h1 id="pageGreeting"
+                            class="font-sora text-2xl sm:text-3xl lg:text-[34px] font-bold tracking-tight">
+                            Good morning, Admin 👋
+                        </h1>
+
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-2xl">
+                            Manage your Optify platform, users, payments and earning activities from one place.
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-[#12B76A]/15 bg-[#E8F8F0] dark:bg-[#12B76A]/10">
+                        <span class="status-dot"></span>
+                        <span class="text-xs font-bold text-[#087443] dark:text-[#6ce0a4]">
+                            System Online
+                        </span>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- OVERVIEW STATS -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+
+                <div class="card stat-card p-5">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                                Total Users
+                            </p>
+
+                            <div id="totalUsers"
+                                 class="mt-3 text-2xl font-sora font-bold">
+                                <div class="skeleton h-8 w-20"></div>
+                            </div>
+
+                            <p class="text-[11px] text-gray-400 mt-2">
+                                Registered accounts
+                            </p>
+                        </div>
+
+                        <div class="icon-box bg-[#E8F8F0] text-[#12B76A]">
+                            <i class='bx bx-group text-xl'></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card stat-card p-5">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                                Validated Users
+                            </p>
+
+                            <div id="validatedUsers"
+                                 class="mt-3 text-2xl font-sora font-bold">
+                                <div class="skeleton h-8 w-20"></div>
+                            </div>
+
+                            <p class="text-[11px] text-gray-400 mt-2">
+                                Active earning access
+                            </p>
+                        </div>
+
+                        <div class="icon-box bg-[#EEF8FF] text-[#0EA5A4]">
+                            <i class='bx bx-check-shield text-xl'></i>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card stat-card p-5">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                                Total Withdrawals
+                            </p>
+
+                            <div id="totalWithdrawals"
+                                 class="mt-3 text-2xl font-sora font-bold">
+                                <div class="skeleton h-8 w-28"></div>
+                            </div>
+
+                            <p id="totalWithdrawalsNgn"
+                               class="text-[11px] text-gray-400 mt-2">
+                                ≈ ₦0
+                            </p>
+                        </div>
+
+                        <div class="icon-box bg-[#F3F4F6] text-gray-600 dark:bg-white/[.05] dark:text-gray-300">
+                            <i class='bx bx-money-withdraw text-xl'></i>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- FINANCIAL STATS -->
+            <!-- <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-7">
+
+                <div class="card p-5">
+                    <div class="flex items-center justify-between mb-5">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                                Total Earnings Paid
+                            </p>
+                        </div>
+
+                        <i class='bx bx-wallet text-lg text-[#12B76A]'></i>
+                    </div>
+
+                    <p id="totalEarningsPaid"
+                       class="text-xl font-sora font-bold">
+                        $0.00
+                    </p>
+
+                    <p id="totalEarningsPaidNgn"
+                       class="text-xs text-gray-400 mt-1">
+                        ≈ ₦0
+                    </p>
+                </div>
+
+                <div class="card p-5">
+                    <div class="flex items-center justify-between mb-5">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                                Pending Withdrawals
+                            </p>
+                        </div>
+
+                        <i class='bx bx-loader-circle text-lg text-[#F79009]'></i>
+                    </div>
+
+                    <p id="pendingWithdrawalsAmount"
+                       class="text-xl font-sora font-bold">
+                        $0.00
+                    </p>
+
+                    <p id="pendingWithdrawalsNgn"
+                       class="text-xs text-gray-400 mt-1">
+                        ≈ ₦0
+                    </p>
+                </div>
+
+                <div class="card p-5">
+                    <div class="flex items-center justify-between mb-5">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                                E-pin Revenue
+                            </p>
+                        </div>
+
+                        <i class='bx bx-key text-lg text-[#0EA5A4]'></i>
+                    </div>
+
+                    <p id="epinRevenue"
+                       class="text-xl font-sora font-bold">
+                        $0.00
+                    </p>
+
+                    <p id="epinRevenueNgn"
+                       class="text-xs text-gray-400 mt-1">
+                        ≈ ₦0
+                    </p>
+                </div>
+
+                <div class="card p-5">
+                    <div class="flex items-center justify-between mb-5">
+                        <div>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
+                                Validation Revenue
+                            </p>
+                        </div>
+
+                        <i class='bx bx-check-circle text-lg text-[#12B76A]'></i>
+                    </div>
+
+                    <p id="validationRevenue"
+                       class="text-xl font-sora font-bold">
+                        $0.00
+                    </p>
+
+                    <p id="validationRevenueNgn"
+                       class="text-xs text-gray-400 mt-1">
+                        ≈ ₦0
+                    </p>
+                </div>
+
+            </section> -->
+
+            <!-- QUICK MANAGEMENT -->
+            <section class="mb-7">
+
+                <div class="flex items-end justify-between gap-4 mb-4">
+                    <div>
+                        <h2 class="font-sora text-lg font-bold">
+                            Quick Management
+                        </h2>
+                        <p class="text-xs text-gray-400 mt-1">
+                            Access the areas you manage most often.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+
+                    <a href="users.html" class="quick-card card p-5 block">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <div class="icon-box bg-[#E8F8F0] text-[#12B76A] mb-4">
+                                    <i class='bx bx-group text-xl'></i>
+                                </div>
+
+                                <h3 class="font-sora font-semibold text-sm">
+                                    Manage Users
+                                </h3>
+
+                                <p class="text-xs text-gray-400 mt-2 leading-5">
+                                    View and manage registered Optify users.
+                                </p>
+                            </div>
+
+                            <i class='bx bx-right-arrow-alt text-xl text-gray-300'></i>
+                        </div>
+
+                        <div class="mt-4 text-xs font-bold text-[#12B76A]">
+                            Open Users
+                        </div>
+                    </a>
+
+
+                    <a href="withdrawals.html" class="quick-card card p-5 block">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <div class="icon-box bg-[#FFFAEB] text-[#F79009] mb-4">
+                                    <i class='bx bx-money-withdraw text-xl'></i>
+                                </div>
+
+                                <h3 class="font-sora font-semibold text-sm">
+                                    Withdrawals
+                                </h3>
+
+                                <p class="text-xs text-gray-400 mt-2 leading-5">
+                                    Review and process withdrawal requests.
+                                </p>
+                            </div>
+
+                            <i class='bx bx-right-arrow-alt text-xl text-gray-300'></i>
+                        </div>
+
+                        <div class="mt-4 text-xs font-bold text-[#F79009]">
+                            Manage Withdrawals
+                        </div>
+                    </a>
+
+                    <a href="quizzes.html" class="quick-card card p-5 block">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <div class="icon-box bg-[#F3F4F6] text-gray-600 dark:bg-white/[.05] dark:text-gray-300 mb-4">
+                                    <i class='bx bx-help-circle text-xl'></i>
+                                </div>
+
+                                <h3 class="font-sora font-semibold text-sm">
+                                    Quiz
+                                </h3>
+
+                                <p class="text-xs text-gray-400 mt-2 leading-5">
+                                    Create and manage quiz questions.
+                                </p>
+                            </div>
+
+                            <i class='bx bx-right-arrow-alt text-xl text-gray-300'></i>
+                        </div>
+
+                        <div class="mt-4 text-xs font-bold text-gray-600 dark:text-gray-300">
+                            Manage Quiz
+                        </div>
+                    </a>
+
+                    <!-- <a href="mystery-box.html" class="quick-card card p-5 block">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <div class="icon-box bg-[#FDF2FA] text-[#C11574] mb-4">
+                                    <i class='bx bx-gift text-xl'></i>
+                                </div>
+
+                                <h3 class="font-sora font-semibold text-sm">
+                                    Mystery Box
+                                </h3>
+
+                                <p class="text-xs text-gray-400 mt-2 leading-5">
+                                    Manage daily mystery box rewards.
+                                </p>
+                            </div>
+
+                            <i class='bx bx-right-arrow-alt text-xl text-gray-300'></i>
+                        </div>
+
+                        <div class="mt-4 text-xs font-bold text-[#C11574]">
+                            Manage Boxes
+                        </div>
+                    </a> -->
+
+                    <a href="platform-settings.html" class="quick-card card p-5 block">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <div class="icon-box bg-[#EEF4FF] text-[#155EEF] mb-4">
+                                    <i class='bx bx-cog text-xl'></i>
+                                </div>
+
+                                <h3 class="font-sora font-semibold text-sm">
+                                    Platform Settings
+                                </h3>
+
+                                <p class="text-xs text-gray-400 mt-2 leading-5">
+                                    Manage Optify-wide configuration.
+                                </p>
+                            </div>
+
+                            <i class='bx bx-right-arrow-alt text-xl text-gray-300'></i>
+                        </div>
+
+                        <div class="mt-4 text-xs font-bold text-[#155EEF]">
+                            Open Settings
+                        </div>
+                    </a>
+
+                </div>
+            </section>
+
+
+
+
+            <!-- COMMUNITY + ADMIN PROFILE -->
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-7">
+
+                <!-- COMMUNITY -->
+                <div class="card p-5 sm:p-6">
+
+                    <div class="flex items-start justify-between gap-4">
+
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-[#EEF8FF] text-[#0EA5A4] flex items-center justify-center">
+                                <i class='bx bx-link-alt text-xl'></i>
+                            </div>
+
+                            <div>
+                                <h2 class="font-sora font-bold text-base">
+                                    Community
+                                </h2>
+
+                                <p class="text-xs text-gray-400 mt-1">
+                                    Manage the community link shown to users.
+                                </p>
+                            </div>
+                        </div>
+
+                        <a href="community-settings.html"
+                           class="text-xs font-bold text-[#0EA5A4]">
+                            Manage
+                        </a>
+                    </div>
+
+                    <div class="mt-5 rounded-2xl border border-gray-100 dark:border-[#203342] p-4 flex items-center justify-between gap-4">
+
+                        <div>
+                            <p class="text-[11px] text-gray-400">
+                                Community Link
+                            </p>
+
+                            <div class="flex items-center gap-2 mt-2">
+                                <span id="communityStatusDot"
+                                      class="w-2 h-2 rounded-full bg-gray-300"></span>
+
+                                <p id="communityStatus"
+                                   class="text-sm font-semibold">
+                                    Checking...
+                                </p>
+                            </div>
+                        </div>
+
+                        <i class='bx bx-link text-2xl text-gray-300'></i>
+                    </div>
+
+                </div>
+
+                <!-- ADMIN PROFILE -->
+                <div class="card p-5 sm:p-6">
+
+                    <div class="flex items-start justify-between gap-4">
+
+                        <div class="flex items-start gap-3">
+                            <div id="profileAvatar"
+                                 class="w-10 h-10 rounded-xl bg-[#E8F8F0] text-[#087443] flex items-center justify-center font-bold">
+                                A
+                            </div>
+
+                            <div>
+                                <h2 class="font-sora font-bold text-base">
+                                    Admin Profile
+                                </h2>
+
+                                <p class="text-xs text-gray-400 mt-1">
+                                    Your authorized administrator account.
+                                </p>
+                            </div>
+                        </div>
+
+                        <a href="admin-profile.html"
+                           class="text-xs font-bold text-[#12B76A]">
+                            View Profile
+                        </a>
+                    </div>
+
+                    <div class="mt-5 rounded-2xl border border-gray-100 dark:border-[#203342] p-4">
+
+                        <p id="profileAdminName"
+                           class="text-sm font-semibold">
+                            Loading admin...
+                        </p>
+
+                        <p id="profileAdminEmail"
+                           class="text-xs text-gray-400 mt-1">
+                            Loading email...
+                        </p>
+
+                        <div class="flex items-center gap-2 mt-4">
+                            <span class="status-badge status-success">
+                                <i class='bx bx-check-circle'></i>
+                                Administrator
+                            </span>
+
+                            <span id="profileActiveBadge"
+                                  class="status-badge status-success">
+                                Active
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- SECURITY NOTICE -->
+            <section class="card p-5 sm:p-6 mb-7 border-[#12B76A]/15">
+
+                <div class="flex flex-col sm:flex-row gap-4">
+
+                    <div class="w-11 h-11 rounded-xl bg-[#E8F8F0] text-[#12B76A] flex items-center justify-center flex-shrink-0">
+                        <i class='bx bx-shield-quarter text-xl'></i>
+                    </div>
+
+                    <div class="flex-1">
+                        <h3 class="font-sora font-semibold text-sm">
+                            Admin Security
+                        </h3>
+
+                        <p class="text-xs text-gray-400 leading-5 mt-2 max-w-4xl">
+                            Administrative permissions must be enforced by Firebase Authentication,
+                            Firestore Security Rules and trusted backend operations. This dashboard
+                            should never be treated as the authority for balances, payments, validation,
+                            withdrawals, rewards or user permissions.
+                        </p>
+
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="status-badge status-success">
+                                <i class='bx bx-lock'></i>
+                                Auth Protected
+                            </span>
+
+                            <span class="status-badge status-success">
+                                <i class='bx bx-shield'></i>
+                                Role Verified
+                            </span>
+
+                            <span class="status-badge status-neutral">
+                                <i class='bx bx-server'></i>
+                                Backend Authority
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <footer class="pb-5 text-center">
+                <p class="text-[11px] text-gray-400">
+                    Optify Admin Portal
+                </p>
+
+                <p class="text-[10px] text-gray-400 mt-1">
+                    Secure platform management interface
+                </p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav class="bottom-nav fixed bottom-0 left-0 right-0 z-[70] bg-white dark:bg-[#0d1d2b] border-t border-gray-100 dark:border-[#203342] px-2 py-2">
+
+        <a href="admin.html"
+           class="flex-1 flex flex-col items-center gap-1 text-[#12B76A]">
+            <i class='bx bx-grid-alt text-xl'></i>
+            <span class="text-[9px] font-bold">Home</span>
+        </a>
+
+        <a href="users.html"
+           class="flex-1 flex flex-col items-center gap-1 text-gray-400">
+            <i class='bx bx-group text-xl'></i>
+            <span class="text-[9px] font-bold">Users</span>
+        </a>
+
+        <button onclick="openMobileDrawer()"
+                class="flex-1 flex flex-col items-center gap-1 text-gray-400">
+            <div class="w-10 h-10 -mt-6 rounded-full bg-[#12B76A] text-white flex items-center justify-center shadow-lg shadow-[#12B76A]/20">
+                <i class='bx bx-menu text-xl'></i>
+            </div>
+            <span class="text-[9px] font-bold mt-0.5">Menu</span>
+        </button>
+
+        <a href="withdrawals.html"
+           class="flex-1 flex flex-col items-center gap-1 text-gray-400">
+            <i class='bx bx-money-withdraw text-xl'></i>
+            <span class="text-[9px] font-bold">Withdraw</span>
+        </a>
+
+        <a href="admin-profile.html"
+           class="flex-1 flex flex-col items-center gap-1 text-gray-400">
+            <i class='bx bx-user-circle text-xl'></i>
+            <span class="text-[9px] font-bold">Profile</span>
+        </a>
+
+    </nav>
+
+    <!-- LOGOUT MODAL -->
+    <div id="logoutModal"
+         class="modal-backdrop fixed inset-0 z-[200] hidden items-center justify-center p-4">
+
+        <div class="modal card w-full max-w-md p-6">
+
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <div class="w-11 h-11 rounded-xl bg-[#FEF3F2] text-[#F04438] flex items-center justify-center mb-4">
+                        <i class='bx bx-log-out text-xl'></i>
+                    </div>
+
+                    <h2 class="font-sora text-lg font-bold">
+                        Sign Out?
+                    </h2>
+
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 leading-6">
+                        Are you sure you want to sign out of the Optify Admin Portal?
+                    </p>
+                </div>
+
+                <button onclick="closeLogoutModal()"
+                        class="w-9 h-9 rounded-xl border border-gray-200 dark:border-[#203342] flex items-center justify-center text-gray-500">
+                    <i class='bx bx-x text-xl'></i>
+                </button>
+            </div>
+
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeLogoutModal()"
+                        class="flex-1 h-11 rounded-xl border border-gray-200 dark:border-[#203342] text-sm font-semibold">
+                    Cancel
+                </button>
+
+                <button id="confirmLogoutButton"
+                        onclick="handleLogout()"
+                        class="flex-1 h-11 rounded-xl bg-[#F04438] text-white text-sm font-semibold hover:bg-[#d92f24] transition">
+                    Sign Out
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- FIREBASE -->
+    <script type="module">
+
+        /*
+        ============================================================
+        OPTIFY FIREBASE INTEGRATION
+        ============================================================
+
+        Recommended structure:
+
+        /firebase/firebase-config.js
+
+        That file should export the initialized Firebase services.
+
+        Example:
+
+        export { app, auth, db };
+
+        where:
+        - auth = getAuth(app)
+        - db = getFirestore(app)
+
+        Do NOT put Firebase Admin SDK credentials or private keys
+        in this frontend file.
+        ============================================================
+        */
+
+        /*
+        IMPORTANT:
+
+        Replace these imports with your actual firebase-config.js
+        location when the backend is ready.
+
+        Example:
+
+        import { auth, db } from "../firebase/firebase-config.js";
+
+        import {
+            onAuthStateChanged,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+
+        import {
+            doc,
+            getDoc
+        } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        */
+
+        let firebaseReady = false;
+        let currentAdmin = null;
+
+        /*
+        ============================================================
+        DEMO / FRONTEND DEVELOPMENT MODE
+        ============================================================
+
+        The dashboard does not automatically authenticate a user.
+
+        When Firebase is connected, set:
+
+        firebaseReady = true;
+
+        and use the authentication guard below.
+
+        Never replace real authorization with a frontend boolean
+        in production.
+        ============================================================
+        */
+
+        const USD_TO_NGN = 1000;
+
+        const dashboardStats = {
+            totalUsers: 0,
+            validatedUsers: 0,
+            pendingValidations: 0,
+            totalWithdrawals: 0,
+            totalEarningsPaid: 0,
+            pendingWithdrawals: 0,
+            epinRevenue: 0,
+            validationRevenue: 0
+        };
+
+        const pendingActions = {
+            validations: 0,
+            epins: 0,
+            withdrawals: 0
+        };
+
+        const platformSettings = {
+            validationFee: 5,
+            minimumWithdrawal: 10,
+            epinPrice: 2,
+            communityLink: null
+        };
+
+        /*
+        ============================================================
+        AUTHENTICATION GUARD
+        ============================================================
+        */
+
+        async function initializeAdminAuth() {
+
+            /*
+            Production example:
+
+            onAuthStateChanged(auth, async (user) => {
+
+                if (!user) {
+                    window.location.href = "admin-login.html";
+                    return;
+                }
+
+                try {
+
+                    const adminRef = doc(db, "admins", user.uid);
+                    const adminSnap = await getDoc(adminRef);
+
+                    if (!adminSnap.exists()) {
+                        await signOut(auth);
+                        window.location.href = "admin-login.html";
+                        return;
+                    }
+
+                    const adminData = adminSnap.data();
+
+                    if (
+                        adminData.role !== "admin" ||
+                        adminData.active !== true
+                    ) {
+                        await signOut(auth);
+                        window.location.href = "admin-login.html";
+                        return;
+                    }
+
+                    currentAdmin = {
+                        uid: user.uid,
+                        email: user.email,
+                        ...adminData
+                    };
+
+                    renderAdminProfile(currentAdmin);
+                    await loadDashboard();
+
+                    document
+                        .getElementById("pageLoader")
+                        .classList.add("hidden");
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    showToast(
+                        "Unable to verify admin access.",
+                        "error"
+                    );
+
+                    setTimeout(() => {
+                        window.location.href = "admin-login.html";
+                    }, 1500);
+                }
+
+            });
+
+            */
+
+            /*
+            Until Firebase is connected, this page stays as a frontend
+            prototype. No fake successful authentication is performed.
+            */
+
+            renderAdminProfile({
+                name: "Optify Admin",
+                email: "administrator",
+                role: "admin",
+                active: true
+            });
+
+            await loadDashboard();
+
+            document
+                .getElementById("pageLoader")
+                .classList.add("hidden");
+        }
+
+        /*
+        ============================================================
+        ADMIN PROFILE
+        ============================================================
+        */
+
+        function renderAdminProfile(admin) {
+
+            const name = admin?.name || "Optify Admin";
+            const email = admin?.email || "administrator";
+            const initial = name.trim().charAt(0).toUpperCase() || "A";
+
+            document.getElementById("sidebarAdminName").textContent = name;
+            document.getElementById("topbarAdminName").textContent = name;
+            document.getElementById("topbarAdminEmail").textContent = email;
+
+            document.getElementById("profileAdminName").textContent = name;
+            document.getElementById("profileAdminEmail").textContent = email;
+
+            document.getElementById("sidebarAvatar").textContent = initial;
+            document.getElementById("topbarAvatar").textContent = initial;
+            document.getElementById("profileAvatar").textContent = initial;
+
+            if (admin?.active === false) {
+                document.getElementById("profileActiveBadge").className =
+                    "status-badge status-danger";
+
+                document.getElementById("profileActiveBadge").innerHTML =
+                    "<i class='bx bx-x-circle'></i> Inactive";
+            }
+        }
+
+        /*
+        ============================================================
+        LOAD DASHBOARD
+        ============================================================
+        */
+
+        async function loadDashboard() {
+
+            /*
+            Replace these frontend placeholders with your backend
+            or Firestore data loading functions.
+
+            Example:
+
+            await Promise.all([
+                loadAdminProfile(),
+                loadDashboardStats(),
+                loadRecentActivity(),
+                loadPendingActions(),
+                loadValidationStats(),
+                loadWithdrawalStats(),
+                loadEpinStats(),
+                loadEarningSystemStats(),
+                loadCommunitySettings(),
+                loadSystemStatus()
+            ]);
+            */
+
+            renderDashboardStats();
+            renderPendingActions();
+            renderValidationSettings();
+            renderWithdrawalSettings();
+            renderCommunityStatus();
+
+            /*
+            Prototype system status.
+
+            In production these values should come from actual
+            service-health checks.
+            */
+
+            setSystemStatus("authStatus", "Operational");
+            setSystemStatus("databaseStatus", "Checking");
+            setSystemStatus("paymentStatus", "Checking");
+            setSystemStatus("taskStatus", "Checking");
+
+            /*
+            Do not claim that services are operational until actual
+            backend health checks have confirmed them.
+            */
+        }
+
+        /*
+        ============================================================
+        DASHBOARD STATS
+        ============================================================
+        */
+
+        function renderDashboardStats() {
+
+            document.getElementById("totalUsers").textContent =
+                formatNumber(dashboardStats.totalUsers);
+
+            document.getElementById("validatedUsers").textContent =
+                formatNumber(dashboardStats.validatedUsers);
+
+            document.getElementById("pendingValidations").textContent =
+                formatNumber(dashboardStats.pendingValidations);
+
+            document.getElementById("totalWithdrawals").textContent =
+                formatUSD(dashboardStats.totalWithdrawals);
+
+            document.getElementById("totalWithdrawalsNgn").textContent =
+                `≈ ${formatNGN(dashboardStats.totalWithdrawals)}`;
+
+            document.getElementById("totalEarningsPaid").textContent =
+                formatUSD(dashboardStats.totalEarningsPaid);
+
+            document.getElementById("totalEarningsPaidNgn").textContent =
+                `≈ ${formatNGN(dashboardStats.totalEarningsPaid)}`;
+
+            document.getElementById("pendingWithdrawalsAmount").textContent =
+                formatUSD(dashboardStats.pendingWithdrawals);
+
+            document.getElementById("pendingWithdrawalsNgn").textContent =
+                `≈ ${formatNGN(dashboardStats.pendingWithdrawals)}`;
+
+            document.getElementById("epinRevenue").textContent =
+                formatUSD(dashboardStats.epinRevenue);
+
+            document.getElementById("epinRevenueNgn").textContent =
+                `≈ ${formatNGN(dashboardStats.epinRevenue)}`;
+
+            document.getElementById("validationRevenue").textContent =
+                formatUSD(dashboardStats.validationRevenue);
+
+            document.getElementById("validationRevenueNgn").textContent =
+                `≈ ${formatNGN(dashboardStats.validationRevenue)}`;
+
+            document.getElementById("validationStatValidated").textContent =
+                formatNumber(dashboardStats.validatedUsers);
+
+            document.getElementById("validationStatPending").textContent =
+                formatNumber(dashboardStats.pendingValidations);
+
+            document.getElementById("validationStatFailed").textContent =
+                "0";
+
+            document.getElementById("withdrawalPendingStat").textContent =
+                formatUSD(dashboardStats.pendingWithdrawals);
+
+            document.getElementById("withdrawalApprovedStat").textContent =
+                "$0";
+
+            document.getElementById("withdrawalRejectedStat").textContent =
+                "$0";
+        }
+
+        /*
+        ============================================================
+        PENDING ACTIONS
+        ============================================================
+        */
+
+        function renderPendingActions() {
+
+            document.getElementById("attentionValidations").textContent =
+                formatNumber(pendingActions.validations);
+
+            document.getElementById("attentionEpins").textContent =
+                formatNumber(pendingActions.epins);
+
+            document.getElementById("attentionWithdrawals").textContent =
+                formatNumber(pendingActions.withdrawals);
+        }
+
+        /*
+        ============================================================
+        PLATFORM SETTINGS
+        ============================================================
+        */
+
+        function renderValidationSettings() {
+
+            const fee = Number(platformSettings.validationFee || 5);
+
+            document.getElementById("validationFee").textContent =
+                formatUSD(fee);
+
+            document.getElementById("validationFeeNgn").textContent =
+                `≈ ${formatNGN(fee)}`;
+        }
+
+        function renderWithdrawalSettings() {
+
+            const minimum = Number(
+                platformSettings.minimumWithdrawal || 10
+            );
+
+            const epin = Number(
+                platformSettings.epinPrice || 2
+            );
+
+            document.getElementById("minimumWithdrawal").textContent =
+                formatUSD(minimum);
+
+            document.getElementById("minimumWithdrawalNgn").textContent =
+                `≈ ${formatNGN(minimum)}`;
+
+            document.getElementById("epinPrice").textContent =
+                formatUSD(epin);
+
+            document.getElementById("epinPriceNgn").textContent =
+                `≈ ${formatNGN(epin)}`;
+        }
+
+        /*
+        ============================================================
+        COMMUNITY STATUS
+        ============================================================
+        */
+
+        function renderCommunityStatus() {
+
+            const status = document.getElementById("communityStatus");
+            const dot = document.getElementById("communityStatusDot");
+
+            if (platformSettings.communityLink) {
+
+                status.textContent = "Configured";
+                dot.className =
+                    "w-2 h-2 rounded-full bg-[#12B76A]";
+
+            } else {
+
+                status.textContent = "Not configured";
+                dot.className =
+                    "w-2 h-2 rounded-full bg-gray-300";
+            }
+        }
+
+        /*
+        ============================================================
+        SYSTEM STATUS
+        ============================================================
+        */
+
+        function setSystemStatus(id, status) {
+
+            const element = document.getElementById(id);
+
+            if (!element) return;
+
+            if (status === "Operational") {
+
+                element.className =
+                    "status-badge status-success";
+
+                element.innerHTML =
+                    "<i class='bx bx-check-circle'></i> Operational";
+
+            } else if (status === "Issue") {
+
+                element.className =
+                    "status-badge status-danger";
+
+                element.innerHTML =
+                    "<i class='bx bx-error-circle'></i> Issue";
+
+            } else {
+
+                element.className =
+                    "status-badge status-neutral";
+
+                element.innerHTML =
+                    "<i class='bx bx-loader-alt bx-spin'></i> Checking";
+            }
+        }
+
+        /*
+        ============================================================
+        NUMBER / CURRENCY HELPERS
+        ============================================================
+        */
+
+        function formatNumber(value) {
+
+            return new Intl.NumberFormat("en-US").format(
+                Number(value || 0)
+            );
+        }
+
+        function formatUSD(value) {
+
+            return new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(Number(value || 0));
+        }
+
+        function formatNGN(value) {
+
+            return new Intl.NumberFormat("en-NG", {
+                style: "currency",
+                currency: "NGN",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(
+                Number(value || 0) * USD_TO_NGN
+            );
+        }
+
+        /*
+        ============================================================
+        MOBILE DRAWER
+        ============================================================
+        */
+
+        function openMobileDrawer() {
+
+            document
+                .getElementById("mobileDrawer")
+                .classList.add("open");
+
+            document
+                .getElementById("mobileOverlay")
+                .classList.remove("hidden");
+
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeMobileDrawer() {
+
+            document
+                .getElementById("mobileDrawer")
+                .classList.remove("open");
+
+            document
+                .getElementById("mobileOverlay")
+                .classList.add("hidden");
+
+            document.body.style.overflow = "";
+        }
+
+        /*
+        ============================================================
+        THEME
+        ============================================================
+        */
+
+        function applyTheme(theme) {
+
+            const icon = document.getElementById("themeIcon");
+
+            if (theme === "dark") {
+
+                document.body.classList.add("dark");
+
+                icon.className =
+                    "bx bx-sun text-lg";
+
+            } else {
+
+                document.body.classList.remove("dark");
+
+                icon.className =
+                    "bx bx-moon text-lg";
+            }
+        }
+
+        function toggleTheme() {
+
+            const current =
+                document.body.classList.contains("dark")
+                    ? "dark"
+                    : "light";
+
+            const next =
+                current === "dark"
+                    ? "light"
+                    : "dark";
+
+            localStorage.setItem("optify-theme", next);
+
+            applyTheme(next);
+        }
+
+        function initializeTheme() {
+
+            const saved =
+                localStorage.getItem("optify-theme");
+
+            if (saved === "dark" || saved === "light") {
+
+                applyTheme(saved);
+                return;
+            }
+
+            const prefersDark =
+                window.matchMedia &&
+                window.matchMedia(
+                    "(prefers-color-scheme: dark)"
+                ).matches;
+
+            applyTheme(
+                prefersDark ? "dark" : "light"
+            );
+        }
+
+        /*
+        ============================================================
+        NOTIFICATIONS
+        ============================================================
+        */
+
+        function toggleNotifications() {
+
+            const dropdown =
+                document.getElementById(
+                    "notificationDropdown"
+                );
+
+            dropdown.classList.toggle("hidden");
+        }
+
+        document.addEventListener("click", function(event) {
+
+            const dropdown =
+                document.getElementById(
+                    "notificationDropdown"
+                );
+
+            const button =
+                document.getElementById(
+                    "notificationButton"
+                );
+
+            if (
+                !dropdown.contains(event.target) &&
+                !button.contains(event.target)
+            ) {
+                dropdown.classList.add("hidden");
+            }
+        });
+
+        /*
+        ============================================================
+        LOGOUT
+        ============================================================
+        */
+
+        function openLogoutModal() {
+
+            const modal =
+                document.getElementById("logoutModal");
+
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+
+            closeMobileDrawer();
+        }
+
+        function closeLogoutModal() {
+
+            const modal =
+                document.getElementById("logoutModal");
+
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        async function handleLogout() {
+
+            const button =
+                document.getElementById(
+                    "confirmLogoutButton"
+                );
+
+            button.disabled = true;
+
+            button.innerHTML =
+                "<i class='bx bx-loader-alt bx-spin'></i> Signing out...";
+
+            /*
+            Production:
+
+            await signOut(auth);
+
+            */
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "admin-login.html";
+
+            }, 600);
+        }
+
+        /*
+        ============================================================
+        ADMIN PROFILE NAVIGATION
+        ============================================================
+        */
+
+        function goToAdminProfile() {
+
+            window.location.href =
+                "admin-profile.html";
+        }
+
+        /*
+        ============================================================
+        TOAST SYSTEM
+        ============================================================
+        */
+
+        function showToast(message, type = "success") {
+
+            const container =
+                document.getElementById(
+                    "toastContainer"
+                );
+
+            const toast =
+                document.createElement("div");
+
+            let icon = "bx-check-circle";
+
+            if (type === "error") {
+                icon = "bx-error-circle";
+            }
+
+            if (type === "warning") {
+                icon = "bx-error";
+            }
+
+            toast.className = "toast";
+
+            toast.innerHTML = `
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center
+                    ${type === "error"
+                        ? "bg-[#F04438]/15 text-[#ff8f87]"
+                        : type === "warning"
+                            ? "bg-[#F79009]/15 text-[#fdb968]"
+                            : "bg-[#12B76A]/15 text-[#6ce0a4]"
+                    }">
+                    <i class='bx ${icon}'></i>
+                </div>
+
+                <div class="flex-1">
+                    <p class="text-xs font-semibold leading-5">
+                        ${escapeHtml(message)}
+                    </p>
+                </div>
+
+                <button class="text-white/50 hover:text-white"
+                        onclick="this.closest('.toast').remove()">
+                    <i class='bx bx-x'></i>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+
+                toast.style.opacity = "0";
+                toast.style.transform =
+                    "translateY(8px)";
+
+                setTimeout(() => {
+                    toast.remove();
+                }, 250);
+
+            }, 4000);
+        }
+
+        function escapeHtml(value) {
+
+            return String(value)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        /*
+        ============================================================
+        KEYBOARD HANDLING
+        ============================================================
+        */
+
+        document.addEventListener("keydown", function(event) {
+
+            if (event.key === "Escape") {
+
+                closeMobileDrawer();
+                closeLogoutModal();
+
+                document
+                    .getElementById("notificationDropdown")
+                    .classList.add("hidden");
+            }
+        });
+
+        /*
+        ============================================================
+        FIREBASE / BACKEND FUNCTIONS TO CONNECT
+        ============================================================
+
+        These are intentionally placeholders.
+
+        The backend must remain authoritative.
+
+        ------------------------------------------------------------
+
+        async function loadAdminProfile() {}
+
+        async function loadDashboardStats() {}
+
+        async function loadRecentActivity() {}
+
+        async function loadPendingActions() {}
+
+        async function loadValidationStats() {}
+
+        async function loadWithdrawalStats() {}
+
+        async function loadEpinStats() {}
+
+        async function loadEarningSystemStats() {}
+
+        async function loadCommunitySettings() {}
+
+        async function loadSystemStatus() {}
+
+        ------------------------------------------------------------
+
+        Suggested API structure:
+
+        GET /api/admin/profile
+        GET /api/admin/dashboard/stats
+        GET /api/admin/activity
+        GET /api/admin/pending-actions
+        GET /api/admin/validation/stats
+        GET /api/admin/withdrawals/stats
+        GET /api/admin/epins/stats
+        GET /api/admin/platform/settings
+        GET /api/admin/system/status
+
+        ------------------------------------------------------------
+
+        Firestore collections:
+
+        admins/
+        users/
+        settings/
+        transactions/
+        validationPayments/
+        withdrawals/
+        epins/
+        epinPurchases/
+        referrals/
+        streakClaims/
+        mysteryBoxes/
+        quizzes/
+        quizAttempts/
+        notifications/
+        activityLogs/
+
+        ------------------------------------------------------------
+
+        Important security rule:
+
+        A frontend admin dashboard must NOT be able to bypass
+        Firestore Security Rules.
+
+        Sensitive operations such as:
+
+        - approving withdrawals
+        - approving E-pins
+        - changing rewards
+        - changing validation fees
+        - modifying balances
+        - changing user validation
+        - creating financial transactions
+
+        should be protected by trusted backend logic and/or
+        tightly scoped Firebase Security Rules.
+        ============================================================
+        */
+
+        /*
+        ============================================================
+        INITIALIZATION
+        ============================================================
+        */
+
+        initializeTheme();
+        initializeAdminAuth();
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account | Optify</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Boxicons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sora: ['Sora', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif']
+                    },
+                    colors: {
+                        optify: {
+                            navy: '#071A2B',
+                            emerald: '#12B76A',
+                            teal: '#0EA5A4',
+                            soft: '#E8F8F0',
+                            bg: '#F7F9FC',
+                            text: '#101828',
+                            muted: '#667085',
+                            border: '#E4E7EC'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F7F9FC;
+            color: #101828;
+        }
+
+        .font-sora {
+            font-family: 'Sora', sans-serif;
+        }
+
+        .brand-panel {
+            background:
+                radial-gradient(circle at 15% 20%, rgba(18, 183, 106, 0.15), transparent 30%),
+                radial-gradient(circle at 85% 80%, rgba(14, 165, 164, 0.16), transparent 32%),
+                #071A2B;
+        }
+
+        .input-wrap {
+            transition: all 0.2s ease;
+        }
+
+        .input-wrap:focus-within {
+            border-color: #12B76A;
+            box-shadow: 0 0 0 4px rgba(18, 183, 106, 0.09);
+        }
+
+        .form-input {
+            outline: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        .form-input::placeholder {
+            color: #98A2B3;
+        }
+
+        .password-toggle {
+            transition: color 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: #12B76A;
+        }
+
+        .register-btn {
+            background: #12B76A;
+            transition: all 0.2s ease;
+        }
+
+        .register-btn:hover {
+            background: #0E9F5B;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(18, 183, 106, 0.18);
+        }
+
+        .register-btn:active {
+            transform: translateY(0);
+        }
+
+        .register-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .error-message {
+            display: none;
+        }
+
+        .error-message.show {
+            display: flex;
+        }
+
+        .field-error {
+            border-color: #F04438 !important;
+        }
+
+        .field-error:focus-within {
+            border-color: #F04438 !important;
+            box-shadow: 0 0 0 4px rgba(240, 68, 56, 0.08);
+        }
+
+        .success-message {
+            display: none;
+        }
+
+        .success-message.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 999px;
+            pointer-events: none;
+        }
+
+        .benefit-item {
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .benefit-item:hover {
+            transform: translateX(4px);
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        select.form-input {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        @media (max-width: 1023px) {
+            .brand-panel {
+                min-height: 340px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="min-h-screen lg:flex">
+
+        <!-- =========================================
+             LEFT BRANDING PANEL
+        ========================================== -->
+        <section
+            class="brand-panel relative hidden overflow-hidden lg:flex lg:w-[44%] xl:w-[46%] min-h-screen text-white">
+
+            <!-- Decorative shapes -->
+            <div class="floating-shape w-72 h-72 border border-white/5 -top-24 -left-24"></div>
+            <div class="floating-shape w-96 h-96 border border-emerald-400/10 -bottom-48 -right-32"></div>
+            <div class="floating-shape w-32 h-32 bg-emerald-400/5 top-[28%] right-[18%]"></div>
+
+            <div class="relative z-10 flex flex-col justify-between w-full p-10 xl:p-14">
+
+                <!-- Logo -->
+                <a href="index.html" class="inline-flex items-center gap-3 w-fit">
+                    <div
+                        class="w-11 h-11 rounded-xl bg-white flex items-center justify-center shadow-lg shadow-black/10">
+                        <span class="font-sora font-bold text-xl text-optify-navy">O</span>
+                    </div>
+
+                    <span class="font-sora text-2xl font-bold tracking-tight">
+                        OPTIFY
+                    </span>
+                </a>
+
+                <!-- Main Content -->
+                <div class="max-w-lg">
+
+                    <div
+                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-emerald-300 mb-6">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                        Start your journey
+                    </div>
+
+                    <h1 class="font-sora text-4xl xl:text-5xl font-bold leading-tight">
+                        Start your
+                        <span class="text-emerald-400">Optify</span>
+                        journey.
+                    </h1>
+
+                    <p class="mt-5 text-white/65 text-base xl:text-lg leading-8 max-w-md">
+                        Create your account and unlock access to a simple,
+                        rewarding platform built around everyday activities.
+                    </p>
+
+                    <!-- Benefits -->
+                    <div class="mt-9 space-y-3">
+
+                        <div class="benefit-item flex items-center gap-4 p-3 rounded-xl">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-emerald-400/10 border border-emerald-400/10 flex items-center justify-center">
+                                <i class='bx bx-calendar-check text-xl text-emerald-400'></i>
+                            </div>
+
+                            <div>
+                                <h3 class="font-semibold text-sm">
+                                    Daily Rewards
+                                </h3>
+                                <p class="text-xs text-white/50 mt-0.5">
+                                    Complete daily activities and earn rewards.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="benefit-item flex items-center gap-4 p-3 rounded-xl">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-teal-400/10 border border-teal-400/10 flex items-center justify-center">
+                                <i class='bx bx-grid-alt text-xl text-teal-300'></i>
+                            </div>
+
+                            <div>
+                                <h3 class="font-semibold text-sm">
+                                    Multiple Activities
+                                </h3>
+                                <p class="text-xs text-white/50 mt-0.5">
+                                    Explore different ways to participate.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="benefit-item flex items-center gap-4 p-3 rounded-xl">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-emerald-400/10 border border-emerald-400/10 flex items-center justify-center">
+                                <i class='bx bx-wallet text-xl text-emerald-400'></i>
+                            </div>
+
+                            <div>
+                                <h3 class="font-semibold text-sm">
+                                    Simple Withdrawals
+                                </h3>
+                                <p class="text-xs text-white/50 mt-0.5">
+                                    Manage your rewards from one dashboard.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Bottom -->
+                <div class="flex items-center justify-between text-xs text-white/35">
+                    <span>© 2026 Optify</span>
+
+                    <span class="flex items-center gap-1.5">
+                        <i class='bx bx-shield-quarter text-emerald-400'></i>
+                        Secure platform
+                    </span>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- =========================================
+             RIGHT REGISTRATION AREA
+        ========================================== -->
+        <section class="flex-1 min-h-screen bg-[#F7F9FC]">
+
+            <!-- Mobile Header -->
+            <header class="lg:hidden px-5 sm:px-8 py-5 flex items-center justify-between bg-white border-b border-[#E4E7EC]">
+
+                <a href="index.html" class="flex items-center gap-2.5">
+                    <div
+                        class="w-9 h-9 rounded-lg bg-[#071A2B] flex items-center justify-center">
+                        <span class="font-sora font-bold text-white">O</span>
+                    </div>
+
+                    <span class="font-sora font-bold text-lg text-[#071A2B]">
+                        OPTIFY
+                    </span>
+                </a>
+
+                <a href="login.html"
+                    class="text-sm font-semibold text-[#12B76A] hover:text-[#0E9F5B] transition">
+                    Log in
+                </a>
+
+            </header>
+
+
+            <!-- Form Container -->
+            <div class="w-full max-w-2xl mx-auto px-5 sm:px-8 lg:px-12 xl:px-16 py-10 lg:py-14">
+
+                <!-- Desktop top link -->
+                <div class="hidden lg:flex justify-end mb-8">
+                    <p class="text-sm text-[#667085]">
+                        Already have an account?
+                        <a href="login.html"
+                            class="font-semibold text-[#12B76A] hover:text-[#0E9F5B] transition">
+                            Log in
+                        </a>
+                    </p>
+                </div>
+
+
+                <!-- Heading -->
+                <div class="mb-8">
+
+                    <div
+                        class="lg:hidden inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E8F8F0] text-[#087443] text-xs font-semibold mb-5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#12B76A]"></span>
+                        Join Optify
+                    </div>
+
+                    <h2 class="font-sora text-3xl sm:text-4xl font-bold text-[#101828] tracking-tight">
+                        Create your account
+                    </h2>
+
+                    <p class="mt-2.5 text-[#667085] text-sm sm:text-base">
+                        Join Optify and get started today.
+                    </p>
+
+                </div>
+
+
+                <!-- Error Message -->
+                <div id="formError"
+                    class="error-message items-start gap-3 p-4 mb-6 rounded-xl bg-red-50 border border-red-100 text-red-700">
+
+                    <i class='bx bx-error-circle text-xl shrink-0 mt-0.5'></i>
+
+                    <div>
+                        <p class="font-semibold text-sm">Please check your details</p>
+                        <p id="formErrorText" class="text-xs mt-1 text-red-600"></p>
+                    </div>
+
+                </div>
+
+
+                <!-- Success Message -->
+                <div id="formSuccess"
+                    class="success-message items-start gap-3 p-4 mb-6 rounded-xl bg-[#E8F8F0] border border-[#B7E7CF] text-[#087443]">
+
+                    <i class='bx bx-check-circle text-xl shrink-0 mt-0.5'></i>
+
+                    <div>
+                        <p class="font-semibold text-sm">Account created successfully</p>
+                        <p class="text-xs mt-1">
+                            Redirecting you to your Optify dashboard...
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <!-- Registration Form -->
+                <form id="registerForm" novalidate>
+
+                    <!-- Name Row -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                        <!-- Full Name -->
+                        <div>
+                            <label for="fullName"
+                                class="block text-sm font-semibold text-[#344054] mb-2">
+                                Full Name
+                            </label>
+
+                            <div id="fullNameWrap"
+                                class="input-wrap flex items-center gap-3 h-12 px-4 bg-white border border-[#E4E7EC] rounded-xl">
+
+                                <i class='bx bx-user text-lg text-[#98A2B3]'></i>
+
+                                <input
+                                    type="text"
+                                    id="fullName"
+                                    name="fullName"
+                                    class="form-input text-sm text-[#101828]"
+                                    placeholder="John Doe"
+                                    autocomplete="name">
+
+                            </div>
+
+                            <p id="fullNameError" class="text-xs text-red-500 mt-1.5 hidden"></p>
+                        </div>
+
+
+                        <!-- Username -->
+                        <div>
+                            <label for="username"
+                                class="block text-sm font-semibold text-[#344054] mb-2">
+                                Username
+                            </label>
+
+                            <div id="usernameWrap"
+                                class="input-wrap flex items-center gap-3 h-12 px-4 bg-white border border-[#E4E7EC] rounded-xl">
+
+                                <i class='bx bx-at text-lg text-[#98A2B3]'></i>
+
+                                <input
+                                    type="text"
+                                    id="username"
+                                    name="username"
+                                    class="form-input text-sm text-[#101828]"
+                                    placeholder="john123"
+                                    autocomplete="username">
+
+                            </div>
+
+                            <p id="usernameError" class="text-xs text-red-500 mt-1.5 hidden"></p>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Email -->
+                    <div class="mt-5">
+
+                        <label for="email"
+                            class="block text-sm font-semibold text-[#344054] mb-2">
+                            Email Address
+                        </label>
+
+                        <div id="emailWrap"
+                            class="input-wrap flex items-center gap-3 h-12 px-4 bg-white border border-[#E4E7EC] rounded-xl">
+
+                            <i class='bx bx-envelope text-lg text-[#98A2B3]'></i>
+
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                class="form-input text-sm text-[#101828]"
+                                placeholder="you@example.com"
+                                autocomplete="email">
+
+                        </div>
+
+                        <p id="emailError" class="text-xs text-red-500 mt-1.5 hidden"></p>
+
+                    </div>
+
+
+                    <!-- Phone + Country -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
+
+                        <!-- Phone -->
+                        <div>
+
+                            <label for="phone"
+                                class="block text-sm font-semibold text-[#344054] mb-2">
+                                Phone Number
+                            </label>
+
+                            <div id="phoneWrap"
+                                class="input-wrap flex items-center gap-3 h-12 px-4 bg-white border border-[#E4E7EC] rounded-xl">
+
+                                <i class='bx bx-phone text-lg text-[#98A2B3]'></i>
+
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    name="phone"
+                                    class="form-input text-sm text-[#101828]"
+                                    placeholder="+234 800 000 0000"
+                                    autocomplete="tel">
+
+                            </div>
+
+                            <p id="phoneError" class="text-xs text-red-500 mt-1.5 hidden"></p>
+
+                        </div>
+
+
+                        <!-- Country -->
+                        <div>
+
+                            <label for="country"
+                                class="block text-sm font-semibold text-[#344054] mb-2">
+                                Country
+                            </label>
+
+                            <div id="countryWrap"
+                                class="input-wrap flex items-center gap-3 h-12 px-4 bg-white border border-[#E4E7EC] rounded-xl">
+
+                                <i class='bx bx-globe text-lg text-[#98A2B3]'></i>
+
+                                <select
+                                    id="country"
+                                    name="country"
+                                    class="form-input text-sm text-[#101828]">
+
+                                    <option value="" selected disabled>
+                                        Select your country
+                                    </option>
+
+                                    <option value="NG">Nigeria</option>
+                                    <option value="GH">Ghana</option>
+                                    <option value="KE">Kenya</option>
+                                    <option value="ZA">South Africa</option>
+                                    <option value="UG">Uganda</option>
+                                    <option value="TZ">Tanzania</option>
+                                    <option value="US">United States</option>
+                                    <option value="GB">United Kingdom</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="AU">Australia</option>
+                                    <option value="OTHER">Other</option>
+
+                                </select>
+
+                                <i class='bx bx-chevron-down text-lg text-[#98A2B3] pointer-events-none'></i>
+
+                            </div>
+
+                            <p id="countryError" class="text-xs text-red-500 mt-1.5 hidden"></p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Password -->
+                    <div class="mt-5">
+
+                        <label for="password"
+                            class="block text-sm font-semibold text-[#344054] mb-2">
+                            Password
+                        </label>
+
+                        <div id="passwordWrap"
+                            class="input-wrap flex items-center gap-3 h-12 px-4 bg-white border border-[#E4E7EC] rounded-xl">
+
+                            <i class='bx bx-lock-alt text-lg text-[#98A2B3]'></i>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="form-input text-sm text-[#101828]"
+                                placeholder="Create a strong password"
+                                autocomplete="new-password">
+
+                            <button
+                                type="button"
+                                id="togglePassword"
+                                class="password-toggle text-[#98A2B3] text-xl shrink-0"
+                                aria-label="Show password">
+
+                                <i class='bx bx-hide'></i>
+
+                            </button>
+
+                        </div>
+
+                        <p class="text-xs text-[#98A2B3] mt-1.5">
+                            Use at least 8 characters with a combination of letters and numbers.
+                        </p>
+
+                        <p id="passwordError" class="text-xs text-red-500 mt-1.5 hidden"></p>
+
+                    </div>
+
+
+                    <!-- Confirm Password -->
+                    <div class="mt-5">
+
+                        <label for="confirmPassword"
+                            class="block text-sm font-semibold text-[#344054] mb-2">
+                            Confirm Password
+                        </label>
+
+                        <div id="confirmPasswordWrap"
+                            class="input-wrap flex items-center gap-3 h-12 px-4 bg-white border border-[#E4E7EC] rounded-xl">
+
+                            <i class='bx bx-lock text-lg text-[#98A2B3]'></i>
+
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                class="form-input text-sm text-[#101828]"
+                                placeholder="Re-enter your password"
+                                autocomplete="new-password">
+
+                            <button
+                                type="button"
+                                id="toggleConfirmPassword"
+                                class="password-toggle text-[#98A2B3] text-xl shrink-0"
+                                aria-label="Show password">
+
+                                <i class='bx bx-hide'></i>
+
+                            </button>
+
+                        </div>
+
+                        <p id="confirmPasswordError" class="text-xs text-red-500 mt-1.5 hidden"></p>
+
+                    </div>
+
+
+                    <!-- Terms -->
+                    <div class="mt-6">
+
+                        <label class="flex items-start gap-3 cursor-pointer">
+
+                            <input
+                                type="checkbox"
+                                id="terms"
+                                name="terms"
+                                class="mt-1 w-4 h-4 accent-[#12B76A] cursor-pointer">
+
+                            <span class="text-sm text-[#667085] leading-6">
+                                I agree to the
+                                <a href="#" class="text-[#12B76A] font-semibold hover:underline">
+                                    Terms of Service
+                                </a>
+                                and
+                                <a href="#" class="text-[#12B76A] font-semibold hover:underline">
+                                    Privacy Policy
+                                </a>.
+                            </span>
+
+                        </label>
+
+                        <p id="termsError" class="text-xs text-red-500 mt-1.5 hidden"></p>
+
+                    </div>
+
+
+                    <!-- Submit -->
+                    <button
+                        type="submit"
+                        id="registerButton"
+                        class="register-btn w-full h-13 min-h-[52px] mt-7 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2">
+
+                        <span id="buttonText">
+                            Create Account
+                        </span>
+
+                        <span id="buttonSpinner" class="spinner hidden"></span>
+
+                        <i id="buttonIcon" class='bx bx-right-arrow-alt text-xl'></i>
+
+                    </button>
+
+                </form>
+
+
+                <!-- Login -->
+                <div class="text-center mt-7 lg:hidden">
+                    <p class="text-sm text-[#667085]">
+                        Already have an account?
+                        <a href="login.html"
+                            class="font-semibold text-[#12B76A] hover:text-[#0E9F5B] transition">
+                            Log in
+                        </a>
+                    </p>
+                </div>
+
+
+                <!-- Security note -->
+                <div class="flex items-center justify-center gap-2 mt-8 text-xs text-[#98A2B3]">
+                    <i class='bx bx-lock-alt text-sm'></i>
+                    <span>Your account information is securely handled.</span>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================== -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const form = document.getElementById("registerForm");
+
+            const password = document.getElementById("password");
+            const confirmPassword = document.getElementById("confirmPassword");
+
+            const togglePassword = document.getElementById("togglePassword");
+            const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
+
+            const registerButton = document.getElementById("registerButton");
+            const buttonText = document.getElementById("buttonText");
+            const buttonSpinner = document.getElementById("buttonSpinner");
+            const buttonIcon = document.getElementById("buttonIcon");
+
+            const formError = document.getElementById("formError");
+            const formErrorText = document.getElementById("formErrorText");
+            const formSuccess = document.getElementById("formSuccess");
+
+
+            /* =========================================
+               PASSWORD VISIBILITY
+            ========================================== */
+
+            function setupPasswordToggle(button, input) {
+
+                button.addEventListener("click", function () {
+
+                    const icon = button.querySelector("i");
+
+                    if (input.type === "password") {
+
+                        input.type = "text";
+                        icon.classList.remove("bx-hide");
+                        icon.classList.add("bx-show");
+                        button.setAttribute("aria-label", "Hide password");
+
+                    } else {
+
+                        input.type = "password";
+                        icon.classList.remove("bx-show");
+                        icon.classList.add("bx-hide");
+                        button.setAttribute("aria-label", "Show password");
+
+                    }
+
+                });
+
+            }
+
+            setupPasswordToggle(togglePassword, password);
+            setupPasswordToggle(toggleConfirmPassword, confirmPassword);
+
+
+            /* =========================================
+               HELPERS
+            ========================================== */
+
+            function showFieldError(field, message) {
+
+                const wrap = document.getElementById(field.id + "Wrap");
+                const error = document.getElementById(field.id + "Error");
+
+                if (wrap) {
+                    wrap.classList.add("field-error");
+                }
+
+                if (error) {
+                    error.textContent = message;
+                    error.classList.remove("hidden");
+                }
+
+            }
+
+
+            function clearFieldError(field) {
+
+                const wrap = document.getElementById(field.id + "Wrap");
+                const error = document.getElementById(field.id + "Error");
+
+                if (wrap) {
+                    wrap.classList.remove("field-error");
+                }
+
+                if (error) {
+                    error.textContent = "";
+                    error.classList.add("hidden");
+                }
+
+            }
+
+
+            function clearAllErrors() {
+
+                const fields = [
+                    "fullName",
+                    "username",
+                    "email",
+                    "phone",
+                    "country",
+                    "password",
+                    "confirmPassword"
+                ];
+
+                fields.forEach(function (id) {
+                    const field = document.getElementById(id);
+
+                    if (field) {
+                        clearFieldError(field);
+                    }
+                });
+
+                document.getElementById("termsError").classList.add("hidden");
+
+                formError.classList.remove("show");
+
+            }
+
+
+            /* =========================================
+               LIVE ERROR CLEARING
+            ========================================== */
+
+            const fields = document.querySelectorAll(
+                "#registerForm input, #registerForm select"
+            );
+
+            fields.forEach(function (field) {
+
+                field.addEventListener("input", function () {
+                    clearFieldError(field);
+                });
+
+                field.addEventListener("change", function () {
+                    clearFieldError(field);
+                });
+
+            });
+
+
+            /* =========================================
+               FORM SUBMISSION
+            ========================================== */
+
+            form.addEventListener("submit", function (event) {
+
+                event.preventDefault();
+
+                clearAllErrors();
+
+                const fullName = document.getElementById("fullName");
+                const username = document.getElementById("username");
+                const email = document.getElementById("email");
+                const phone = document.getElementById("phone");
+                const country = document.getElementById("country");
+                const terms = document.getElementById("terms");
+
+                let valid = true;
+
+
+                /* Full Name */
+                if (fullName.value.trim().length < 2) {
+
+                    showFieldError(
+                        fullName,
+                        "Please enter your full name."
+                    );
+
+                    valid = false;
+
+                }
+
+
+                /* Username */
+                const usernameValue = username.value.trim();
+
+                if (usernameValue.length < 3) {
+
+                    showFieldError(
+                        username,
+                        "Username must contain at least 3 characters."
+                    );
+
+                    valid = false;
+
+                } else if (!/^[a-zA-Z0-9_]+$/.test(usernameValue)) {
+
+                    showFieldError(
+                        username,
+                        "Use only letters, numbers and underscores."
+                    );
+
+                    valid = false;
+
+                }
+
+
+                /* Email */
+                const emailValue = email.value.trim();
+
+                if (!emailValue) {
+
+                    showFieldError(
+                        email,
+                        "Please enter your email address."
+                    );
+
+                    valid = false;
+
+                } else if (
+                    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)
+                ) {
+
+                    showFieldError(
+                        email,
+                        "Please enter a valid email address."
+                    );
+
+                    valid = false;
+
+                }
+
+
+                /* Phone */
+                if (phone.value.trim().length < 7) {
+
+                    showFieldError(
+                        phone,
+                        "Please enter a valid phone number."
+                    );
+
+                    valid = false;
+
+                }
+
+
+                /* Country */
+                if (!country.value) {
+
+                    showFieldError(
+                        country,
+                        "Please select your country."
+                    );
+
+                    valid = false;
+
+                }
+
+
+                /* Password */
+                if (password.value.length < 8) {
+
+                    showFieldError(
+                        password,
+                        "Password must contain at least 8 characters."
+                    );
+
+                    valid = false;
+
+                }
+
+
+                /* Confirm Password */
+                if (!confirmPassword.value) {
+
+                    showFieldError(
+                        confirmPassword,
+                        "Please confirm your password."
+                    );
+
+                    valid = false;
+
+                } else if (confirmPassword.value !== password.value) {
+
+                    showFieldError(
+                        confirmPassword,
+                        "Passwords do not match."
+                    );
+
+                    valid = false;
+
+                }
+
+
+                /* Terms */
+                if (!terms.checked) {
+
+                    document.getElementById("termsError").textContent =
+                        "Please accept the Terms of Service and Privacy Policy.";
+
+                    document.getElementById("termsError").classList.remove("hidden");
+
+                    valid = false;
+
+                }
+
+
+                /* Stop if invalid */
+                if (!valid) {
+
+                    formErrorText.textContent =
+                        "Please correct the highlighted fields and try again.";
+
+                    formError.classList.add("show");
+
+                    const firstError = document.querySelector(".field-error");
+
+                    if (firstError) {
+                        firstError.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center"
+                        });
+                    }
+
+                    return;
+
+                }
+
+
+                /* =========================================
+                   LOADING STATE
+                   ========================================== */
+
+                registerButton.disabled = true;
+
+                buttonText.textContent = "Creating Account...";
+                buttonSpinner.classList.remove("hidden");
+                buttonIcon.classList.add("hidden");
+
+
+                /*
+                 * BACKEND INTEGRATION PLACEHOLDER
+                 *
+                 * Connect this section to your authentication
+                 * backend/Firebase when the backend is ready.
+                 *
+                 * Do not store passwords in localStorage.
+                 */
+
+
+                setTimeout(function () {
+
+                    formSuccess.classList.add("show");
+
+                    registerButton.disabled = false;
+
+                    buttonText.textContent = "Create Account";
+                    buttonSpinner.classList.add("hidden");
+                    buttonIcon.classList.remove("hidden");
+
+                    /*
+                     * Example future redirect:
+                     *
+                     * window.location.href = "dashboard.html";
+                     *
+                     * The backend should determine whether the
+                     * registration was actually successful before
+                     * performing the redirect.
+                     */
+
+                }, 900);
+
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Login | Optify</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <link
+        href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        :root {
+            --navy: #071A2B;
+            --navy-2: #0B2638;
+            --emerald: #12B76A;
+            --teal: #0EA5A4;
+            --green-soft: #E8F8F0;
+            --background: #F7F9FC;
+            --white: #FFFFFF;
+            --text: #101828;
+            --muted: #667085;
+            --border: #E4E7EC;
+            --danger: #F04438;
+            --warning: #F79009;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+            font-family: "Inter", sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: "Sora", sans-serif;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        .page {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: minmax(420px, .92fr) minmax(500px, 1.08fr);
+        }
+
+        /* ==========================================
+           BRAND PANEL
+        ========================================== */
+
+        .brand-panel {
+            position: relative;
+            min-height: 100vh;
+            overflow: hidden;
+            padding: 38px 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: var(--navy);
+            color: #fff;
+        }
+
+        .brand-panel::before {
+            content: "";
+            width: 480px;
+            height: 480px;
+            position: absolute;
+            top: -230px;
+            right: -190px;
+            border-radius: 50%;
+            border: 1px solid rgba(18, 183, 106, .15);
+        }
+
+        .brand-panel::after {
+            content: "";
+            width: 360px;
+            height: 360px;
+            position: absolute;
+            bottom: -190px;
+            left: -150px;
+            border-radius: 50%;
+            border: 1px solid rgba(14, 165, 164, .12);
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 11px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .logo-mark {
+            width: 43px;
+            height: 43px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            background: var(--emerald);
+            color: #fff;
+            font-family: "Sora", sans-serif;
+            font-size: 23px;
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-family: "Sora", sans-serif;
+            font-size: 21px;
+            font-weight: 700;
+            letter-spacing: -.6px;
+        }
+
+        .brand-center {
+            max-width: 530px;
+            margin: auto 0;
+        }
+
+        .brand-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding: 8px 11px;
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 8px;
+            background: rgba(255,255,255,.045);
+            color: #A8BAC5;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .brand-eyebrow i {
+            color: #7AE2AE;
+            font-size: 15px;
+        }
+
+        .brand-title {
+            max-width: 510px;
+            margin: 0;
+            color: #fff;
+            font-size: clamp(32px, 4vw, 49px);
+            line-height: 1.12;
+            letter-spacing: -1.8px;
+        }
+
+        .brand-title span {
+            color: #53D68F;
+        }
+
+        .brand-description {
+            max-width: 490px;
+            margin: 18px 0 30px;
+            color: #A9BAC5;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .admin-features {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            max-width: 480px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: 1px solid rgba(255,255,255,.07);
+            border-radius: 11px;
+            background: rgba(255,255,255,.035);
+        }
+
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 9px;
+            background: rgba(18,183,106,.11);
+            color: #71DFA5;
+            font-size: 17px;
+        }
+
+        .feature span {
+            color: #C3D0D8;
+            font-size: 9px;
+            line-height: 1.4;
+        }
+
+        .brand-footer {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            color: #718896;
+            font-size: 9px;
+        }
+
+        .secure-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .secure-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--emerald);
+            box-shadow: 0 0 0 4px rgba(18,183,106,.09);
+        }
+
+        /* ==========================================
+           LOGIN PANEL
+        ========================================== */
+
+        .login-panel {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 35px;
+            background: var(--white);
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .mobile-logo {
+            display: none;
+        }
+
+        .login-heading {
+            margin-bottom: 27px;
+        }
+
+        .login-heading .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 11px;
+            color: var(--emerald);
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .login-heading h1 {
+            margin: 0;
+            font-size: 28px;
+            line-height: 1.25;
+            letter-spacing: -.7px;
+        }
+
+        .login-heading p {
+            margin: 9px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 9px;
+            margin-bottom: 14px;
+            border-radius: 7px;
+            background: var(--green-soft);
+            color: var(--emerald);
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 7px;
+            color: var(--text);
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            font-size: 17px;
+            pointer-events: none;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 47px;
+            padding: 0 42px 0 40px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            background: var(--white);
+            color: var(--text);
+            font-size: 11px;
+            transition: .2s ease;
+        }
+
+        .form-input::placeholder {
+            color: #98A2B3;
+        }
+
+        .form-input:focus {
+            border-color: rgba(18,183,106,.55);
+            box-shadow: 0 0 0 3px rgba(18,183,106,.08);
+        }
+
+        .password-toggle {
+            width: 35px;
+            height: 35px;
+            position: absolute;
+            right: 6px;
+            top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .password-toggle:hover {
+            background: var(--background);
+        }
+
+        .login-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 3px 0 19px;
+        }
+
+        .remember {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--muted);
+            font-size: 9px;
+            cursor: pointer;
+        }
+
+        .remember input {
+            width: 14px;
+            height: 14px;
+            accent-color: var(--emerald);
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            color: var(--emerald);
+            font-size: 9px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .login-button {
+            width: 100%;
+            height: 47px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--emerald);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            transition: .2s ease;
+        }
+
+        .login-button:hover {
+            background: #0FA15E;
+            transform: translateY(-1px);
+        }
+
+        .login-button:disabled {
+            opacity: .65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-button i {
+            font-size: 17px;
+        }
+
+        .error-message {
+            display: none;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 11px 12px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(240,68,56,.14);
+            border-radius: 9px;
+            background: rgba(240,68,56,.055);
+            color: var(--danger);
+            font-size: 9px;
+            line-height: 1.5;
+        }
+
+        .error-message.show {
+            display: flex;
+        }
+
+        .error-message i {
+            margin-top: 1px;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .success-message {
+            display: none;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 11px 12px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(18,183,106,.15);
+            border-radius: 9px;
+            background: var(--green-soft);
+            color: var(--emerald);
+            font-size: 9px;
+            line-height: 1.5;
+        }
+
+        .success-message.show {
+            display: flex;
+        }
+
+        .success-message i {
+            margin-top: 1px;
+            font-size: 16px;
+        }
+
+        .security-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 19px;
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--background);
+        }
+
+        .security-card i {
+            color: var(--emerald);
+            font-size: 18px;
+        }
+
+        .security-card strong {
+            display: block;
+            margin-bottom: 3px;
+            font-size: 9px;
+        }
+
+        .security-card p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 8px;
+            line-height: 1.55;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 21px;
+            color: var(--muted);
+            font-size: 9px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            color: var(--emerald);
+        }
+
+        .copyright {
+            margin-top: 28px;
+            color: #98A2B3;
+            font-size: 8px;
+            text-align: center;
+        }
+
+        /* ==========================================
+           LOADING
+        ========================================== */
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ==========================================
+           RESPONSIVE
+        ========================================== */
+
+        @media (max-width: 900px) {
+            .page {
+                grid-template-columns: 1fr;
+            }
+
+            .brand-panel {
+                min-height: auto;
+                padding: 28px 25px;
+            }
+
+            .brand-center {
+                margin: 70px 0 65px;
+            }
+
+            .brand-title {
+                max-width: 650px;
+                font-size: 37px;
+            }
+
+            .brand-description {
+                max-width: 620px;
+            }
+
+            .login-panel {
+                min-height: auto;
+                padding: 50px 25px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .brand-panel {
+                padding: 23px 18px;
+            }
+
+            .brand-center {
+                margin: 55px 0 45px;
+            }
+
+            .brand-title {
+                font-size: 29px;
+                letter-spacing: -1px;
+            }
+
+            .brand-description {
+                font-size: 11px;
+                line-height: 1.7;
+            }
+
+            .admin-features {
+                grid-template-columns: 1fr;
+            }
+
+            .brand-footer {
+                font-size: 8px;
+            }
+
+            .login-panel {
+                padding: 35px 18px 30px;
+            }
+
+            .mobile-logo {
+                display: flex;
+                align-items: center;
+                gap: 9px;
+                margin-bottom: 35px;
+            }
+
+            .mobile-logo .logo-mark {
+                width: 37px;
+                height: 37px;
+                font-size: 19px;
+            }
+
+            .mobile-logo .logo-text {
+                font-size: 18px;
+            }
+
+            .login-heading h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- ==========================================
+             BRAND PANEL
+        =========================================== -->
+
+        <section class="brand-panel">
+
+            <div class="brand-content">
+
+                <a href="../index.html" class="logo">
+                    <div class="logo-mark">O</div>
+                    <div class="logo-text">OPTIFY</div>
+                </a>
+
+            </div>
+
+            <div class="brand-center">
+
+                <div class="brand-eyebrow">
+                    <i class='bx bx-shield-quarter'></i>
+                    Secure Administration
+                </div>
+
+                <h1 class="brand-title">
+                    Manage your <span>Optify</span> platform securely.
+                </h1>
+
+                <p class="brand-description">
+                    Access the Optify administration portal to manage users,
+                    validation payments, earning activities, withdrawals,
+                    referrals and platform settings.
+                </p>
+
+                <div class="admin-features">
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            <i class='bx bx-user'></i>
+                        </div>
+
+                        <span>
+                            Manage user accounts and validation status
+                        </span>
+
+                    </div>
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            <i class='bx bx-credit-card'></i>
+                        </div>
+
+                        <span>
+                            Monitor payments and transactions
+                        </span>
+
+                    </div>
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            <i class='bx bx-task'></i>
+                        </div>
+
+                        <span>
+                            Configure earning activities
+                        </span>
+
+                    </div>
+
+                    <div class="feature">
+
+                        <div class="feature-icon">
+                            <i class='bx bx-transfer'></i>
+                        </div>
+
+                        <span>
+                            Review withdrawals and account activity
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="brand-footer">
+
+                <div class="secure-status">
+                    <span class="secure-dot"></span>
+                    Secure Admin Environment
+                </div>
+
+                <span>Optify Administration</span>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             LOGIN PANEL
+        =========================================== -->
+
+        <section class="login-panel">
+
+            <div class="login-wrapper">
+
+                <!-- MOBILE LOGO -->
+
+                <div class="mobile-logo">
+
+                    <div class="logo-mark">
+                        O
+                    </div>
+
+                    <div class="logo-text">
+                        OPTIFY
+                    </div>
+
+                </div>
+
+
+                <!-- HEADING -->
+
+                <div class="login-heading">
+
+                    <div class="admin-badge">
+                        <i class='bx bx-lock-alt'></i>
+                        Admin Portal
+                    </div>
+
+                    <div class="eyebrow">
+                        <i class='bx bx-shield-quarter'></i>
+                        Administration
+                    </div>
+
+                    <h1>
+                        Welcome back, Admin
+                    </h1>
+
+                    <p>
+                        Sign in to manage your Optify platform.
+                    </p>
+
+                </div>
+
+
+                <!-- ERROR -->
+
+                <div class="error-message" id="errorMessage">
+
+                    <i class='bx bx-error-circle'></i>
+
+                    <span id="errorText">
+                        Invalid email or password.
+                    </span>
+
+                </div>
+
+
+                <!-- SUCCESS -->
+
+                <div class="success-message" id="successMessage">
+
+                    <i class='bx bx-check-circle'></i>
+
+                    <span id="successText">
+                        Login successful.
+                    </span>
+
+                </div>
+
+
+                <!-- LOGIN FORM -->
+
+                <form id="adminLoginForm" autocomplete="on">
+
+                    <!-- EMAIL -->
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="adminEmail"
+                        >
+                            Admin Email
+                        </label>
+
+                        <div class="input-wrap">
+
+                            <i class='bx bx-envelope input-icon'></i>
+
+                            <input
+                                type="email"
+                                id="adminEmail"
+                                name="email"
+                                class="form-input"
+                                placeholder="admin@example.com"
+                                autocomplete="username"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="adminPassword"
+                        >
+                            Password
+                        </label>
+
+                        <div class="input-wrap">
+
+                            <i class='bx bx-lock-alt input-icon'></i>
+
+                            <input
+                                type="password"
+                                id="adminPassword"
+                                name="password"
+                                class="form-input"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                id="passwordToggle"
+                                aria-label="Show password"
+                            >
+                                <i class='bx bx-show'></i>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- OPTIONS -->
+
+                    <div class="login-options">
+
+                        <label class="remember">
+
+                            <input
+                                type="checkbox"
+                                id="rememberMe"
+                            >
+
+                            <span>
+                                Remember me
+                            </span>
+
+                        </label>
+
+                        <a
+                            href="#"
+                            class="forgot-link"
+                            id="forgotPassword"
+                        >
+                            Forgot password?
+                        </a>
+
+                    </div>
+
+
+                    <!-- LOGIN -->
+
+                    <button
+                        type="submit"
+                        class="login-button"
+                        id="loginButton"
+                    >
+
+                        <i class='bx bx-log-in'></i>
+
+                        <span>
+                            Sign In to Admin Portal
+                        </span>
+
+                    </button>
+
+                </form>
+
+
+                <!-- SECURITY -->
+
+                <div class="security-card">
+
+                    <i class='bx bx-shield-quarter'></i>
+
+                    <div>
+
+                        <strong>
+                            Protected administrator access
+                        </strong>
+
+                        <p>
+                            Only authorized administrator accounts should
+                            access this portal. Authentication and admin
+                            permissions must be verified by the backend.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BACK -->
+
+                <a
+                    href="../index.html"
+                    class="back-link"
+                >
+                    <i class='bx bx-arrow-back'></i>
+                    Back to Optify
+                </a>
+
+
+                <div class="copyright">
+                    © <span id="currentYear"></span> Optify. Administration Portal.
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <script>
+        /*
+        ============================================================
+        OPTIFY ADMIN LOGIN
+        ============================================================
+
+        FRONTEND-ONLY ADMIN LOGIN UI
+
+        This page intentionally does NOT fake a successful login.
+
+        Production authentication should use Firebase Authentication
+        or your backend authentication system.
+
+        Recommended production flow:
+
+        1. Authenticate admin with Firebase Auth.
+        2. Get authenticated user's UID.
+        3. Read admins/{uid}.
+        4. Confirm role === "admin".
+        5. Only then redirect to admin.html.
+        6. Protect admin.html and every admin action with backend/
+           Firestore security rules.
+
+        NEVER trust:
+        - localStorage
+        - sessionStorage
+        - hidden inputs
+        - URL parameters
+        - frontend role values
+        - frontend redirects
+        - client-side admin flags
+
+        ============================================================
+        */
+
+
+        const loginForm = document.getElementById("adminLoginForm");
+        const loginButton = document.getElementById("loginButton");
+
+        const emailInput = document.getElementById("adminEmail");
+        const passwordInput = document.getElementById("adminPassword");
+
+        const passwordToggle =
+            document.getElementById("passwordToggle");
+
+        const errorMessage =
+            document.getElementById("errorMessage");
+
+        const errorText =
+            document.getElementById("errorText");
+
+        const successMessage =
+            document.getElementById("successMessage");
+
+        const successText =
+            document.getElementById("successText");
+
+        const rememberMe =
+            document.getElementById("rememberMe");
+
+
+        /*
+        ------------------------------------------------------------
+        YEAR
+        ------------------------------------------------------------
+        */
+
+        document.getElementById("currentYear").textContent =
+            new Date().getFullYear();
+
+
+        /*
+        ------------------------------------------------------------
+        PASSWORD VISIBILITY
+        ------------------------------------------------------------
+        */
+
+        passwordToggle.addEventListener("click", () => {
+
+            const isPassword =
+                passwordInput.type === "password";
+
+            passwordInput.type =
+                isPassword
+                    ? "text"
+                    : "password";
+
+            passwordToggle.innerHTML = `
+                <i class='bx ${
+                    isPassword
+                        ? "bx-hide"
+                        : "bx-show"
+                }'></i>
+            `;
+
+            passwordToggle.setAttribute(
+                "aria-label",
+                isPassword
+                    ? "Hide password"
+                    : "Show password"
+            );
+        });
+
+
+        /*
+        ------------------------------------------------------------
+        ERROR / SUCCESS
+        ------------------------------------------------------------
+        */
+
+        function showError(message) {
+
+            errorText.textContent = message;
+
+            errorMessage.classList.add("show");
+
+            successMessage.classList.remove("show");
+        }
+
+
+        function hideError() {
+
+            errorMessage.classList.remove("show");
+        }
+
+
+        function showSuccess(message) {
+
+            successText.textContent = message;
+
+            successMessage.classList.add("show");
+
+            errorMessage.classList.remove("show");
+        }
+
+
+        function hideSuccess() {
+
+            successMessage.classList.remove("show");
+        }
+
+
+        /*
+        ------------------------------------------------------------
+        BASIC FRONTEND VALIDATION
+        ------------------------------------------------------------
+        */
+
+        function validateForm() {
+
+            const email =
+                emailInput.value.trim();
+
+            const password =
+                passwordInput.value;
+
+            if (!email) {
+
+                showError(
+                    "Please enter your admin email."
+                );
+
+                emailInput.focus();
+
+                return false;
+            }
+
+
+            if (!email.includes("@")) {
+
+                showError(
+                    "Please enter a valid email address."
+                );
+
+                emailInput.focus();
+
+                return false;
+            }
+
+
+            if (!password) {
+
+                showError(
+                    "Please enter your admin password."
+                );
+
+                passwordInput.focus();
+
+                return false;
+            }
+
+
+            return true;
+        }
+
+
+        /*
+        ------------------------------------------------------------
+        LOGIN SUBMISSION
+        ------------------------------------------------------------
+        */
+
+        loginForm.addEventListener("submit", async event => {
+
+            event.preventDefault();
+
+            hideError();
+            hideSuccess();
+
+
+            if (!validateForm()) {
+                return;
+            }
+
+
+            const email =
+                emailInput.value.trim();
+
+            const password =
+                passwordInput.value;
+
+
+            loginButton.disabled = true;
+
+            loginButton.innerHTML = `
+                <span class="spinner"></span>
+                <span>Signing In...</span>
+            `;
+
+
+            try {
+
+                /*
+                ====================================================
+                PRODUCTION AUTHENTICATION
+                ====================================================
+
+                Example with Firebase Authentication:
+
+                import {
+                    signInWithEmailAndPassword,
+                    setPersistence,
+                    browserLocalPersistence,
+                    browserSessionPersistence
+                } from
+                "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+
+
+                const persistence =
+                    rememberMe.checked
+                        ? browserLocalPersistence
+                        : browserSessionPersistence;
+
+
+                await setPersistence(
+                    auth,
+                    persistence
+                );
+
+
+                const credential =
+                    await signInWithEmailAndPassword(
+                        auth,
+                        email,
+                        password
+                    );
+
+
+                const uid =
+                    credential.user.uid;
+
+
+                Then read:
+
+                admins/{uid}
+
+
+                Example:
+
+                const adminRef =
+                    doc(db, "admins", uid);
+
+                const adminSnapshot =
+                    await getDoc(adminRef);
+
+
+                if (!adminSnapshot.exists()) {
+
+                    await signOut(auth);
+
+                    throw new Error(
+                        "This account is not authorized as an administrator."
+                    );
+                }
+
+
+                const adminData =
+                    adminSnapshot.data();
+
+
+                if (adminData.role !== "admin") {
+
+                    await signOut(auth);
+
+                    throw new Error(
+                        "This account does not have administrator permissions."
+                    );
+                }
+
+
+                window.location.href =
+                    "admin.html";
+
+
+                ====================================================
+                */
+
+
+                /*
+                ----------------------------------------------------
+                DEMO MODE
+
+                No fake successful authentication.
+
+                Replace this section with Firebase Auth or your
+                backend authentication call.
+                ----------------------------------------------------
+                */
+
+                await new Promise(resolve =>
+                    setTimeout(resolve, 900)
+                );
+
+
+                throw new Error(
+                    "Admin authentication is not connected yet."
+                );
+
+
+            } catch (error) {
+
+                showError(
+                    error.message ||
+                    "Unable to sign in. Please try again."
+                );
+
+                loginButton.disabled = false;
+
+                loginButton.innerHTML = `
+                    <i class='bx bx-log-in'></i>
+                    <span>Sign In to Admin Portal</span>
+                `;
+            }
+
+        });
+
+
+        /*
+        ------------------------------------------------------------
+        FORGOT PASSWORD
+        ------------------------------------------------------------
+        */
+
+        document
+            .getElementById("forgotPassword")
+            .addEventListener("click", async event => {
+
+                event.preventDefault();
+
+                const email =
+                    emailInput.value.trim();
+
+
+                if (!email) {
+
+                    showError(
+                        "Enter your admin email first so a password reset can be requested."
+                    );
+
+                    emailInput.focus();
+
+                    return;
+                }
+
+
+                if (!email.includes("@")) {
+
+                    showError(
+                        "Enter a valid admin email address."
+                    );
+
+                    emailInput.focus();
+
+                    return;
+                }
+
+
+                hideError();
+                hideSuccess();
+
+
+                /*
+                Production Firebase:
+
+                await sendPasswordResetEmail(
+                    auth,
+                    email
+                );
+
+                Then show:
+
+                "Password reset instructions have been sent
+                 to your admin email."
+
+                */
+
+
+                showError(
+                    "Password reset is not connected yet. Connect Firebase Authentication to enable this feature."
+                );
+
+            });
+
+
+        /*
+        ------------------------------------------------------------
+        ENTER KEY / INPUT CLEANUP
+        ------------------------------------------------------------
+        */
+
+        [emailInput, passwordInput].forEach(input => {
+
+            input.addEventListener("input", () => {
+
+                if (errorMessage.classList.contains("show")) {
+                    hideError();
+                }
+
+            });
+
+        });
+
+
+        /*
+        ============================================================
+        FIREBASE INTEGRATION TEMPLATE
+        ============================================================
+
+        Keep Firebase configuration in:
+
+            ../firebase/firebase-config.js
+
+        Example structure:
+
+        firebase/
+        └── firebase-config.js
+
+        That file should export initialized:
+
+            app
+            auth
+            db
+
+        Admin authentication should use:
+
+            Firebase Authentication
+            +
+            Firestore admins collection
+            +
+            Firestore security rules
+
+        Recommended admin document:
+
+            admins/{uid}
+
+        Example:
+
+        {
+            email: "admin@example.com",
+            role: "admin",
+            name: "Optify Admin",
+            active: true,
+            createdAt: serverTimestamp()
+        }
+
+
+        IMPORTANT:
+
+        The role document is not a replacement for Firestore
+        Security Rules.
+
+        Security Rules must independently prevent non-admin users
+        from reading/writing protected admin collections.
+
+        ============================================================
+        */
+
+
+        /*
+        ------------------------------------------------------------
+        PREVENT ENTERING ADMIN PAGE WITHOUT AUTH
+        ------------------------------------------------------------
+
+        This check belongs in admin.html as well.
+
+        Example:
+
+        onAuthStateChanged(auth, async user => {
+
+            if (!user) {
+
+                window.location.href =
+                    "admin-login.html";
+
+                return;
+            }
+
+            const adminSnapshot =
+                await getDoc(
+                    doc(db, "admins", user.uid)
+                );
+
+            if (
+                !adminSnapshot.exists() ||
+                adminSnapshot.data().role !== "admin"
+            ) {
+
+                await signOut(auth);
+
+                window.location.href =
+                    "admin-login.html";
+            }
+
+        });
+
+        ============================================================
+        */
+    </script>
+
+</body>
+</html>
