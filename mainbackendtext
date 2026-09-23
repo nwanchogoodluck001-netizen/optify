@@ -1,0 +1,1461 @@
+Absolutely. Since you’re handing the backend to someone who **doesn’t know Optify yet**, the best thing is to give them a proper **backend handoff document** explaining the product, the logic, what they are responsible for, what the frontend expects, and the mistakes they must avoid.
+
+You can send the following directly to the backend developer.
+
+---
+
+# OPTIFY — BACKEND DEVELOPER PROJECT BRIEF
+
+## 1. What is Optify?
+
+**Optify is a rewards/earning platform where registered users can complete different activities and earn money in USD.**
+
+The frontend has already been designed and built. Your responsibility is to build the **backend, database, authentication, payment processing, reward logic, security, and APIs** that make the frontend functional.
+
+The frontend should **never be treated as the source of truth**.
+
+The backend must be responsible for deciding:
+
+* Who the user is
+* Whether the user is validated
+* How much money the user has
+* Whether a user can claim a reward
+* Whether a referral qualifies
+* Whether a withdrawal is allowed
+* Whether an E-pin is valid/approved
+* Whether a payment was actually successful
+* How much reward a user receives
+* Whether a user has already claimed something
+* All financial transactions
+
+---
+
+# 2. Important Product Rules
+
+Everything on Optify is displayed in **USD**.
+
+For users paying or viewing the Nigerian equivalent:
+
+> **$1 = ₦1,000**
+
+Therefore:
+
+|   USD |     NGN |
+| ----: | ------: |
+|    $1 |  ₦1,000 |
+| $1.50 |  ₦1,500 |
+|    $2 |  ₦2,000 |
+|    $5 |  ₦5,000 |
+|   $10 | ₦10,000 |
+
+The conversion should be centrally controlled by the backend/platform settings rather than scattered throughout the frontend.
+
+---
+
+# 3. User Registration
+
+A user registers with the Optify frontend.
+
+The backend should create the user account and store the required information.
+
+At minimum, the backend needs to maintain things such as:
+
+* User ID
+* Name
+* Email
+* Phone number, if required
+* Password/authentication information
+* Account status
+* Validation status
+* USD balance
+* Total earned
+* Referral information
+* Bank information
+* E-pin status
+* Created date
+* Updated date
+
+### Important
+
+Never trust information coming from the browser such as:
+
+```text
+balance = 100
+validated = true
+reward = 5
+```
+
+A user can modify frontend JavaScript.
+
+The backend must always retrieve the real values from the database.
+
+---
+
+# 4. Community Popup After Registration
+
+After registration, the user enters the dashboard.
+
+The **first experience on the dashboard is the Optify Community popup**.
+
+The purpose is simply to encourage the new user to join the official Optify community.
+
+The popup is **NOT**:
+
+* A payment popup
+* A validation popup
+* An earning task
+* A withdrawal requirement
+
+Joining the community does **not** validate the user's dashboard.
+
+The community information is controlled from the admin side.
+
+The backend should provide things such as:
+
+```text
+communityName
+platform
+communityLink
+active
+registrationPrompt.enabled
+registrationPrompt.title
+registrationPrompt.message
+registrationPrompt.buttonText
+registrationPrompt.secondaryButtonText
+linkBehavior.target
+linkBehavior.externalWarning
+```
+
+The frontend reads those values.
+
+### Important
+
+Do not hardcode a real WhatsApp/Telegram/community URL into the frontend.
+
+The admin should be able to change the community destination without changing frontend code.
+
+---
+
+# 5. Dashboard Validation
+
+This is one of the most important parts of Optify.
+
+A newly registered user has **not validated their dashboard**.
+
+Validation costs:
+
+> **$5 / ₦5,000**
+
+Payment is processed through **Paystack**.
+
+Once the payment has been successfully verified by the backend, the user's account becomes:
+
+> **Validated**
+
+Before validation:
+
+* Earning activities are locked.
+* User cannot earn from Streak.
+* User cannot earn from Mystery Box.
+* User cannot earn from Quiz.
+* Referral rewards should not be credited as earned rewards.
+* Withdrawal remains unavailable.
+
+After validation:
+
+* Earning features become available.
+* Streak becomes available.
+* Mystery Box becomes available.
+* Quiz becomes available.
+* Referral earning becomes available.
+* User can accumulate rewards.
+
+### Extremely important
+
+**Do not mark a user as validated simply because Paystack's payment page returned successfully.**
+
+The backend must verify the payment with Paystack.
+
+The backend should be the authority for:
+
+```text
+payment initiated
+payment successful
+payment reference
+amount
+currency
+user
+validation status
+```
+
+---
+
+# 6. Streak System
+
+The Streak system is an earning activity.
+
+The user can claim three times per day:
+
+### Morning
+
+> $1.50
+
+### Afternoon
+
+> $1.50
+
+### Night
+
+> $1.50
+
+Maximum daily Streak earning:
+
+> **$4.50**
+
+The frontend displays the three periods, but the **backend controls whether each claim is actually available**.
+
+---
+
+## Streak backend logic
+
+The backend should know:
+
+```text
+User
+↓
+Validation status
+↓
+Current date
+↓
+Current time/claim period
+↓
+Whether this period was already claimed
+↓
+Whether today's maximum has been reached
+↓
+Credit reward
+```
+
+For example:
+
+If a user already claimed Morning, the backend must reject another Morning claim.
+
+The user should not be able to send:
+
+```json
+{
+  "reward": 1.50
+}
+```
+
+and receive $1.50.
+
+The backend determines the reward.
+
+---
+
+# 7. Important Change: Streak Is Automatic
+
+You mentioned that you removed Streak management from the admin panel because you want it to be automatic.
+
+That's important.
+
+**The admin should not have to manually create Morning/Afternoon/Night streak tasks every day.**
+
+The backend should automatically determine the daily streak periods.
+
+For example, conceptually:
+
+```text
+Every day
+    ↓
+Morning period exists automatically
+Afternoon period exists automatically
+Night period exists automatically
+```
+
+The database should record the user's claims, rather than requiring an admin to create new streak tasks every day.
+
+For example:
+
+```text
+user_id
+date
+period
+claimed
+reward
+claimed_at
+```
+
+The exact implementation is up to the backend developer.
+
+---
+
+# 8. Mystery Box
+
+Mystery Box is another automatic earning activity.
+
+A validated user can open:
+
+> **3 boxes**
+
+Each box produces a reward between:
+
+> **$1 – $5**
+
+The reward should be generated by the backend.
+
+### Do NOT let the frontend decide the reward.
+
+For example, the frontend should never be trusted with:
+
+```javascript
+const reward = 5;
+```
+
+and then send:
+
+```text
+Give me $5
+```
+
+Instead:
+
+```text
+User opens box
+        ↓
+Backend verifies eligibility
+        ↓
+Backend determines reward
+        ↓
+Backend records the result
+        ↓
+Backend credits user's account
+        ↓
+Frontend displays result
+```
+
+---
+
+# 9. Important Change: Mystery Box Is Automatic Too
+
+Since you removed Mystery Box management from the admin panel:
+
+**The admin does not manually create three boxes every day.**
+
+The backend should automatically determine the user's daily/session allowance.
+
+It needs to prevent:
+
+* Opening more than allowed
+* Replaying an already opened box
+* Refreshing the page to receive another reward
+* Calling the API repeatedly to generate rewards
+* Manipulating the reward amount
+
+Every opened box must have a backend record.
+
+Something conceptually like:
+
+```text
+userId
+date
+boxNumber
+reward
+openedAt
+transactionId
+```
+
+This gives you an audit trail.
+
+---
+
+# 10. Quiz System
+
+Unlike Streak and Mystery Box, **Quiz content is managed by the admin.**
+
+The admin can create quiz questions.
+
+The quiz requires:
+
+> Minimum 5 questions
+
+Reward range:
+
+> **$1 – $5**
+
+The backend should control:
+
+* Questions
+* Answers
+* Correct answers
+* Active/inactive questions
+* Categories
+* Difficulty
+* Reward rules
+* Attempts
+* Completed attempts
+* Reward calculation
+
+### Very important security rule
+
+Do **not** send the correct answers to the normal user's browser before the user answers.
+
+Otherwise someone can inspect the frontend/network request and obtain the answers.
+
+The backend should evaluate the answers.
+
+Conceptually:
+
+```text
+User requests quiz
+        ↓
+Backend sends questions/options
+        ↓
+User answers
+        ↓
+Backend receives answers
+        ↓
+Backend evaluates answers
+        ↓
+Backend determines result/reward
+        ↓
+Backend records attempt
+        ↓
+Backend credits reward if eligible
+```
+
+---
+
+# 11. Referral System
+
+Referral reward:
+
+> **$5 per eligible referral**
+
+But there is an important condition:
+
+### Registration alone does NOT qualify.
+
+The referred user must:
+
+> Register → Validate dashboard
+
+Only then does the referral become eligible for the $5 reward.
+
+---
+
+## Referral flow
+
+Example:
+
+```text
+User A
+   ↓
+Shares referral link
+   ↓
+User B registers
+   ↓
+Backend records User A as referrer
+   ↓
+User B is pending referral
+   ↓
+User B pays validation fee
+   ↓
+Payment confirmed
+   ↓
+User B becomes validated
+   ↓
+Referral becomes eligible
+   ↓
+Backend credits User A $5
+```
+
+The backend should create a transaction for that $5 reward.
+
+---
+
+# 12. Referral Security
+
+The backend must prevent:
+
+### Self-referrals
+
+A user cannot refer themselves.
+
+### Duplicate attribution
+
+A referral should not be attached to multiple referrers.
+
+### Duplicate rewards
+
+If User B validates, User A must not receive the $5 twice.
+
+### Fake referral requests
+
+The frontend must never be able to simply say:
+
+```text
+"Give me my $5 referral reward."
+```
+
+The backend checks whether the referral actually qualifies.
+
+---
+
+# 13. E-pin System
+
+The E-pin is required for withdrawal.
+
+Cost:
+
+> **$2 / ₦2,000**
+
+A user purchases an Optify withdrawal E-pin.
+
+After purchase, the E-pin enters a pending state until the required backend/admin process approves it.
+
+The backend must control:
+
+* E-pin generation
+* E-pin ownership
+* E-pin status
+* Purchase/payment
+* Approval
+* Usage
+* Expiration if implemented
+* Duplicate use prevention
+
+An E-pin should never be generated or approved purely by frontend JavaScript.
+
+---
+
+# 14. Withdrawal System
+
+Minimum withdrawal:
+
+> **$10 / ₦10,000**
+
+Requirements:
+
+1. User must be validated.
+2. User must meet the minimum balance.
+3. User must have the required E-pin.
+4. E-pin must be approved/valid.
+5. User must have bank details.
+6. User must have enough available balance.
+7. Withdrawal must not already be duplicated.
+
+---
+
+## Withdrawal flow
+
+```text
+User requests withdrawal
+        ↓
+Backend checks validation
+        ↓
+Backend checks balance
+        ↓
+Backend checks minimum $10
+        ↓
+Backend checks E-pin
+        ↓
+Backend checks bank details
+        ↓
+Backend creates withdrawal request
+        ↓
+Admin reviews
+        ↓
+Approved / Rejected
+        ↓
+If approved → processing
+        ↓
+Completed
+```
+
+The frontend should only display the status.
+
+It should not decide whether the withdrawal is approved.
+
+---
+
+# 15. User Bank Details
+
+Users can add/edit their bank information from Settings.
+
+The backend should store the bank details securely.
+
+The withdrawal system should retrieve the user's current bank details from the backend.
+
+Do not trust hidden frontend fields.
+
+For example, a malicious user should not be able to submit:
+
+```text
+balance = $500
+bankAccount = another person's account
+```
+
+and expect the backend to accept it without proper authorization/validation.
+
+---
+
+# 16. Transactions
+
+The `transactions` section is the **overall financial ledger of Optify**.
+
+It should contain financial activity such as:
+
+* Validation payment
+* E-pin purchase
+* Streak reward
+* Mystery Box reward
+* Quiz reward
+* Referral reward
+* Withdrawal
+* Refund/reversal
+* Any legitimate financial adjustment
+
+Example:
+
+```text
+TXN001
+Validation Payment
+-$5.00
+Completed
+```
+
+or:
+
+```text
+TXN002
+Streak Reward
++$1.50
+Completed
+```
+
+or:
+
+```text
+TXN003
+Withdrawal
+-$10.00
+Pending
+```
+
+The transaction ledger should be generated by backend events.
+
+**Do not allow the frontend to create arbitrary transactions.**
+
+---
+
+# 17. User Balance
+
+This is extremely important.
+
+The balance should not simply be:
+
+```javascript
+let balance = 0;
+```
+
+on the frontend.
+
+The backend/database should be authoritative.
+
+When a reward is earned:
+
+```text
+Reward event
+     ↓
+Backend validates event
+     ↓
+Backend calculates reward
+     ↓
+Backend updates balance
+     ↓
+Backend creates transaction
+```
+
+Ideally, the balance update and transaction creation should happen atomically so you don't end up with:
+
+> Balance increased but no transaction
+
+or:
+
+> Transaction created but balance wasn't updated.
+
+---
+
+# 18. Admin Panel
+
+The admin panel is for **management and oversight**, not for manually controlling everything.
+
+Current admin navigation:
+
+```text
+Dashboard
+Users
+Quiz
+Referrals
+
+Finance
+E-pins
+Withdrawals
+Transactions
+
+Platform
+Community Settings
+Platform Settings
+```
+
+The admin should be able to manage/review the things that actually require administration.
+
+---
+
+# 19. What Should Be Automatic
+
+You specifically removed Streak and Mystery Box from the admin panel.
+
+That is the correct product architecture for these systems.
+
+### Automatic:
+
+* Daily Streak periods
+* Streak availability
+* Streak claim eligibility
+* Streak daily limits
+* Mystery Box availability
+* Mystery Box reward generation
+* Duplicate prevention
+* Reward calculations
+* Balance updates
+* Transaction creation
+* Referral eligibility checking
+* Referral reward triggering after validation
+
+The backend should handle these automatically.
+
+---
+
+# 20. What Admin Should Control
+
+### Quiz
+
+Admin manages:
+
+* Questions
+* Options
+* Correct answers
+* Categories
+* Difficulty
+* Active/inactive status
+* Quiz configuration
+
+### Referrals
+
+Admin monitors:
+
+* Referrals
+* Pending referrals
+* Eligible referrals
+* Rewarded referrals
+* Referral issues
+
+### E-pins
+
+Admin manages/reviews:
+
+* E-pin purchases
+* E-pin status
+* E-pin approval
+* E-pin usage
+
+### Withdrawals
+
+Admin manages:
+
+* Withdrawal requests
+* Pending withdrawals
+* Approved withdrawals
+* Processing withdrawals
+* Completed withdrawals
+* Rejected withdrawals
+
+### Transactions
+
+Admin views the financial ledger.
+
+### Community Settings
+
+Admin changes:
+
+* Community name
+* Platform
+* Community link
+* Popup title
+* Popup message
+* Button text
+* Link behavior
+
+### Platform Settings
+
+Admin controls the platform configuration such as:
+
+* Currency
+* `$1 = ₦1,000`
+* Validation fee
+* Withdrawal minimum
+* E-pin price
+* Referral reward
+* Streak reward
+* Mystery Box reward range
+* Quiz reward range
+* Platform status
+* Maintenance mode
+* Registration status
+* Earning status
+
+---
+
+# 21. Backend APIs
+
+The exact API architecture is up to you, but the frontend has been designed around backend-driven data.
+
+Examples include:
+
+```text
+GET /api/user/profile
+GET /api/user/dashboard
+GET /api/user/tasks/summary
+
+GET /api/user/streak
+POST /api/user/streak/claim
+
+GET /api/user/mystery-box
+POST /api/user/mystery-box/open
+
+GET /api/user/quiz
+POST /api/user/quiz/submit
+
+GET /api/user/referrals
+GET /api/user/referrals/link
+
+GET /api/user/wallet
+GET /api/user/transactions
+
+POST /api/user/withdrawals
+GET /api/user/withdrawals
+
+GET /api/user/community-settings
+GET /api/user/platform-settings
+```
+
+Admin APIs would handle things like:
+
+```text
+GET /api/admin/users
+GET /api/admin/quizzes
+POST /api/admin/quizzes
+PUT /api/admin/quizzes/:id
+
+GET /api/admin/referrals
+
+GET /api/admin/epins
+
+GET /api/admin/withdrawals
+POST /api/admin/withdrawals/:id/approve
+POST /api/admin/withdrawals/:id/reject
+POST /api/admin/withdrawals/:id/processing
+POST /api/admin/withdrawals/:id/complete
+
+GET /api/admin/transactions
+
+GET /api/admin/community-settings
+PUT /api/admin/community-settings
+
+GET /api/admin/platform-settings
+PUT /api/admin/platform-settings
+```
+
+These are architectural examples; the backend developer can structure them differently as long as the frontend contract is clearly maintained.
+
+---
+
+# 22. Authentication & Authorization
+
+There are two different types of users:
+
+### Normal users
+
+Can access:
+
+* Their own dashboard
+* Their own tasks
+* Their own wallet
+* Their own referrals
+* Their own transactions
+* Their own settings
+* Their own withdrawals
+
+They must **never** be able to access another user's private data.
+
+### Admin
+
+Can access:
+
+* Users
+* Quiz management
+* Referrals
+* E-pins
+* Withdrawals
+* Transactions
+* Community Settings
+* Platform Settings
+
+Admin authorization must happen on the backend.
+
+Do **not** do this:
+
+```javascript
+if (localStorage.getItem("role") === "admin") {
+    showAdminPanel();
+}
+```
+
+That is only UI logic.
+
+The backend must verify the authenticated user's identity and admin role on every protected admin request.
+
+---
+
+# 23. Firebase / Database Architecture
+
+If Firebase is being used for authentication/database, keep the architecture clean.
+
+For example:
+
+```text
+Authentication
+      ↓
+Firebase Auth
+      ↓
+User UID
+      ↓
+Database
+```
+
+And for admins:
+
+```text
+Firebase Auth UID
+      ↓
+admins/{uid}
+      ↓
+role: admin
+active: true
+```
+
+But **don't put sensitive financial authority in frontend Firestore rules alone** if your architecture requires privileged server operations.
+
+Financial operations should go through trusted backend/server-side logic.
+
+---
+
+# 24. Paystack
+
+Paystack is responsible for payment processing.
+
+There are at least two important payments:
+
+### Validation
+
+```text
+$5 / ₦5,000
+```
+
+### E-pin
+
+```text
+$2 / ₦2,000
+```
+
+The backend should:
+
+1. Create/initiate the payment.
+2. Associate it with the authenticated user.
+3. Store a unique payment reference.
+4. Verify the transaction server-side.
+5. Confirm amount/currency.
+6. Confirm successful status.
+7. Update the appropriate record.
+8. Create the appropriate transaction record.
+9. Trigger the appropriate product action.
+
+Never trust:
+
+```text
+?payment=successful
+```
+
+or a frontend callback alone.
+
+---
+
+# 25. The Most Important Backend Rule
+
+## NEVER TRUST THE FRONTEND.
+
+The frontend is basically the **interface**.
+
+The backend is the **authority**.
+
+For example:
+
+### Bad
+
+```text
+Frontend:
+"I earned $5."
+
+Backend:
+"Okay."
+```
+
+### Correct
+
+```text
+Frontend:
+"I opened Mystery Box #2."
+
+Backend:
+"Let me check:
+- Is this user authenticated?
+- Is the user validated?
+- Has box #2 already been opened?
+- Has the user reached today's limit?
+- Is the request legitimate?
+- What reward should this box give?
+- Has this transaction already happened?"
+
+Backend:
+"Reward = $3.20."
+
+Then backend records and credits it.
+```
+
+---
+
+# 26. Common Mistakes to Avoid
+
+### ❌ Don't trust frontend balances
+
+Never accept:
+
+```text
+balance: 500
+```
+
+from the browser.
+
+---
+
+### ❌ Don't trust frontend validation status
+
+Never allow:
+
+```text
+validated: true
+```
+
+from the browser to unlock earning.
+
+---
+
+### ❌ Don't let frontend determine rewards
+
+The browser should not decide:
+
+```text
+reward = $5
+```
+
+---
+
+### ❌ Don't let users call reward endpoints repeatedly
+
+Every reward endpoint needs duplicate protection.
+
+---
+
+### ❌ Don't create fake transaction records
+
+Every transaction must correspond to a legitimate backend event.
+
+---
+
+### ❌ Don't credit referral rewards immediately
+
+Registration is not enough.
+
+The referred user must successfully validate.
+
+---
+
+### ❌ Don't expose quiz answers
+
+Correct answers must remain server-side until evaluation.
+
+---
+
+### ❌ Don't let users manipulate withdrawal amounts
+
+The backend should retrieve the user's actual balance.
+
+---
+
+### ❌ Don't rely on localStorage for security
+
+LocalStorage can help with UI preferences, but it should never determine:
+
+```text
+admin
+validated
+balance
+withdrawal eligibility
+```
+
+---
+
+### ❌ Don't manually create Streak every day
+
+Streak should be automatically generated/recognized by the backend.
+
+---
+
+### ❌ Don't manually create Mystery Boxes every day
+
+Mystery Box availability should be calculated/controlled automatically.
+
+---
+
+### ❌ Don't allow duplicate financial operations
+
+Every important operation should have a unique reference/idempotency mechanism.
+
+---
+
+# 27. Security Requirements
+
+The backend should implement:
+
+* Authentication
+* Authorization
+* Input validation
+* Rate limiting where appropriate
+* Server-side reward calculation
+* Duplicate request protection
+* Idempotency for payments/financial operations
+* Audit logs
+* Transaction records
+* Secure payment verification
+* Ownership checks
+* Self-referral prevention
+* Balance integrity
+* Withdrawal eligibility checks
+* Admin authorization
+* Secure handling of secrets
+* Proper database rules/indexes
+* Error handling that doesn't expose sensitive information
+
+---
+
+# 28. Audit Trail
+
+For anything involving money, we should be able to answer:
+
+> **Who did what, when, how much, and why?**
+
+For example:
+
+```text
+User ID
+Action
+Amount
+Transaction ID
+Date/time
+Status
+Previous balance
+New balance
+Reference
+```
+
+This becomes extremely useful if a user says:
+
+> "My $5 reward disappeared."
+
+or:
+
+> "I never received my withdrawal."
+
+---
+
+# 29. Balance Architecture
+
+I strongly recommend treating financial operations as **ledger events**, not simply editing a number everywhere.
+
+For example:
+
+```text
+Validation payment
+       ↓
+Transaction
+
+Streak reward
+       ↓
+Transaction
+       ↓
+Balance credit
+
+Mystery Box reward
+       ↓
+Transaction
+       ↓
+Balance credit
+
+Quiz reward
+       ↓
+Transaction
+       ↓
+Balance credit
+
+Referral reward
+       ↓
+Transaction
+       ↓
+Balance credit
+
+Withdrawal
+       ↓
+Transaction
+       ↓
+Balance debit
+```
+
+This makes the system much easier to audit.
+
+---
+
+# 30. Frontend ↔ Backend Relationship
+
+The frontend developer has already created the visual/interface layer.
+
+So the backend developer should **not redesign the pages unnecessarily**.
+
+Instead, connect the existing interfaces to real data.
+
+For example:
+
+```text
+Frontend:
+$0.00
+```
+
+should eventually become:
+
+```text
+GET /api/user/dashboard
+        ↓
+Backend
+        ↓
+$12.50
+        ↓
+Frontend displays $12.50
+```
+
+Similarly:
+
+```text
+Dashboard Validated
+```
+
+should come from actual backend validation status.
+
+---
+
+# 31. Development Order
+
+I recommend building the backend in this order:
+
+### Phase 1 — Foundation
+
+* Database
+* Authentication
+* User model
+* Admin model
+* Authorization
+* API structure
+
+### Phase 2 — Wallet
+
+* Balance
+* Transactions
+* Ledger
+* Financial integrity
+
+### Phase 3 — Paystack
+
+* Validation payment
+* Payment verification
+* E-pin payment
+* Webhooks/payment references
+
+### Phase 4 — Validation
+
+* $5 validation
+* Validation status
+* Validation history
+
+### Phase 5 — Automatic Rewards
+
+* Streak
+* Mystery Box
+* Reward ledger
+* Duplicate prevention
+
+### Phase 6 — Quiz
+
+* Questions
+* Answers
+* Attempts
+* Results
+* Rewards
+
+### Phase 7 — Referrals
+
+* Referral codes
+* Attribution
+* Validation trigger
+* $5 reward
+* Anti-abuse rules
+
+### Phase 8 — Withdrawal
+
+* Bank details
+* E-pin
+* Withdrawal request
+* Admin review
+* Processing/completion
+
+### Phase 9 — Admin
+
+* Users
+* Quiz
+* Referrals
+* E-pins
+* Withdrawals
+* Transactions
+* Community Settings
+* Platform Settings
+
+### Phase 10 — Testing
+
+Test everything with:
+
+* Normal user
+* Validated user
+* Admin
+* Invalid payment
+* Duplicate requests
+* Multiple tabs
+* Refreshing during transactions
+* Repeated API calls
+* Unauthorized API calls
+* Self-referrals
+* Duplicate referrals
+* Duplicate reward claims
+* Insufficient balance
+* Invalid E-pin
+* Already-used E-pin
+
+---
+
+# 32. Final Understanding of the Project
+
+The easiest way to understand Optify is:
+
+```text
+                 OPTIFY
+                    │
+          ┌─────────┴─────────┐
+          │                   │
+       USERS                ADMIN
+          │                   │
+          │             Manage/Monitor
+          │                   │
+          ▼                   ▼
+     Registration          Platform
+          │                Settings
+          ▼                   │
+  Community Popup             │
+          │                   │
+          ▼                   │
+      Dashboard               │
+          │                   │
+     ┌────┴────┐              │
+     │         │              │
+Unvalidated   Validated        │
+     │         │              │
+     │         ├── Streak ────┤
+     │         ├── Mystery ───┤
+     │         ├── Quiz ──────┤
+     │         └── Referral ──┤
+     │                        │
+     └── Validation ─────────┤
+                              │
+                         Wallet/Ledger
+                              │
+                         E-pin + Withdrawal
+                              │
+                           Paystack
+```
+
+### The core principle:
+
+**The frontend tells the user what is happening.
+The backend decides what is actually happening.**
+
+That distinction is extremely important for Optify because the platform contains payments, balances, rewards, referrals and withdrawals.
+
+---
+
+## One final instruction for the backend developer
+
+Before connecting anything to the frontend, **understand the business rules first**.
+
+Do not build endpoints like:
+
+```text
+POST /give-reward
+POST /approve-user
+POST /set-balance
+POST /validate-user
+```
+
+where the browser tells the server what should happen.
+
+Instead, endpoints should represent **actions that the server validates and controls**.
+
+For example:
+
+```text
+POST /streak/claim
+POST /mystery-box/open
+POST /quiz/submit
+POST /withdrawals
+```
+
+The server then determines whether the action is allowed and what the result should be.
+
+That is the architecture that will keep the Optify frontend and backend properly connected without making the frontend responsible for financial/security decisions.
